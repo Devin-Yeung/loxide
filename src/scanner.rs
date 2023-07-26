@@ -207,4 +207,17 @@ mod tests {
             }
         )
     }
+
+    #[test]
+    fn single_or_double_char() {
+        insta::with_settings!({snapshot_path => SNAPSHOT_OUTPUT_BASE},{
+                let src = src!(SNAPSHOT_INPUT_BASE, "single_or_double_char.lox");
+                let scanner = Scanner::from(&src);
+                let tokens = scanner
+                    .map(|x| x.unwrap())
+                    .collect::<Vec<_>>();
+                insta::assert_debug_snapshot!(tokens);
+            }
+        )
+    }
 }
