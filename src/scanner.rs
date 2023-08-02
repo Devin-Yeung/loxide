@@ -1,6 +1,7 @@
 use crate::error::SyntaxError;
 use crate::prophetic::Prophet;
 use crate::token::{Literal, Span, Token, TokenType};
+use std::borrow::Cow;
 use std::str::Chars;
 
 pub struct Scanner<'src> {
@@ -112,14 +113,14 @@ impl<'src> Scanner<'src> {
                 }
                 false => TokenType::Slash,
             },
-            Some('\"') => TokenType::Literal(Literal::String(self.string()?)),
+            Some('\"') => TokenType::Literal(Literal::String(Cow::Owned(self.string()?))),
             None => TokenType::EOF,
             _ => return Err(SyntaxError::UnexpectedChar(self.current.line)),
         };
         Ok(self.yield_token(ty))
     }
 
-    fn yield_token(&mut self, ty: TokenType) -> Token<'src> {
+    fn yield_token(&mut self, ty: TokenType<'src>) -> Token<'src> {
         let len = self.current.end - self.current.start;
         let lexeme = &self.src[self.consumed..self.consumed + len];
         self.consumed += lexeme.len();

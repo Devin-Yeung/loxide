@@ -1,7 +1,9 @@
+use std::borrow::Cow;
+
 #[derive(Debug, PartialEq)]
-pub enum Literal {
+pub enum Literal<'src> {
     Identifier,
-    String(std::string::String),
+    String(Cow<'src, str>),
     Number(f64),
 }
 
@@ -26,7 +28,7 @@ pub enum Keyword {
 }
 
 #[derive(Debug, PartialEq)]
-pub enum TokenType {
+pub enum TokenType<'src> {
     // Single-character tokens.
     /// Opening parentheses `(`
     LeftParen,
@@ -57,14 +59,14 @@ pub enum TokenType {
     Comment,
     EOF,
     // Literals.
-    Literal(Literal),
+    Literal(Literal<'src>),
     // Keywords.
     Keyword(Keyword),
 }
 
 #[derive(Debug)]
 pub struct Token<'src> {
-    pub(crate) ty: TokenType,
+    pub(crate) ty: TokenType<'src>,
     pub(crate) lexeme: &'src str,
     pub(crate) span: Span,
 }
@@ -79,7 +81,7 @@ pub struct Span {
 }
 
 impl<'src> Token<'src> {
-    pub fn new(ty: TokenType, lexeme: &'src str, span: Span) -> Token<'src> {
+    pub fn new(ty: TokenType<'src>, lexeme: &'src str, span: Span) -> Token<'src> {
         Token { ty, lexeme, span }
     }
 }
