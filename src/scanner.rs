@@ -113,7 +113,7 @@ impl<'src> Scanner<'src> {
                 }
                 false => TokenType::Slash,
             },
-            Some('\"') => TokenType::Literal(Literal::String(Cow::Owned(self.string()?))),
+            Some('\"') => TokenType::Literal(Literal::String(self.string()?)),
             None => TokenType::EOF,
             _ => return Err(SyntaxError::UnexpectedChar(self.current.line)),
         };
@@ -131,13 +131,16 @@ impl<'src> Scanner<'src> {
         }
     }
 
-    fn string(&mut self) -> Result<String, SyntaxError> {
+    fn string(&mut self) -> Result<Cow<'src, str>, SyntaxError> {
         loop {
             match self.advance() {
                 None => panic!(""), // TODO: error
                 Some('\"') => {
                     // discard the left quote
-                    return Ok(self.src[self.current.start + 1..self.current.end].to_string());
+                    // return owned string only when *string escape* happens
+                    return Ok(Cow::Borrowed(
+                        &self.src[self.current.start + 1..self.current.end],
+                    ));
                 }
                 _ => { /* Continue */ }
             }
