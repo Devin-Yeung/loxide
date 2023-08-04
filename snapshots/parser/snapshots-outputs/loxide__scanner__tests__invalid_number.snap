@@ -1,0 +1,22 @@
+---
+source: src/scanner.rs
+expression: tokens
+---
+[
+    [
+        Err(
+            InvalidNumber,
+        ),
+        Ok(
+            Token {
+                ty: Dot,
+                lexeme: "5",
+                span: Span {
+                    line: 1,
+                    start: 3,
+                    end: 4,
+                },
+            },
+        ),
+    ],
+]

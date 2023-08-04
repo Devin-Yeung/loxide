@@ -156,8 +156,12 @@ impl<'src> Scanner<'src> {
     fn number(&mut self) -> Result<f64, SyntaxError> {
         while let Some(c) = self.peek() {
             match c {
-                c if c == '.' && self.peek_next().map_or(false, |c| c.is_digit(10)) => {
-                    self.advance()
+                '.' => {
+                    if self.peek_next().map_or(false, |c| c.is_digit(10)) {
+                        self.advance()
+                    } else {
+                        return Err(SyntaxError::InvalidNumber);
+                    }
                 }
                 c if c.is_digit(10) => self.advance(),
                 _ => break,
@@ -165,7 +169,9 @@ impl<'src> Scanner<'src> {
         }
         let len = self.current.end - self.current.start;
         let lexeme = &self.src[self.consumed..self.consumed + len];
-        Ok(lexeme.parse::<f64>().unwrap()) // TODO: remove the unwrap
+        lexeme
+            .parse::<f64>()
+            .map_err(|_| SyntaxError::InvalidNumber)
     }
 }
 
@@ -247,15 +253,25 @@ mod tests {
     }
 
     #[test]
-    fn number() {
+    fn valid_number() {
         insta::with_settings!({snapshot_path => SNAPSHOT_OUTPUT_BASE},{
-                let src = src!(SNAPSHOT_INPUT_BASE, "number.lox");
+                let src = src!(SNAPSHOT_INPUT_BASE, "valid_number.lox");
                 let scanner = Scanner::from(&src);
                 let tokens = scanner
                     .collect::<Vec<_>>();
                 insta::assert_debug_snapshot!(tokens);
             }
         )
+    }
+
+    #[test]
+    fn invalid_number() {
+        insta::with_settings!({snapshot_path => SNAPSHOT_OUTPUT_BASE},{
+            let src = src!(SNAPSHOT_INPUT_BASE, "invalid_number.lox");
+            // each line a single new src
+            let tokens = src.split('\n').map(|l| tokens!(l)).collect::<Vec<_>>();
+            insta::assert_debug_snapshot!(tokens);
+        })
     }
 
     #[test]
