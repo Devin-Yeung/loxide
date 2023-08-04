@@ -1,0 +1,31 @@
+---
+source: src/scanner.rs
+expression: tokens
+---
+[
+    [
+        Err(
+            InvalidStringLiteral,
+        ),
+    ],
+    [
+        Ok(
+            Token {
+                ty: Literal(
+                    String(
+                        "",
+                    ),
+                ),
+                lexeme: "\"\"",
+                span: Span {
+                    line: 1,
+                    start: 0,
+                    end: 2,
+                },
+            },
+        ),
+        Err(
+            InvalidStringLiteral,
+        ),
+    ],
+]

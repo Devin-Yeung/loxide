@@ -216,7 +216,7 @@ impl<'src> From<&'src String> for Scanner<'src> {
 #[cfg(test)]
 mod tests {
     use crate::scanner::Scanner;
-    use crate::src;
+    use crate::{src, tokens};
     const SNAPSHOT_OUTPUT_BASE: &'static str = "../snapshots/parser/snapshots-outputs";
     const SNAPSHOT_INPUT_BASE: &'static str = "../snapshots/parser/snapshots-inputs";
 
@@ -265,6 +265,16 @@ mod tests {
             let scanner = Scanner::from(&src);
             let tokens = scanner
                 .collect::<Vec<_>>();
+            insta::assert_debug_snapshot!(tokens);
+        })
+    }
+
+    #[test]
+    fn invalid_string() {
+        insta::with_settings!({snapshot_path => SNAPSHOT_OUTPUT_BASE},{
+            let src = src!(SNAPSHOT_INPUT_BASE, "invalid_string.lox");
+            // each line a single new src
+            let tokens = src.split('\n').map(|l| tokens!(l)).collect::<Vec<_>>();
             insta::assert_debug_snapshot!(tokens);
         })
     }
