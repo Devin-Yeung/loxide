@@ -1,0 +1,77 @@
+---
+source: src/scanner.rs
+expression: tokens
+---
+[
+    Ok(
+        Token {
+            ty: Literal(
+                Number(
+                    123.0,
+                ),
+            ),
+            lexeme: "123",
+            span: Span {
+                line: 1,
+                start: 0,
+                end: 3,
+            },
+        },
+    ),
+    Ok(
+        Token {
+            ty: Literal(
+                Number(
+                    123.0,
+                ),
+            ),
+            lexeme: "123.00",
+            span: Span {
+                line: 2,
+                start: 0,
+                end: 6,
+            },
+        },
+    ),
+    Ok(
+        Token {
+            ty: Literal(
+                Number(
+                    123.456,
+                ),
+            ),
+            lexeme: "123.456",
+            span: Span {
+                line: 3,
+                start: 0,
+                end: 7,
+            },
+        },
+    ),
+    Ok(
+        Token {
+            ty: Literal(
+                Number(
+                    567.0,
+                ),
+            ),
+            lexeme: "567",
+            span: Span {
+                line: 4,
+                start: 0,
+                end: 3,
+            },
+        },
+    ),
+    Ok(
+        Token {
+            ty: Dot,
+            lexeme: ".",
+            span: Span {
+                line: 4,
+                start: 3,
+                end: 4,
+            },
+        },
+    ),
+]

@@ -40,6 +40,10 @@ impl<'src> Scanner<'src> {
         self.prophet.peek()
     }
 
+    fn peek_next(&mut self) -> Option<char> {
+        self.prophet.peek_next()
+    }
+
     /// advance will take care of span and iter for you
     fn advance(&mut self) -> Option<char> {
         match self.prophet.peek() {
@@ -114,6 +118,7 @@ impl<'src> Scanner<'src> {
                 false => TokenType::Slash,
             },
             Some('\"') => TokenType::Literal(Literal::String(self.string()?)),
+            Some(c) if c.is_digit(10) => TokenType::Literal(Literal::Number(self.number()?)),
             None => TokenType::EOF,
             _ => return Err(SyntaxError::UnexpectedChar(self.current.line)),
         };
@@ -145,6 +150,21 @@ impl<'src> Scanner<'src> {
                 _ => { /* Continue */ }
             }
         }
+    }
+
+    fn number(&mut self) -> Result<f64, SyntaxError> {
+        while let Some(c) = self.peek() {
+            match c {
+                c if c == '.' && self.peek_next().map_or(false, |c| c.is_digit(10)) => {
+                    self.advance()
+                }
+                c if c.is_digit(10) => self.advance(),
+                _ => break,
+            };
+        }
+        let len = self.current.end - self.current.start;
+        let lexeme = &self.src[self.consumed..self.consumed + len];
+        Ok(lexeme.parse::<f64>().unwrap()) // TODO: remove the unwrap
     }
 }
 
@@ -219,6 +239,18 @@ mod tests {
                 let scanner = Scanner::from(&src);
                 let tokens = scanner
                     .map(|x| x.unwrap())
+                    .collect::<Vec<_>>();
+                insta::assert_debug_snapshot!(tokens);
+            }
+        )
+    }
+
+    #[test]
+    fn number() {
+        insta::with_settings!({snapshot_path => SNAPSHOT_OUTPUT_BASE},{
+                let src = src!(SNAPSHOT_INPUT_BASE, "number.lox");
+                let scanner = Scanner::from(&src);
+                let tokens = scanner
                     .collect::<Vec<_>>();
                 insta::assert_debug_snapshot!(tokens);
             }
