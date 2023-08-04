@@ -48,30 +48,4 @@ expression: tokens
             },
         },
     ),
-    Ok(
-        Token {
-            ty: Literal(
-                Number(
-                    567.0,
-                ),
-            ),
-            lexeme: "567",
-            span: Span {
-                line: 4,
-                start: 0,
-                end: 3,
-            },
-        },
-    ),
-    Ok(
-        Token {
-            ty: Dot,
-            lexeme: ".",
-            span: Span {
-                line: 4,
-                start: 3,
-                end: 4,
-            },
-        },
-    ),
 ]
