@@ -4,4 +4,6 @@ use thiserror::Error;
 pub enum SyntaxError {
     #[error("Unexpected character at line {0}")]
     UnexpectedChar(usize),
+    #[error("Invalid string literal")]
+    InvalidStringLiteral,
 }

@@ -1,0 +1,66 @@
+---
+source: src/scanner.rs
+expression: tokens
+---
+[
+    Ok(
+        Token {
+            ty: Literal(
+                String(
+                    "Hello World",
+                ),
+            ),
+            lexeme: "\"Hello World\"",
+            span: Span {
+                line: 1,
+                start: 0,
+                end: 13,
+            },
+        },
+    ),
+    Ok(
+        Token {
+            ty: Literal(
+                String(
+                    "Let's Get Rusty!",
+                ),
+            ),
+            lexeme: "\"Let's Get Rusty!\"",
+            span: Span {
+                line: 2,
+                start: 0,
+                end: 18,
+            },
+        },
+    ),
+    Ok(
+        Token {
+            ty: Literal(
+                String(
+                    "",
+                ),
+            ),
+            lexeme: "\"\"",
+            span: Span {
+                line: 3,
+                start: 0,
+                end: 2,
+            },
+        },
+    ),
+    Ok(
+        Token {
+            ty: Literal(
+                String(
+                    "A",
+                ),
+            ),
+            lexeme: "\"A\"",
+            span: Span {
+                line: 4,
+                start: 0,
+                end: 3,
+            },
+        },
+    ),
+]

@@ -139,12 +139,13 @@ impl<'src> Scanner<'src> {
     fn string(&mut self) -> Result<Cow<'src, str>, SyntaxError> {
         loop {
             match self.advance() {
-                None => panic!(""), // TODO: error
+                None => return Err(SyntaxError::InvalidStringLiteral),
                 Some('\"') => {
+                    let len = self.current.end - self.current.start;
                     // discard the left quote
                     // return owned string only when *string escape* happens
                     return Ok(Cow::Borrowed(
-                        &self.src[self.current.start + 1..self.current.end],
+                        &self.src[self.consumed + 1..self.consumed + len - 1],
                     ));
                 }
                 _ => { /* Continue */ }
@@ -255,5 +256,16 @@ mod tests {
                 insta::assert_debug_snapshot!(tokens);
             }
         )
+    }
+
+    #[test]
+    fn valid_string() {
+        insta::with_settings!({snapshot_path => SNAPSHOT_OUTPUT_BASE},{
+            let src = src!(SNAPSHOT_INPUT_BASE, "valid_string.lox");
+            let scanner = Scanner::from(&src);
+            let tokens = scanner
+                .collect::<Vec<_>>();
+            insta::assert_debug_snapshot!(tokens);
+        })
     }
 }
