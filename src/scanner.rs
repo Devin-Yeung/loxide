@@ -117,8 +117,8 @@ impl<'src> Scanner<'src> {
                 }
                 false => TokenType::Slash,
             },
-            Some('\"') => TokenType::Literal(Literal::String(self.string()?)),
-            Some(c) if c.is_digit(10) => TokenType::Literal(Literal::Number(self.number()?)),
+            Some('\"') => self.string()?,
+            Some(c) if c.is_digit(10) => self.number()?,
             Some(c) if c.is_ascii_alphabetic() || c == '_' => self.identifier(),
             None => TokenType::EOF,
             _ => return Err(SyntaxError::UnexpectedChar(self.current.line)),
@@ -142,7 +142,7 @@ impl<'src> Scanner<'src> {
         &self.src[self.consumed..self.consumed + len]
     }
 
-    fn string(&mut self) -> Result<Cow<'src, str>, SyntaxError> {
+    fn string(&mut self) -> Result<TokenType<'src>, SyntaxError> {
         loop {
             match self.advance() {
                 None => return Err(SyntaxError::InvalidStringLiteral),
@@ -150,16 +150,16 @@ impl<'src> Scanner<'src> {
                     // discard the left quote
                     // return owned string only when *string escape* happens
                     let lexeme = self.lexeme();
-                    return Ok(Cow::Borrowed(
-                        &lexeme[1..lexeme.len() - 1], // trim the left and right quote
-                    ));
+                    // trim the left and right quote
+                    let raw_str = Cow::Borrowed(&lexeme[1..lexeme.len() - 1]);
+                    return Ok(TokenType::Literal(Literal::String(raw_str)));
                 }
                 _ => { /* Continue */ }
             }
         }
     }
 
-    fn number(&mut self) -> Result<f64, SyntaxError> {
+    fn number(&mut self) -> Result<TokenType<'src>, SyntaxError> {
         while let Some(c) = self.peek() {
             match c {
                 '.' => {
@@ -173,9 +173,11 @@ impl<'src> Scanner<'src> {
                 _ => break,
             };
         }
-        self.lexeme()
+        let num = self
+            .lexeme()
             .parse::<f64>()
-            .map_err(|_| SyntaxError::InvalidNumber)
+            .map_err(|_| SyntaxError::InvalidNumber)?;
+        Ok(TokenType::Literal(Literal::Number(num)))
     }
 
     fn identifier(&mut self) -> TokenType<'src> {
