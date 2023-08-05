@@ -127,8 +127,7 @@ impl<'src> Scanner<'src> {
     }
 
     fn yield_token(&mut self, ty: TokenType<'src>) -> Token<'src> {
-        let len = self.current.end - self.current.start;
-        let lexeme = &self.src[self.consumed..self.consumed + len];
+        let lexeme = self.lexeme();
         self.consumed += lexeme.len();
         Token {
             ty,
@@ -137,16 +136,22 @@ impl<'src> Scanner<'src> {
         }
     }
 
+    /// return the lexeme currently working on
+    fn lexeme(&self) -> &'src str {
+        let len = self.current.end - self.current.start;
+        &self.src[self.consumed..self.consumed + len]
+    }
+
     fn string(&mut self) -> Result<Cow<'src, str>, SyntaxError> {
         loop {
             match self.advance() {
                 None => return Err(SyntaxError::InvalidStringLiteral),
                 Some('\"') => {
-                    let len = self.current.end - self.current.start;
                     // discard the left quote
                     // return owned string only when *string escape* happens
+                    let lexeme = self.lexeme();
                     return Ok(Cow::Borrowed(
-                        &self.src[self.consumed + 1..self.consumed + len - 1],
+                        &lexeme[1..lexeme.len() - 1], // trim the left and right quote
                     ));
                 }
                 _ => { /* Continue */ }
@@ -168,9 +173,7 @@ impl<'src> Scanner<'src> {
                 _ => break,
             };
         }
-        let len = self.current.end - self.current.start;
-        let lexeme = &self.src[self.consumed..self.consumed + len];
-        lexeme
+        self.lexeme()
             .parse::<f64>()
             .map_err(|_| SyntaxError::InvalidNumber)
     }
