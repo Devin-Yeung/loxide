@@ -213,9 +213,7 @@ expression: tokens
     ),
     Ok(
         Token {
-            ty: Literal(
-                Identifier,
-            ),
+            ty: Identifier,
             lexeme: "function",
             span: Span {
                 line: 17,
@@ -226,9 +224,7 @@ expression: tokens
     ),
     Ok(
         Token {
-            ty: Literal(
-                Identifier,
-            ),
+            ty: Identifier,
             lexeme: "_rusty",
             span: Span {
                 line: 18,
@@ -239,9 +235,7 @@ expression: tokens
     ),
     Ok(
         Token {
-            ty: Literal(
-                Identifier,
-            ),
+            ty: Identifier,
             lexeme: "rust123",
             span: Span {
                 line: 19,

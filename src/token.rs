@@ -3,7 +3,6 @@ use std::str::FromStr;
 
 #[derive(Debug, PartialEq)]
 pub enum Literal<'src> {
-    Identifier,
     String(Cow<'src, str>),
     Number(f64),
 }
@@ -89,6 +88,7 @@ pub enum TokenType<'src> {
     Literal(Literal<'src>),
     // Keywords.
     Keyword(Keyword),
+    Identifier,
 }
 
 #[derive(Debug)]

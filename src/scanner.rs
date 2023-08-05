@@ -188,7 +188,7 @@ impl<'src> Scanner<'src> {
         content
             .parse::<Keyword>()
             .map(|k| TokenType::Keyword(k))
-            .unwrap_or(TokenType::Literal(Literal::Identifier))
+            .unwrap_or(TokenType::Identifier)
     }
 }
 
