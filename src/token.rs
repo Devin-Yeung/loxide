@@ -1,4 +1,5 @@
 use std::borrow::Cow;
+use std::str::FromStr;
 
 #[derive(Debug, PartialEq)]
 pub enum Literal<'src> {
@@ -25,6 +26,32 @@ pub enum Keyword {
     True,
     Var,
     While,
+}
+
+impl FromStr for Keyword {
+    type Err = crate::error::SyntaxError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "and" => Ok(Keyword::And),
+            "class" => Ok(Keyword::Class),
+            "else" => Ok(Keyword::Else),
+            "false" => Ok(Keyword::False),
+            "fun" => Ok(Keyword::Fun),
+            "for" => Ok(Keyword::For),
+            "if" => Ok(Keyword::If),
+            "nil" => Ok(Keyword::Nil),
+            "or" => Ok(Keyword::Or),
+            "print" => Ok(Keyword::Print),
+            "return" => Ok(Keyword::Return),
+            "super" => Ok(Keyword::Super),
+            "this" => Ok(Keyword::This),
+            "true" => Ok(Keyword::True),
+            "var" => Ok(Keyword::Var),
+            "while" => Ok(Keyword::While),
+            _ => Err(crate::error::SyntaxError::InvalidKeywords),
+        }
+    }
 }
 
 #[derive(Debug, PartialEq)]

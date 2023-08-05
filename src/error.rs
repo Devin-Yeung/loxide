@@ -8,4 +8,6 @@ pub enum SyntaxError {
     InvalidNumber,
     #[error("Invalid string literal")]
     InvalidStringLiteral,
+    #[error("Invalid keyword")]
+    InvalidKeywords,
 }

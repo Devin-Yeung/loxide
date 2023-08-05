@@ -1,6 +1,6 @@
 use crate::error::SyntaxError;
 use crate::prophetic::Prophet;
-use crate::token::{Literal, Span, Token, TokenType};
+use crate::token::{Keyword, Literal, Span, Token, TokenType};
 use std::borrow::Cow;
 use std::str::Chars;
 
@@ -119,6 +119,7 @@ impl<'src> Scanner<'src> {
             },
             Some('\"') => TokenType::Literal(Literal::String(self.string()?)),
             Some(c) if c.is_digit(10) => TokenType::Literal(Literal::Number(self.number()?)),
+            Some(c) if c.is_ascii_alphabetic() || c == '_' => self.identifier(),
             None => TokenType::EOF,
             _ => return Err(SyntaxError::UnexpectedChar(self.current.line)),
         };
@@ -172,6 +173,22 @@ impl<'src> Scanner<'src> {
         lexeme
             .parse::<f64>()
             .map_err(|_| SyntaxError::InvalidNumber)
+    }
+
+    fn identifier(&mut self) -> TokenType<'src> {
+        while let Some(c) = self.peek() {
+            if c.is_ascii_alphanumeric() {
+                self.advance();
+            } else {
+                break;
+            }
+        }
+        let content =
+            &self.src[self.consumed..self.consumed + self.current.end - self.current.start];
+        content
+            .parse::<Keyword>()
+            .map(|k| TokenType::Keyword(k))
+            .unwrap_or(TokenType::Literal(Literal::Identifier))
     }
 }
 
@@ -291,6 +308,16 @@ mod tests {
             let src = src!(SNAPSHOT_INPUT_BASE, "invalid_string.lox");
             // each line a single new src
             let tokens = src.split('\n').map(|l| tokens!(l)).collect::<Vec<_>>();
+            insta::assert_debug_snapshot!(tokens);
+        })
+    }
+
+    #[test]
+    fn valid_indents_and_keywords() {
+        insta::with_settings!({snapshot_path => SNAPSHOT_OUTPUT_BASE},{
+            let src = src!(SNAPSHOT_INPUT_BASE, "valid_idents_and_keywords.lox");
+            let scanner = Scanner::from(&src);
+            let tokens = scanner.collect::<Vec<_>>();
             insta::assert_debug_snapshot!(tokens);
         })
     }
