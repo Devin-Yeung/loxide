@@ -1,0 +1,61 @@
+---
+source: src/parser.rs
+expression: asts
+---
+[
+    Ok(
+        Expr {
+            kind: Unary(
+                UnaryExpr {
+                    operator: Minus,
+                    expr: Expr {
+                        kind: Literal(
+                            Number(
+                                1.0,
+                            ),
+                        ),
+                    },
+                },
+            ),
+        },
+    ),
+    Ok(
+        Expr {
+            kind: Unary(
+                UnaryExpr {
+                    operator: Bang,
+                    expr: Expr {
+                        kind: Literal(
+                            Boolean(
+                                true,
+                            ),
+                        ),
+                    },
+                },
+            ),
+        },
+    ),
+    Ok(
+        Expr {
+            kind: Unary(
+                UnaryExpr {
+                    operator: Bang,
+                    expr: Expr {
+                        kind: Unary(
+                            UnaryExpr {
+                                operator: Bang,
+                                expr: Expr {
+                                    kind: Literal(
+                                        Boolean(
+                                            false,
+                                        ),
+                                    ),
+                                },
+                            },
+                        ),
+                    },
+                },
+            ),
+        },
+    ),
+]

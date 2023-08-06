@@ -11,7 +11,7 @@
 use crate::ast;
 use crate::ast::ExprKind::Binary;
 use crate::ast::Literal::{Boolean, Nil};
-use crate::ast::{BinaryExpr, Expr, ExprKind};
+use crate::ast::{BinaryExpr, Expr, ExprKind, UnaryExpr};
 use crate::error::SyntaxError;
 use crate::scanner::Scanner;
 use crate::token::{Keyword, Token, TokenType};
@@ -78,6 +78,20 @@ impl<'src> Parser<'src> {
         todo!()
     }
 
+    fn unary(&mut self) -> Result<Expr<'src>, SyntaxError> {
+        let expr = match self.peek_type()? {
+            TokenType::Bang | TokenType::Minus => {
+                let operator = self.advance()?.try_into()?;
+                let expr = Box::new(self.unary()?);
+                Expr {
+                    kind: ExprKind::Unary(UnaryExpr { operator, expr }),
+                }
+            }
+            _ => self.primary()?,
+        };
+        Ok(expr)
+    }
+
     fn primary(&mut self) -> Result<Expr<'src>, SyntaxError> {
         let expr = match self.peek_type()? {
             TokenType::Keyword(Keyword::True) => Expr {
@@ -114,6 +128,17 @@ mod tests {
             let src = src!(SNAPSHOT_INPUT_BASE, "primary.lox");
             let asts = src.split('\n').map(|line| {
                 Parser::new(line).primary()
+            }).collect::<Vec<_>>();
+            insta::assert_debug_snapshot!(asts);
+        })
+    }
+
+    #[test]
+    fn unary() {
+        insta::with_settings!({snapshot_path => SNAPSHOT_OUTPUT_BASE},{
+            let src = src!(SNAPSHOT_INPUT_BASE, "unary.lox");
+            let asts = src.split('\n').map(|line| {
+                Parser::new(line).unary()
             }).collect::<Vec<_>>();
             insta::assert_debug_snapshot!(asts);
         })
