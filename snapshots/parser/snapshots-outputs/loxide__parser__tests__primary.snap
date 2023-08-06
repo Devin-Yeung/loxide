@@ -1,0 +1,49 @@
+---
+source: src/parser.rs
+expression: asts
+---
+[
+    Ok(
+        Expr {
+            kind: Literal(
+                Nil,
+            ),
+        },
+    ),
+    Ok(
+        Expr {
+            kind: Literal(
+                Boolean(
+                    true,
+                ),
+            ),
+        },
+    ),
+    Ok(
+        Expr {
+            kind: Literal(
+                Boolean(
+                    false,
+                ),
+            ),
+        },
+    ),
+    Ok(
+        Expr {
+            kind: Literal(
+                String(
+                    "hello world",
+                ),
+            ),
+        },
+    ),
+    Ok(
+        Expr {
+            kind: Literal(
+                Number(
+                    123.0,
+                ),
+            ),
+        },
+    ),
+]
