@@ -59,7 +59,7 @@ impl<'src> Parser<'src> {
         let mut expr = self.comparison()?;
         loop {
             let token = match self.peek_type()? {
-                TokenType::Bang | TokenType::BangEqual => self.advance()?,
+                TokenType::EqualEqual | TokenType::BangEqual => self.advance()?,
                 _ => break,
             };
             let rhs = self.comparison()?;
@@ -228,6 +228,17 @@ mod tests {
             let src = src!(SNAPSHOT_INPUT_BASE, "comparison.lox");
             let asts = src.split('\n').map(|line| {
                 Parser::new(line).comparison()
+            }).collect::<Vec<_>>();
+            insta::assert_debug_snapshot!(asts);
+        })
+    }
+
+    #[test]
+    fn equality() {
+        insta::with_settings!({snapshot_path => SNAPSHOT_OUTPUT_BASE},{
+            let src = src!(SNAPSHOT_INPUT_BASE, "equality.lox");
+            let asts = src.split('\n').map(|line| {
+                Parser::new(line).equality()
             }).collect::<Vec<_>>();
             insta::assert_debug_snapshot!(asts);
         })

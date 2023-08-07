@@ -121,7 +121,7 @@ impl<'src> TryInto<BinaryOperator> for Token<'src> {
 
     fn try_into(self) -> Result<BinaryOperator, Self::Error> {
         let op = match self.ty {
-            TokenType::Equal => BinaryOperator::Equal,
+            TokenType::EqualEqual => BinaryOperator::EqualEqual,
             TokenType::BangEqual => BinaryOperator::BangEq,
             TokenType::GreaterEqual => BinaryOperator::GreaterEqual,
             TokenType::Greater => BinaryOperator::Greater,

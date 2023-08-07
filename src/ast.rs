@@ -33,7 +33,7 @@ pub struct UnaryExpr<'src> {
 
 #[derive(Debug)]
 pub enum BinaryOperator {
-    Equal,
+    EqualEqual,
     BangEq,
     GreaterEqual,
     Greater,
