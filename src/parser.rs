@@ -173,7 +173,7 @@ impl<'src> Parser<'src> {
                     kind: ExprKind::Grouped(Box::new(expr)),
                 }
             }
-            _ => unreachable!(),
+            _ => return Err(SyntaxError::Expect("expression")),
         };
         Ok(expr)
     }
@@ -247,6 +247,17 @@ mod tests {
             let src = src!(SNAPSHOT_INPUT_BASE, "equality.lox");
             let asts = src.split('\n').map(|line| {
                 Parser::new(line).equality()
+            }).collect::<Vec<_>>();
+            insta::assert_debug_snapshot!(asts);
+        })
+    }
+
+    #[test]
+    fn expression() {
+        insta::with_settings!({snapshot_path => SNAPSHOT_OUTPUT_BASE},{
+            let src = src!(SNAPSHOT_INPUT_BASE, "expression.lox");
+            let asts = src.split('\n').map(|line| {
+                Parser::new(line).expression()
             }).collect::<Vec<_>>();
             insta::assert_debug_snapshot!(asts);
         })

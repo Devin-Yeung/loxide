@@ -1,0 +1,21 @@
+---
+source: src/parser.rs
+expression: asts
+---
+[
+    Err(
+        Expect(
+            "expression",
+        ),
+    ),
+    Err(
+        Expect(
+            "expression",
+        ),
+    ),
+    Err(
+        Expect(
+            "expression",
+        ),
+    ),
+]

@@ -6,6 +6,8 @@ pub enum SyntaxError {
     UnexpectedChar(usize),
     #[error("Unexpected EOF")]
     UnexpectedEOF,
+    #[error("Expected")]
+    Expect(&'static str),
     #[error("Invalid Conversion")]
     InvalidConversion,
     #[error("Invalid Number")]
