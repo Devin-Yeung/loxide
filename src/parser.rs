@@ -165,7 +165,15 @@ impl<'src> Parser<'src> {
                     kind: ExprKind::Literal(literal),
                 }
             }
-            _ => unreachable!("TODO"),
+            TokenType::LeftParen => {
+                self.consume(TokenType::LeftParen)?;
+                let expr = self.expression()?;
+                self.consume(TokenType::RightParen)?;
+                Expr {
+                    kind: ExprKind::Grouped(Box::new(expr)),
+                }
+            }
+            _ => unreachable!(),
         };
         Ok(expr)
     }

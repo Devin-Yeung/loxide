@@ -46,4 +46,38 @@ expression: asts
             ),
         },
     ),
+    Ok(
+        Expr {
+            kind: Grouped(
+                Expr {
+                    kind: Binary(
+                        BinaryExpr {
+                            lhs: Expr {
+                                kind: Unary(
+                                    UnaryExpr {
+                                        operator: Minus,
+                                        expr: Expr {
+                                            kind: Literal(
+                                                Number(
+                                                    123.0,
+                                                ),
+                                            ),
+                                        },
+                                    },
+                                ),
+                            },
+                            rhs: Expr {
+                                kind: Literal(
+                                    Number(
+                                        456.0,
+                                    ),
+                                ),
+                            },
+                            operator: Plus,
+                        },
+                    ),
+                },
+            ),
+        },
+    ),
 ]
