@@ -78,6 +78,25 @@ impl<'src> Parser<'src> {
         todo!()
     }
 
+    fn term(&mut self) -> Result<Expr<'src>, SyntaxError> {
+        let mut expr = self.factor()?;
+        loop {
+            let token = match self.peek_type()? {
+                TokenType::Minus | TokenType::Plus => self.advance()?,
+                _ => break,
+            };
+            let rhs = self.factor()?;
+            expr = Expr {
+                kind: Binary(BinaryExpr {
+                    lhs: Box::new(expr),
+                    rhs: Box::new(rhs),
+                    operator: token.try_into()?,
+                }),
+            }
+        }
+        Ok(expr)
+    }
+
     fn factor(&mut self) -> Result<Expr<'src>, SyntaxError> {
         let mut expr = self.unary()?;
         loop {
@@ -169,6 +188,17 @@ mod tests {
             let src = src!(SNAPSHOT_INPUT_BASE, "factor.lox");
             let asts = src.split('\n').map(|line| {
                 Parser::new(line).factor()
+            }).collect::<Vec<_>>();
+            insta::assert_debug_snapshot!(asts);
+        })
+    }
+
+    #[test]
+    fn term() {
+        insta::with_settings!({snapshot_path => SNAPSHOT_OUTPUT_BASE},{
+            let src = src!(SNAPSHOT_INPUT_BASE, "term.lox");
+            let asts = src.split('\n').map(|line| {
+                Parser::new(line).term()
             }).collect::<Vec<_>>();
             insta::assert_debug_snapshot!(asts);
         })

@@ -1,0 +1,73 @@
+---
+source: src/parser.rs
+expression: asts
+---
+[
+    Ok(
+        Expr {
+            kind: Binary(
+                BinaryExpr {
+                    lhs: Expr {
+                        kind: Literal(
+                            Number(
+                                2.0,
+                            ),
+                        ),
+                    },
+                    rhs: Expr {
+                        kind: Binary(
+                            BinaryExpr {
+                                lhs: Expr {
+                                    kind: Literal(
+                                        Number(
+                                            6.0,
+                                        ),
+                                    ),
+                                },
+                                rhs: Expr {
+                                    kind: Unary(
+                                        UnaryExpr {
+                                            operator: Minus,
+                                            expr: Expr {
+                                                kind: Literal(
+                                                    Number(
+                                                        3.0,
+                                                    ),
+                                                ),
+                                            },
+                                        },
+                                    ),
+                                },
+                                operator: Slash,
+                            },
+                        ),
+                    },
+                    operator: Minus,
+                },
+            ),
+        },
+    ),
+    Ok(
+        Expr {
+            kind: Binary(
+                BinaryExpr {
+                    lhs: Expr {
+                        kind: Literal(
+                            Number(
+                                2.0,
+                            ),
+                        ),
+                    },
+                    rhs: Expr {
+                        kind: Literal(
+                            Number(
+                                3.0,
+                            ),
+                        ),
+                    },
+                    operator: Plus,
+                },
+            ),
+        },
+    ),
+]
