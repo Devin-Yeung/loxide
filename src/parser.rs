@@ -75,7 +75,25 @@ impl<'src> Parser<'src> {
     }
 
     fn comparison(&mut self) -> Result<Expr<'src>, SyntaxError> {
-        todo!()
+        let mut expr = self.term()?;
+        loop {
+            let token = match self.peek_type()? {
+                TokenType::Greater
+                | TokenType::GreaterEqual
+                | TokenType::Less
+                | TokenType::LessEqual => self.advance()?,
+                _ => break,
+            };
+            let rhs = self.term()?;
+            expr = Expr {
+                kind: Binary(BinaryExpr {
+                    lhs: Box::new(expr),
+                    rhs: Box::new(rhs),
+                    operator: token.try_into()?,
+                }),
+            }
+        }
+        Ok(expr)
     }
 
     fn term(&mut self) -> Result<Expr<'src>, SyntaxError> {
@@ -199,6 +217,17 @@ mod tests {
             let src = src!(SNAPSHOT_INPUT_BASE, "term.lox");
             let asts = src.split('\n').map(|line| {
                 Parser::new(line).term()
+            }).collect::<Vec<_>>();
+            insta::assert_debug_snapshot!(asts);
+        })
+    }
+
+    #[test]
+    fn comparison() {
+        insta::with_settings!({snapshot_path => SNAPSHOT_OUTPUT_BASE},{
+            let src = src!(SNAPSHOT_INPUT_BASE, "comparison.lox");
+            let asts = src.split('\n').map(|line| {
+                Parser::new(line).comparison()
             }).collect::<Vec<_>>();
             insta::assert_debug_snapshot!(asts);
         })
