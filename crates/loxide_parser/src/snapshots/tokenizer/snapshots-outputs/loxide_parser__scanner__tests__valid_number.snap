@@ -1,5 +1,5 @@
 ---
-source: src/scanner.rs
+source: crates/loxide_parser/src/scanner.rs
 expression: tokens
 ---
 [

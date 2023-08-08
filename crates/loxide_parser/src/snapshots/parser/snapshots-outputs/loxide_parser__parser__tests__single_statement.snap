@@ -1,9 +1,9 @@
 ---
-source: src/parser.rs
-expression: results
+source: crates/loxide_parser/src/parser.rs
+expression: asts
 ---
-(
-    [
+[
+    Ok(
         Expression(
             Expr {
                 kind: Binary(
@@ -27,6 +27,8 @@ expression: results
                 ),
             },
         ),
+    ),
+    Ok(
         Expression(
             Expr {
                 kind: Binary(
@@ -45,21 +47,10 @@ expression: results
                                 ),
                             ),
                         },
-                        operator: Plus,
+                        operator: Less,
                     },
                 ),
             },
         ),
-    ],
-    [
-        Expect(
-            "expression",
-        ),
-        Expect(
-            "expression",
-        ),
-        Expect(
-            "expression",
-        ),
-    ],
-)
+    ),
+]
