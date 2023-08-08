@@ -1,5 +1,5 @@
 ---
-source: src/parser.rs
+source: crates/loxide_parser/src/parser.rs
 expression: asts
 ---
 [

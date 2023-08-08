@@ -245,8 +245,8 @@ impl<'src> From<&'src String> for Scanner<'src> {
 mod tests {
     use crate::scanner::Scanner;
     use crate::{src, tokens};
-    const SNAPSHOT_OUTPUT_BASE: &'static str = "../snapshots/tokenizer/snapshots-outputs";
-    const SNAPSHOT_INPUT_BASE: &'static str = "../snapshots/tokenizer/snapshots-inputs";
+    const SNAPSHOT_OUTPUT_BASE: &'static str = "snapshots/tokenizer/snapshots-outputs";
+    const SNAPSHOT_INPUT_BASE: &'static str = "snapshots/tokenizer/snapshots-inputs";
 
     #[test]
     fn single_char() {

@@ -247,8 +247,8 @@ impl<'src> Parser<'src> {
 mod tests {
     use crate::parser::Parser;
     use crate::src;
-    const SNAPSHOT_OUTPUT_BASE: &'static str = "../snapshots/parser/snapshots-outputs";
-    const SNAPSHOT_INPUT_BASE: &'static str = "../snapshots/parser/snapshots-inputs";
+    const SNAPSHOT_OUTPUT_BASE: &'static str = "snapshots/parser/snapshots-outputs";
+    const SNAPSHOT_INPUT_BASE: &'static str = "snapshots/parser/snapshots-inputs";
 
     #[test]
     fn primary() {

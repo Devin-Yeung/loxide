@@ -1,20 +1,29 @@
 ---
-source: src/scanner.rs
+source: crates/loxide_parser/src/scanner.rs
 expression: tokens
 ---
 [
     Token {
-        ty: BangEqual,
-        lexeme: "!=",
+        ty: LeftParen,
+        lexeme: "(",
         span: Span {
             line: 1,
             start: 0,
-            end: 2,
+            end: 1,
         },
     },
     Token {
-        ty: Bang,
-        lexeme: "!",
+        ty: RightParen,
+        lexeme: ")",
+        span: Span {
+            line: 1,
+            start: 2,
+            end: 3,
+        },
+    },
+    Token {
+        ty: LeftBrace,
+        lexeme: "{",
         span: Span {
             line: 2,
             start: 0,
@@ -22,17 +31,26 @@ expression: tokens
         },
     },
     Token {
-        ty: EqualEqual,
-        lexeme: "==",
+        ty: RightBrace,
+        lexeme: "}",
         span: Span {
-            line: 3,
-            start: 0,
-            end: 2,
+            line: 2,
+            start: 2,
+            end: 3,
         },
     },
     Token {
-        ty: Equal,
-        lexeme: "=",
+        ty: Comma,
+        lexeme: ",",
+        span: Span {
+            line: 3,
+            start: 0,
+            end: 1,
+        },
+    },
+    Token {
+        ty: Dot,
+        lexeme: ".",
         span: Span {
             line: 4,
             start: 0,
@@ -40,17 +58,17 @@ expression: tokens
         },
     },
     Token {
-        ty: LessEqual,
-        lexeme: "<=",
+        ty: Minus,
+        lexeme: "-",
         span: Span {
             line: 5,
             start: 0,
-            end: 2,
+            end: 1,
         },
     },
     Token {
-        ty: Less,
-        lexeme: "<",
+        ty: Plus,
+        lexeme: "+",
         span: Span {
             line: 6,
             start: 0,
@@ -58,19 +76,10 @@ expression: tokens
         },
     },
     Token {
-        ty: GreaterEqual,
-        lexeme: ">=",
+        ty: Semicolon,
+        lexeme: ";",
         span: Span {
             line: 7,
-            start: 0,
-            end: 2,
-        },
-    },
-    Token {
-        ty: Greater,
-        lexeme: ">",
-        span: Span {
-            line: 8,
             start: 0,
             end: 1,
         },
@@ -79,18 +88,18 @@ expression: tokens
         ty: Slash,
         lexeme: "/",
         span: Span {
-            line: 9,
+            line: 8,
             start: 0,
             end: 1,
         },
     },
     Token {
-        ty: Comment,
-        lexeme: "//",
+        ty: Star,
+        lexeme: "*",
         span: Span {
-            line: 10,
+            line: 9,
             start: 0,
-            end: 2,
+            end: 1,
         },
     },
 ]
