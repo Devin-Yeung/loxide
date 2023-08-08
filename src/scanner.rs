@@ -203,7 +203,7 @@ impl<'src> Iterator for Scanner<'src> {
     fn next(&mut self) -> Option<Self::Item> {
         match self.scan_token() {
             Ok(x) if x.ty == TokenType::EOF => return None,
-            Ok(x) if x.ty != TokenType::Comment => return Some(Ok(x)),
+            Ok(x) => return Some(Ok(x)),
             Err(e) => return Some(Err(e)),
             _ => {}
         }
@@ -321,6 +321,16 @@ mod tests {
     fn valid_indents_and_keywords() {
         insta::with_settings!({snapshot_path => SNAPSHOT_OUTPUT_BASE},{
             let src = src!(SNAPSHOT_INPUT_BASE, "valid_idents_and_keywords.lox");
+            let scanner = Scanner::from(&src);
+            let tokens = scanner.collect::<Vec<_>>();
+            insta::assert_debug_snapshot!(tokens);
+        })
+    }
+
+    #[test]
+    fn expressions() {
+        insta::with_settings!({snapshot_path => SNAPSHOT_OUTPUT_BASE},{
+            let src = src!(SNAPSHOT_INPUT_BASE, "comments.lox");
             let scanner = Scanner::from(&src);
             let tokens = scanner.collect::<Vec<_>>();
             insta::assert_debug_snapshot!(tokens);

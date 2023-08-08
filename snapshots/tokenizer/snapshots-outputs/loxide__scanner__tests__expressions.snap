@@ -1,0 +1,58 @@
+---
+source: src/scanner.rs
+expression: tokens
+---
+[
+    Ok(
+        Token {
+            ty: Literal(
+                Number(
+                    1.0,
+                ),
+            ),
+            lexeme: "1",
+            span: Span {
+                line: 1,
+                start: 0,
+                end: 1,
+            },
+        },
+    ),
+    Ok(
+        Token {
+            ty: Plus,
+            lexeme: "+",
+            span: Span {
+                line: 1,
+                start: 2,
+                end: 3,
+            },
+        },
+    ),
+    Ok(
+        Token {
+            ty: Literal(
+                Number(
+                    2.0,
+                ),
+            ),
+            lexeme: "2",
+            span: Span {
+                line: 1,
+                start: 4,
+                end: 5,
+            },
+        },
+    ),
+    Ok(
+        Token {
+            ty: Comment,
+            lexeme: "// Hello world",
+            span: Span {
+                line: 1,
+                start: 6,
+                end: 20,
+            },
+        },
+    ),
+]

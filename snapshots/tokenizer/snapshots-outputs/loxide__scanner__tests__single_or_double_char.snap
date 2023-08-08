@@ -84,4 +84,13 @@ expression: tokens
             end: 1,
         },
     },
+    Token {
+        ty: Comment,
+        lexeme: "//",
+        span: Span {
+            line: 10,
+            start: 0,
+            end: 2,
+        },
+    },
 ]
