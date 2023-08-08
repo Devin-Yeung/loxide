@@ -1,10 +1,9 @@
-[package]
-name = "loxide"
-version = "0.1.0"
-edition = "2021"
+[workspace]
+members = ["crates/*"]
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
-[dependencies]
+[workspace.dependencies]
+# publish = true
+loxide_parser = { version = "0.1.0", path = "crates/loxide_parser" }
+# publish = false
 insta = { version = "1.31.0", features = ["glob"] }
-thiserror = "1.0.44"
+thiserror = { version = "1.0.44" }
