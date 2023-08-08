@@ -1,0 +1,56 @@
+---
+source: src/parser.rs
+expression: asts
+---
+[
+    Ok(
+        Expression(
+            Expr {
+                kind: Binary(
+                    BinaryExpr {
+                        lhs: Expr {
+                            kind: Literal(
+                                Number(
+                                    1.0,
+                                ),
+                            ),
+                        },
+                        rhs: Expr {
+                            kind: Literal(
+                                Number(
+                                    2.0,
+                                ),
+                            ),
+                        },
+                        operator: Plus,
+                    },
+                ),
+            },
+        ),
+    ),
+    Ok(
+        Expression(
+            Expr {
+                kind: Binary(
+                    BinaryExpr {
+                        lhs: Expr {
+                            kind: Literal(
+                                Number(
+                                    3.0,
+                                ),
+                            ),
+                        },
+                        rhs: Expr {
+                            kind: Literal(
+                                Number(
+                                    4.0,
+                                ),
+                            ),
+                        },
+                        operator: Less,
+                    },
+                ),
+            },
+        ),
+    ),
+]

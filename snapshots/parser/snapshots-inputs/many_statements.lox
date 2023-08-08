@@ -1,0 +1,5 @@
+1 + 2;
+1 +  ; // expect expression
+3 + 4;
+1 <  ; // expect expression
+!    ; // expect expression

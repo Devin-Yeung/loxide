@@ -28,6 +28,25 @@ impl<'src> Parser<'src> {
         }
     }
 
+    fn parse(&mut self) -> (Vec<Stmt>, Vec<SyntaxError>) {
+        let mut statements = Vec::<Stmt>::new();
+        let mut errors = Vec::<SyntaxError>::new();
+        loop {
+            match self.peek_type() {
+                Ok(TokenType::EOF) => break,
+                Ok(_) => match self.statement() {
+                    Ok(stmt) => statements.push(stmt),
+                    Err(err) => {
+                        errors.push(err);
+                        self.synchronize();
+                    }
+                },
+                Err(err) => errors.push(err),
+            }
+        }
+        (statements, errors)
+    }
+
     fn consume(&mut self, ty: TokenType) -> Result<(), SyntaxError> {
         return if self.peek_type()? == ty {
             self.advance()?;
@@ -35,6 +54,12 @@ impl<'src> Parser<'src> {
         } else {
             todo!()
         };
+    }
+
+    fn consume_if(&mut self, ty: TokenType) {
+        if self.peek_type() == Ok(ty) {
+            self.advance().unwrap();
+        }
     }
 
     fn peek_type(&mut self) -> Result<TokenType<'src>, SyntaxError> {
@@ -187,6 +212,35 @@ impl<'src> Parser<'src> {
         };
         Ok(expr)
     }
+
+    fn synchronize(&mut self) {
+        loop {
+            match self.peek_type() {
+                Ok(ty) => match ty {
+                    TokenType::Semicolon => {
+                        self.advance().unwrap();
+                        self.consume_if(TokenType::Comment); // remove comment if necessary
+                        return;
+                    }
+                    TokenType::Keyword(Keyword::Class)
+                    | TokenType::Keyword(Keyword::Fun)
+                    | TokenType::Keyword(Keyword::Var)
+                    | TokenType::Keyword(Keyword::For)
+                    | TokenType::Keyword(Keyword::If)
+                    | TokenType::Keyword(Keyword::While)
+                    | TokenType::Keyword(Keyword::Print)
+                    | TokenType::Keyword(Keyword::Return)
+                    | TokenType::EOF => return,
+                    _ => {
+                        self.advance().unwrap();
+                    }
+                },
+                _ => {
+                    unreachable!()
+                }
+            }
+        }
+    }
 }
 
 #[cfg(test)]
@@ -282,6 +336,16 @@ mod tests {
                 Parser::new(line).statement()
             }).collect::<Vec<_>>();
             insta::assert_debug_snapshot!(asts);
+        })
+    }
+
+    #[test]
+    fn many_statements() {
+        insta::with_settings!({snapshot_path => SNAPSHOT_OUTPUT_BASE},{
+            let src = src!(SNAPSHOT_INPUT_BASE, "many_statements.lox");
+            let mut parser = Parser::new(&src);
+            let results = parser.parse();
+            insta::assert_debug_snapshot!(results);
         })
     }
 }
