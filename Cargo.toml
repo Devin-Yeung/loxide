@@ -4,6 +4,7 @@ members = ["crates/*"]
 [workspace.dependencies]
 # publish = true
 loxide_parser = { version = "0.1.0", path = "crates/loxide_parser" }
+loxide_interpreter = { version = "0.1.0", path = "crates/loxide_interpreter" }
 # publish = false
 insta = { version = "1.31.0", features = ["glob"] }
 thiserror = { version = "1.0.44" }
