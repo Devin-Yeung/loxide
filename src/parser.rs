@@ -328,11 +328,10 @@ mod tests {
     }
 
     #[test]
-    fn statements() {
+    fn single_statement() {
         insta::with_settings!({snapshot_path => SNAPSHOT_OUTPUT_BASE},{
-            let src = src!(SNAPSHOT_INPUT_BASE, "statements.lox");
+            let src = src!(SNAPSHOT_INPUT_BASE, "single_statement.lox");
             let asts = src.split('\n').map(|line| {
-                println!("stmt => {}", &line);
                 Parser::new(line).statement()
             }).collect::<Vec<_>>();
             insta::assert_debug_snapshot!(asts);
