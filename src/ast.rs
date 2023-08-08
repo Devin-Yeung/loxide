@@ -56,3 +56,9 @@ pub struct BinaryExpr<'src> {
 pub struct GroupedExpr<'src> {
     pub expr: Box<Expr<'src>>,
 }
+
+#[derive(Debug)]
+#[non_exhaustive]
+pub enum Stmt<'src> {
+    Expression(Expr<'src>),
+}

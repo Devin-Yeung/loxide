@@ -11,7 +11,7 @@
 use crate::ast;
 use crate::ast::ExprKind::Binary;
 use crate::ast::Literal::{Boolean, Nil};
-use crate::ast::{BinaryExpr, Expr, ExprKind, UnaryExpr};
+use crate::ast::{BinaryExpr, Expr, ExprKind, Stmt, UnaryExpr};
 use crate::error::SyntaxError;
 use crate::scanner::Scanner;
 use crate::token::{Keyword, Token, TokenType};
@@ -49,6 +49,16 @@ impl<'src> Parser<'src> {
         self.tokens
             .next()
             .unwrap_or_else(|| Err(SyntaxError::UnexpectedEOF))
+    }
+
+    fn statement(&mut self) -> Result<Stmt<'src>, SyntaxError> {
+        self.expression_stmt()
+    }
+
+    fn expression_stmt(&mut self) -> Result<Stmt<'src>, SyntaxError> {
+        let expr = self.expression()?;
+        self.consume(TokenType::Semicolon)?;
+        Ok(Stmt::Expression(expr))
     }
 
     fn expression(&mut self) -> Result<Expr<'src>, SyntaxError> {
@@ -258,6 +268,18 @@ mod tests {
             let src = src!(SNAPSHOT_INPUT_BASE, "expression.lox");
             let asts = src.split('\n').map(|line| {
                 Parser::new(line).expression()
+            }).collect::<Vec<_>>();
+            insta::assert_debug_snapshot!(asts);
+        })
+    }
+
+    #[test]
+    fn statements() {
+        insta::with_settings!({snapshot_path => SNAPSHOT_OUTPUT_BASE},{
+            let src = src!(SNAPSHOT_INPUT_BASE, "statements.lox");
+            let asts = src.split('\n').map(|line| {
+                println!("stmt => {}", &line);
+                Parser::new(line).statement()
             }).collect::<Vec<_>>();
             insta::assert_debug_snapshot!(asts);
         })
