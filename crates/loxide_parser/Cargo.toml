@@ -8,3 +8,6 @@ edition = "2021"
 [dependencies]
 insta = { workspace = true, features = ["glob"] }
 thiserror = { workspace = true }
+
+[dev-dependencies]
+loxide_macros = { workspace = true }
