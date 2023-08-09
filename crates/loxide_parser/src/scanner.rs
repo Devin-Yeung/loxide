@@ -244,9 +244,16 @@ impl<'src> From<&'src String> for Scanner<'src> {
 #[cfg(test)]
 mod tests {
     use crate::scanner::Scanner;
-    use crate::{src, tokens};
+    use loxide_macros::src;
     const SNAPSHOT_OUTPUT_BASE: &'static str = "snapshots/tokenizer/snapshots-outputs";
     const SNAPSHOT_INPUT_BASE: &'static str = "snapshots/tokenizer/snapshots-inputs";
+
+    macro_rules! tokens {
+        ($src:expr) => {{
+            let scanner = $crate::scanner::Scanner::from($src);
+            scanner.collect::<::std::vec::Vec<_>>()
+        }};
+    }
 
     #[test]
     fn single_char() {

@@ -246,7 +246,7 @@ impl<'src> Parser<'src> {
 #[cfg(test)]
 mod tests {
     use crate::parser::Parser;
-    use crate::src;
+    use loxide_macros::src;
     const SNAPSHOT_OUTPUT_BASE: &'static str = "snapshots/parser/snapshots-outputs";
     const SNAPSHOT_INPUT_BASE: &'static str = "snapshots/parser/snapshots-inputs";
 
