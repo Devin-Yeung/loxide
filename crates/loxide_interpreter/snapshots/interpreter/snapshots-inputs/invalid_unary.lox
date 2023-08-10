@@ -1,0 +1,2 @@
+-true ; // expected number
+!1.0  ; // expected boolean
