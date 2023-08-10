@@ -1,8 +1,39 @@
-use std::borrow::Cow;
-
-pub enum Value<'src> {
+#[derive(Debug, Clone)]
+pub enum Value {
     Number(f64),
-    String(Cow<'src, str>),
+    String(String),
     Boolean(bool),
     Nil,
+}
+
+impl Value {
+    pub fn is_number(&self) -> bool {
+        matches!(self, Value::Number(_))
+    }
+
+    pub fn is_string(&self) -> bool {
+        matches!(self, Value::String(_))
+    }
+
+    pub fn is_boolean(&self) -> bool {
+        matches!(self, Value::Boolean(_))
+    }
+
+    pub fn is_nil(&self) -> bool {
+        matches!(self, Value::Nil)
+    }
+
+    pub fn as_f64(&self) -> Option<f64> {
+        match self {
+            Value::Number(v) => Some(*v),
+            _ => None,
+        }
+    }
+
+    pub fn as_boolean(&self) -> Option<bool> {
+        match self {
+            Value::Boolean(v) => Some(*v),
+            _ => None,
+        }
+    }
 }
