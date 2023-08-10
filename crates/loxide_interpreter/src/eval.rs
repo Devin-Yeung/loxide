@@ -8,6 +8,18 @@ pub trait Evaluable {
     fn eval(&self) -> Result<Value, RuntimeError>;
 }
 
+macro_rules! inner_or {
+    ($val:expr, $ty:tt, $err:expr) => {{
+        ::paste::paste! {
+            if $val.[<is_$ty>]() {
+                Ok($val.[<as_$ty>]().unwrap())
+            } else {
+                Err($err)
+            }
+        }
+    }};
+}
+
 impl<'src> Evaluable for Stmt<'src> {
     fn eval(&self) -> Result<Value, RuntimeError> {
         match self {
@@ -39,18 +51,12 @@ impl<'src> Evaluable for UnaryExpr<'src> {
         let value = self.expr.eval()?;
         return match self.operator {
             UnaryOperator::Minus => {
-                if value.is_number() {
-                    Ok(Value::Number(-value.as_f64().unwrap()))
-                } else {
-                    Err(RuntimeError::InvalidUnaryOperand("number"))
-                }
+                let num = inner_or!(value, number, RuntimeError::InvalidUnaryOperand("number"))?;
+                Ok(Value::Number(-num))
             }
             UnaryOperator::Bang => {
-                if value.is_boolean() {
-                    Ok(Value::Boolean(!value.as_boolean().unwrap()))
-                } else {
-                    Err(RuntimeError::InvalidUnaryOperand("boolean"))
-                }
+                let bool = inner_or!(value, boolean, RuntimeError::InvalidUnaryOperand("boolean"))?;
+                Ok(Value::Boolean(!bool))
             }
         };
     }
