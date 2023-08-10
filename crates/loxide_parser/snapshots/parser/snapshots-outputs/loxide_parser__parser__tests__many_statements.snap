@@ -50,6 +50,31 @@ expression: results
                 ),
             },
         ),
+        Expression(
+            Expr {
+                kind: Literal(
+                    Boolean(
+                        true,
+                    ),
+                ),
+            },
+        ),
+        Expression(
+            Expr {
+                kind: Literal(
+                    Boolean(
+                        false,
+                    ),
+                ),
+            },
+        ),
+        Expression(
+            Expr {
+                kind: Literal(
+                    Nil,
+                ),
+            },
+        ),
     ],
     [
         Expect(

@@ -3,3 +3,6 @@
 3 + 4;
 1 <  ; // expect expression
 !    ; // expect expression
+true ;
+false;
+nil;

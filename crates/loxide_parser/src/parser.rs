@@ -185,15 +185,24 @@ impl<'src> Parser<'src> {
 
     fn primary(&mut self) -> Result<Expr<'src>, SyntaxError> {
         let expr = match self.peek_type()? {
-            TokenType::Keyword(Keyword::True) => Expr {
-                kind: ExprKind::Literal(Boolean(true)),
-            },
-            TokenType::Keyword(Keyword::False) => Expr {
-                kind: ExprKind::Literal(Boolean(false)),
-            },
-            TokenType::Keyword(Keyword::Nil) => Expr {
-                kind: ExprKind::Literal(Nil),
-            },
+            TokenType::Keyword(Keyword::True) => {
+                self.advance()?;
+                Expr {
+                    kind: ExprKind::Literal(Boolean(true)),
+                }
+            }
+            TokenType::Keyword(Keyword::False) => {
+                self.advance()?;
+                Expr {
+                    kind: ExprKind::Literal(Boolean(false)),
+                }
+            }
+            TokenType::Keyword(Keyword::Nil) => {
+                self.advance()?;
+                Expr {
+                    kind: ExprKind::Literal(Nil),
+                }
+            }
             TokenType::Literal(_) => {
                 let literal: ast::Literal = self.advance()?.try_into()?;
                 Expr {
