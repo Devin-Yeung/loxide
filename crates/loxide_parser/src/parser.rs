@@ -22,13 +22,13 @@ pub struct Parser<'src> {
 }
 
 impl<'src> Parser<'src> {
-    fn new(src: &'src str) -> Parser {
+    pub fn new(src: &'src str) -> Parser {
         Parser {
             tokens: Scanner::new(src).peekable(),
         }
     }
 
-    fn parse(&mut self) -> (Vec<Stmt>, Vec<SyntaxError>) {
+    pub fn parse(&mut self) -> (Vec<Stmt>, Vec<SyntaxError>) {
         let mut statements = Vec::<Stmt>::new();
         let mut errors = Vec::<SyntaxError>::new();
         loop {
