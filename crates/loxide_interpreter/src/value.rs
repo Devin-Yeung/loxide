@@ -23,7 +23,7 @@ impl Value {
         matches!(self, Value::Nil)
     }
 
-    pub fn as_f64(&self) -> Option<f64> {
+    pub fn as_number(&self) -> Option<f64> {
         match self {
             Value::Number(v) => Some(*v),
             _ => None,
