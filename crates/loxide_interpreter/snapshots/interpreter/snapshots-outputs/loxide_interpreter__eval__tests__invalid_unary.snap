@@ -1,0 +1,20 @@
+---
+source: crates/loxide_interpreter/src/eval.rs
+expression: results
+---
+[
+    [
+        Err(
+            InvalidUnaryOperand(
+                "number",
+            ),
+        ),
+    ],
+    [
+        Err(
+            InvalidUnaryOperand(
+                "boolean",
+            ),
+        ),
+    ],
+]
