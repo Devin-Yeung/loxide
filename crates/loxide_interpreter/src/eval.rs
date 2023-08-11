@@ -25,7 +25,8 @@ impl<'src> Evaluable for Stmt<'src> {
     fn eval(&self) -> Result<Value, RuntimeError> {
         match self {
             Stmt::Expression(e) => e.eval(),
-            _ => todo!(),
+            Stmt::PrintStmt(_) => todo!("design decision: print stmt cant be evaluated to a value"),
+            _ => unreachable!(),
         }
     }
 }

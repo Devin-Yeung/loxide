@@ -61,4 +61,5 @@ pub struct GroupedExpr<'src> {
 #[non_exhaustive]
 pub enum Stmt<'src> {
     Expression(Expr<'src>),
+    PrintStmt(Expr<'src>),
 }

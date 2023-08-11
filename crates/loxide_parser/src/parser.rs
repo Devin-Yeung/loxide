@@ -77,7 +77,17 @@ impl<'src> Parser<'src> {
     }
 
     fn statement(&mut self) -> Result<Stmt<'src>, SyntaxError> {
-        self.expression_stmt()
+        match self.peek_type()? {
+            TokenType::Keyword(Keyword::Print) => self.print_stmt(),
+            _ => self.expression_stmt(),
+        }
+    }
+
+    fn print_stmt(&mut self) -> Result<Stmt<'src>, SyntaxError> {
+        self.consume(TokenType::Keyword(Keyword::Print))?;
+        let expr = self.expression()?;
+        self.consume_if(TokenType::Comment);
+        Ok(Stmt::PrintStmt(expr))
     }
 
     fn expression_stmt(&mut self) -> Result<Stmt<'src>, SyntaxError> {
