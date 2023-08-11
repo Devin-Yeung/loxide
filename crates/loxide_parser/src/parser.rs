@@ -1,13 +1,3 @@
-// expression     → equality ;
-// equality       → comparison ( ( "!=" | "==" ) comparison )* ;
-// comparison     → term ( ( ">" | ">=" | "<" | "<=" ) term )* ;
-// term           → factor ( ( "-" | "+" ) factor )* ;
-// factor         → unary ( ( "/" | "*" ) unary )* ;
-// unary          → ( "!" | "-" ) unary
-//                | primary ;
-// primary        → NUMBER | STRING | "true" | "false" | "nil"
-//                | "(" expression ")" ;
-
 use crate::ast;
 use crate::ast::ExprKind::Binary;
 use crate::ast::Literal::{Boolean, Nil};
@@ -76,6 +66,12 @@ impl<'src> Parser<'src> {
             .unwrap_or_else(|| Err(SyntaxError::UnexpectedEOF))
     }
 
+    /// parse statement according to following rules:
+    ///
+    /// ```text
+    /// statement  → exprStmt
+    ///            | printStmt ;
+    /// ```
     fn statement(&mut self) -> Result<Stmt<'src>, SyntaxError> {
         match self.peek_type()? {
             TokenType::Keyword(Keyword::Print) => self.print_stmt(),
@@ -83,6 +79,11 @@ impl<'src> Parser<'src> {
         }
     }
 
+    /// parse print statement according to following rules:
+    ///
+    /// ```text
+    /// printStmt  → "print" expression ";" ;
+    /// ```
     fn print_stmt(&mut self) -> Result<Stmt<'src>, SyntaxError> {
         self.consume(TokenType::Keyword(Keyword::Print))?;
         let expr = self.expression()?;
@@ -90,6 +91,11 @@ impl<'src> Parser<'src> {
         Ok(Stmt::PrintStmt(expr))
     }
 
+    /// parse expression statement according to following rules:
+    ///
+    /// ```text
+    /// exprStmt  → expression ";" ;
+    /// ```
     fn expression_stmt(&mut self) -> Result<Stmt<'src>, SyntaxError> {
         let expr = self.expression()?;
         self.consume(TokenType::Semicolon)?;
@@ -97,10 +103,20 @@ impl<'src> Parser<'src> {
         Ok(Stmt::Expression(expr))
     }
 
+    /// parse expression according to following rules:
+    ///
+    /// ```text
+    /// expression  → equality ;
+    /// ```
     fn expression(&mut self) -> Result<Expr<'src>, SyntaxError> {
         self.equality()
     }
 
+    /// parse equality expression according to following rules:
+    ///
+    /// ```text
+    /// equality  → comparison ( ( "!=" | "==" ) comparison )* ;
+    /// ```
     fn equality(&mut self) -> Result<Expr<'src>, SyntaxError> {
         let mut expr = self.comparison()?;
         loop {
@@ -120,6 +136,11 @@ impl<'src> Parser<'src> {
         Ok(expr)
     }
 
+    /// parse comparison expression according to following rules:
+    ///
+    /// ```text
+    /// comparison  → term ( ( ">" | ">=" | "<" | "<=" ) term )* ;
+    /// ```
     fn comparison(&mut self) -> Result<Expr<'src>, SyntaxError> {
         let mut expr = self.term()?;
         loop {
@@ -142,6 +163,11 @@ impl<'src> Parser<'src> {
         Ok(expr)
     }
 
+    /// parse term expression according to following rules:
+    ///
+    /// ```text
+    /// term  → factor ( ( "-" | "+" ) factor )* ;
+    /// ```
     fn term(&mut self) -> Result<Expr<'src>, SyntaxError> {
         let mut expr = self.factor()?;
         loop {
@@ -161,6 +187,11 @@ impl<'src> Parser<'src> {
         Ok(expr)
     }
 
+    /// parse factor expression according to following rules:
+    ///
+    /// ```text
+    /// factor  → unary ( ( "/" | "*" ) unary )* ;
+    /// ```
     fn factor(&mut self) -> Result<Expr<'src>, SyntaxError> {
         let mut expr = self.unary()?;
         loop {
@@ -180,6 +211,12 @@ impl<'src> Parser<'src> {
         Ok(expr)
     }
 
+    /// parse unary expression according to following rules:
+    ///
+    /// ```text
+    /// unary  → ( "!" | "-" ) unary
+    ///        | primary ;
+    /// ```
     fn unary(&mut self) -> Result<Expr<'src>, SyntaxError> {
         let expr = match self.peek_type()? {
             TokenType::Bang | TokenType::Minus => {
@@ -194,6 +231,12 @@ impl<'src> Parser<'src> {
         Ok(expr)
     }
 
+    /// parse primary expression according to following rules:
+    ///
+    /// ```text
+    /// primary  → NUMBER | STRING | "true" | "false" | "nil"
+    ///          | "(" expression ")" ;
+    /// ```
     fn primary(&mut self) -> Result<Expr<'src>, SyntaxError> {
         let expr = match self.peek_type()? {
             TokenType::Keyword(Keyword::True) => {
