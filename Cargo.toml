@@ -7,5 +7,6 @@ loxide_parser = { version = "0.1.0", path = "crates/loxide_parser" }
 loxide_interpreter = { version = "0.1.0", path = "crates/loxide_interpreter" }
 # publish = false
 loxide_macros = { version = "0.1.0", path = "crates/loxide_macros" }
+loxide_testsuite = { version = "0.1.0", path = "crates/loxide_testsuite" }
 insta = { version = "1.31.0", features = ["glob"] }
 thiserror = { version = "1.0.44" }
