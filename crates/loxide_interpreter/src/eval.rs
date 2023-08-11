@@ -1,7 +1,8 @@
 use crate::error::RuntimeError;
 use crate::value::Value;
 use loxide_parser::ast::{
-    BinaryExpr, Expr, ExprKind, GroupedExpr, Literal, Stmt, UnaryExpr, UnaryOperator,
+    BinaryExpr, BinaryOperator, Expr, ExprKind, GroupedExpr, Literal, Stmt, UnaryExpr,
+    UnaryOperator,
 };
 
 pub trait Evaluable {
@@ -42,7 +43,57 @@ impl<'src> Evaluable for Expr<'src> {
 
 impl<'src> Evaluable for BinaryExpr<'src> {
     fn eval(&self) -> Result<Value, RuntimeError> {
-        todo!()
+        let lhs = self.lhs.eval()?;
+        let rhs = self.rhs.eval()?;
+        let val = match &self.operator {
+            BinaryOperator::EqualEqual => {
+                todo!()
+            }
+            BinaryOperator::BangEq => {
+                todo!()
+            }
+            BinaryOperator::GreaterEqual => {
+                let lhs = inner_or!(lhs, number, RuntimeError::InvalidBinaryOperand("number"))?;
+                let rhs = inner_or!(rhs, number, RuntimeError::InvalidBinaryOperand("number"))?;
+                Value::Boolean(lhs >= rhs)
+            }
+            BinaryOperator::Greater => {
+                let lhs = inner_or!(lhs, number, RuntimeError::InvalidBinaryOperand("number"))?;
+                let rhs = inner_or!(rhs, number, RuntimeError::InvalidBinaryOperand("number"))?;
+                Value::Boolean(lhs > rhs)
+            }
+            BinaryOperator::Less => {
+                let lhs = inner_or!(lhs, number, RuntimeError::InvalidBinaryOperand("number"))?;
+                let rhs = inner_or!(rhs, number, RuntimeError::InvalidBinaryOperand("number"))?;
+                Value::Boolean(lhs < rhs)
+            }
+            BinaryOperator::LessEqual => {
+                let lhs = inner_or!(lhs, number, RuntimeError::InvalidBinaryOperand("number"))?;
+                let rhs = inner_or!(rhs, number, RuntimeError::InvalidBinaryOperand("number"))?;
+                Value::Boolean(lhs <= rhs)
+            }
+            BinaryOperator::Minus => {
+                let lhs = inner_or!(lhs, number, RuntimeError::InvalidBinaryOperand("number"))?;
+                let rhs = inner_or!(rhs, number, RuntimeError::InvalidBinaryOperand("number"))?;
+                Value::Number(lhs - rhs)
+            }
+            BinaryOperator::Plus => {
+                let lhs = inner_or!(lhs, number, RuntimeError::InvalidBinaryOperand("number"))?;
+                let rhs = inner_or!(rhs, number, RuntimeError::InvalidBinaryOperand("number"))?;
+                Value::Number(lhs + rhs)
+            }
+            BinaryOperator::Slash => {
+                let lhs = inner_or!(lhs, number, RuntimeError::InvalidBinaryOperand("number"))?;
+                let rhs = inner_or!(rhs, number, RuntimeError::InvalidBinaryOperand("number"))?;
+                Value::Number(lhs / rhs)
+            }
+            BinaryOperator::Star => {
+                let lhs = inner_or!(lhs, number, RuntimeError::InvalidBinaryOperand("number"))?;
+                let rhs = inner_or!(rhs, number, RuntimeError::InvalidBinaryOperand("number"))?;
+                Value::Number(lhs * rhs)
+            }
+        };
+        Ok(val)
     }
 }
 
@@ -119,6 +170,15 @@ mod tests {
         insta::with_settings!({snapshot_path => SNAPSHOT_OUTPUT},{
             let src = src!(SNAPSHOT_INPUT_BASE, "invalid_unary.lox");
             let results: Vec<_> = src.split('\n').into_iter().map(|src| eval(&src)).collect();
+            insta::assert_debug_snapshot!(results);
+        })
+    }
+
+    #[test]
+    fn valid_binary() {
+        insta::with_settings!({snapshot_path => SNAPSHOT_OUTPUT},{
+            let src = src!(SNAPSHOT_INPUT_BASE, "valid_binary.lox");
+            let results = eval(&src);
             insta::assert_debug_snapshot!(results);
         })
     }
