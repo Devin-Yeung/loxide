@@ -83,6 +83,7 @@ impl<'src> Parser<'src> {
     fn expression_stmt(&mut self) -> Result<Stmt<'src>, SyntaxError> {
         let expr = self.expression()?;
         self.consume(TokenType::Semicolon)?;
+        self.consume_if(TokenType::Comment);
         Ok(Stmt::Expression(expr))
     }
 
