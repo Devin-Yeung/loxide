@@ -75,6 +75,52 @@ expression: results
                 ),
             },
         ),
+        Expression(
+            Expr {
+                kind: Binary(
+                    BinaryExpr {
+                        lhs: Expr {
+                            kind: Literal(
+                                Number(
+                                    2.0,
+                                ),
+                            ),
+                        },
+                        rhs: Expr {
+                            kind: Literal(
+                                Number(
+                                    1.0,
+                                ),
+                            ),
+                        },
+                        operator: GreaterEqual,
+                    },
+                ),
+            },
+        ),
+        Expression(
+            Expr {
+                kind: Binary(
+                    BinaryExpr {
+                        lhs: Expr {
+                            kind: Literal(
+                                Number(
+                                    2.0,
+                                ),
+                            ),
+                        },
+                        rhs: Expr {
+                            kind: Literal(
+                                Number(
+                                    1.0,
+                                ),
+                            ),
+                        },
+                        operator: Greater,
+                    },
+                ),
+            },
+        ),
     ],
     [
         Expect(
