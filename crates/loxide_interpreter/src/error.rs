@@ -5,4 +5,6 @@ use thiserror::Error;
 pub enum RuntimeError {
     #[error("Invalid unary operand, expected: {0}")]
     InvalidUnaryOperand(&'static str),
+    #[error("Invalid binary operand, expected: {0}")]
+    InvalidBinaryOperand(&'static str),
 }

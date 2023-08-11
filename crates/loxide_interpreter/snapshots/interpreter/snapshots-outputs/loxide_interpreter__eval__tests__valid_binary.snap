@@ -1,0 +1,46 @@
+---
+source: crates/loxide_interpreter/src/eval.rs
+expression: results
+---
+[
+    Ok(
+        Boolean(
+            true,
+        ),
+    ),
+    Ok(
+        Boolean(
+            true,
+        ),
+    ),
+    Ok(
+        Boolean(
+            true,
+        ),
+    ),
+    Ok(
+        Boolean(
+            true,
+        ),
+    ),
+    Ok(
+        Number(
+            1.0,
+        ),
+    ),
+    Ok(
+        Number(
+            1.0,
+        ),
+    ),
+    Ok(
+        Number(
+            2.0,
+        ),
+    ),
+    Ok(
+        Number(
+            0.0,
+        ),
+    ),
+]
