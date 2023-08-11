@@ -46,12 +46,10 @@ impl<'src> Evaluable for BinaryExpr<'src> {
         let lhs = self.lhs.eval()?;
         let rhs = self.rhs.eval()?;
         let val = match &self.operator {
-            BinaryOperator::EqualEqual => {
-                todo!()
-            }
-            BinaryOperator::BangEq => {
-                todo!()
-            }
+            // TODO: design decision, if two types is incompatible, give error or false?
+            BinaryOperator::EqualEqual => Value::Boolean(lhs == rhs),
+            // TODO: design decision, if two types is incompatible, give error or false?
+            BinaryOperator::BangEq => Value::Boolean(lhs != rhs),
             BinaryOperator::GreaterEqual => {
                 let lhs = inner_or!(lhs, number, RuntimeError::InvalidBinaryOperand("number"))?;
                 let rhs = inner_or!(rhs, number, RuntimeError::InvalidBinaryOperand("number"))?;
