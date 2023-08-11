@@ -7,4 +7,9 @@ pub enum RuntimeError {
     InvalidUnaryOperand(&'static str),
     #[error("Invalid binary operand, expected: {0}")]
     InvalidBinaryOperand(&'static str),
+    #[error("Incompatible operand, {lhs} is incompatible with {rhs}")]
+    IncompatibleBinaryOperand {
+        lhs: &'static str,
+        rhs: &'static str,
+    },
 }

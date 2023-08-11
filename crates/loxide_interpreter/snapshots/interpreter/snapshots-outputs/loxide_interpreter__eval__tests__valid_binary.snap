@@ -43,4 +43,24 @@ expression: results
             0.0,
         ),
     ),
+    Ok(
+        Boolean(
+            true,
+        ),
+    ),
+    Ok(
+        Boolean(
+            true,
+        ),
+    ),
+    Ok(
+        Boolean(
+            true,
+        ),
+    ),
+    Ok(
+        Boolean(
+            true,
+        ),
+    ),
 ]
