@@ -1,3 +1,5 @@
+use crate::token::Token;
+
 #[derive(Debug)]
 pub struct Expr<'src> {
     pub kind: ExprKind<'src>,
@@ -58,8 +60,14 @@ pub struct GroupedExpr<'src> {
 }
 
 #[derive(Debug)]
+pub struct Variable<'src> {
+    pub name: Token<'src>,
+}
+
+#[derive(Debug)]
 #[non_exhaustive]
 pub enum Stmt<'src> {
     Expression(Expr<'src>),
     PrintStmt(Expr<'src>),
+    VarDeclaration(Variable<'src>, Expr<'src>),
 }
