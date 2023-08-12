@@ -61,7 +61,7 @@ pub struct GroupedExpr<'src> {
 
 #[derive(Debug)]
 pub struct Variable<'src> {
-    pub name: Token<'src>,
+    pub name: &'src str,
 }
 
 #[derive(Debug)]
@@ -69,5 +69,5 @@ pub struct Variable<'src> {
 pub enum Stmt<'src> {
     Expression(Expr<'src>),
     PrintStmt(Expr<'src>),
-    VarDeclaration(Variable<'src>, Expr<'src>),
+    VarDeclaration(Variable<'src>, Option<Expr<'src>>),
 }
