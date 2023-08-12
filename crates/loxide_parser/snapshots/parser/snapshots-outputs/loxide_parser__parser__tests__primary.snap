@@ -80,4 +80,22 @@ expression: asts
             ),
         },
     ),
+    Ok(
+        Expr {
+            kind: Variable(
+                Variable {
+                    name: "foo",
+                },
+            ),
+        },
+    ),
+    Ok(
+        Expr {
+            kind: Variable(
+                Variable {
+                    name: "bar",
+                },
+            ),
+        },
+    ),
 ]

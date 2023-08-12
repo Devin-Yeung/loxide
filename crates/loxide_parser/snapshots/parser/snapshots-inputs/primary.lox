@@ -4,3 +4,5 @@ false
 "hello world"
 123
 (-123 + 456)
+foo
+bar
