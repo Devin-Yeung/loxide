@@ -1,0 +1,56 @@
+---
+source: crates/loxide_parser/tests/regression/issue8.rs
+expression: result
+input_file: crates/loxide_parser/snapshots/regression/snapshots-inputs/issue8.lox
+---
+(
+    [
+        Expression(
+            Expr {
+                kind: Binary(
+                    BinaryExpr {
+                        lhs: Expr {
+                            kind: Literal(
+                                Number(
+                                    1.0,
+                                ),
+                            ),
+                        },
+                        rhs: Expr {
+                            kind: Literal(
+                                Number(
+                                    2.0,
+                                ),
+                            ),
+                        },
+                        operator: Plus,
+                    },
+                ),
+            },
+        ),
+        Expression(
+            Expr {
+                kind: Binary(
+                    BinaryExpr {
+                        lhs: Expr {
+                            kind: Literal(
+                                Number(
+                                    3.0,
+                                ),
+                            ),
+                        },
+                        rhs: Expr {
+                            kind: Literal(
+                                Number(
+                                    4.0,
+                                ),
+                            ),
+                        },
+                        operator: Plus,
+                    },
+                ),
+            },
+        ),
+    ],
+    [],
+)

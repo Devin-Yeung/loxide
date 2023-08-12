@@ -11,3 +11,4 @@ thiserror = { workspace = true }
 
 [dev-dependencies]
 loxide_macros = { workspace = true }
+automod = "1.0.12"
