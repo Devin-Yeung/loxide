@@ -27,7 +27,9 @@ impl<'src> Parser<'src> {
                 Ok(_) => match self.declaration() {
                     Ok(stmt) => {
                         statements.push(stmt);
-                        self.consume_if(TokenType::Comment);
+                        while self.consume_if(TokenType::Comment) {
+                            continue;
+                        }
                     }
                     Err(err) => {
                         errors.push(err);
@@ -50,10 +52,12 @@ impl<'src> Parser<'src> {
         }
     }
 
-    fn consume_if(&mut self, ty: TokenType) {
+    fn consume_if(&mut self, ty: TokenType) -> bool {
         if self.peek_type() == Ok(ty) {
             self.advance().unwrap();
+            return true;
         }
+        false
     }
 
     fn peek_type(&mut self) -> Result<TokenType<'src>, SyntaxError> {
@@ -121,7 +125,6 @@ impl<'src> Parser<'src> {
     fn print_stmt(&mut self) -> Result<Stmt<'src>, SyntaxError> {
         self.consume(TokenType::Keyword(Keyword::Print))?;
         let expr = self.expression()?;
-        self.consume_if(TokenType::Comment);
         Ok(Stmt::PrintStmt(expr))
     }
 
@@ -133,7 +136,6 @@ impl<'src> Parser<'src> {
     fn expression_stmt(&mut self) -> Result<Stmt<'src>, SyntaxError> {
         let expr = self.expression()?;
         self.consume(TokenType::Semicolon)?;
-        self.consume_if(TokenType::Comment);
         Ok(Stmt::Expression(expr))
     }
 
@@ -323,7 +325,9 @@ impl<'src> Parser<'src> {
                 Ok(ty) => match ty {
                     TokenType::Semicolon => {
                         self.advance().unwrap();
-                        self.consume_if(TokenType::Comment); // remove comment if necessary
+                        while self.consume_if(TokenType::Comment) {
+                            continue; // remove comment if necessary, exhaustively
+                        }
                         return;
                     }
                     TokenType::Keyword(Keyword::Class)
