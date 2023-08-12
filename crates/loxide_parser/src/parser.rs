@@ -66,6 +66,25 @@ impl<'src> Parser<'src> {
             .unwrap_or_else(|| Err(SyntaxError::UnexpectedEOF))
     }
 
+    /// parse declaration according to following rules:
+    ///
+    /// ```text
+    /// declaration  → varDecl
+    ///              | statement ;
+    /// ```
+    fn declaration(&mut self) -> Result<Stmt<'src>, SyntaxError> {
+        todo!()
+    }
+
+    /// parse var declaration according to following rules:
+    ///
+    /// ```text
+    /// varDecl  → "var" IDENTIFIER ( "=" expression )? ";" ;
+    /// ```
+    fn var_delaration(&mut self) -> Result<Stmt<'src>, SyntaxError> {
+        todo!()
+    }
+
     /// parse statement according to following rules:
     ///
     /// ```text
@@ -235,7 +254,8 @@ impl<'src> Parser<'src> {
     ///
     /// ```text
     /// primary  → NUMBER | STRING | "true" | "false" | "nil"
-    ///          | "(" expression ")" ;
+    ///          | "(" expression ")"
+    ///          | IDENTIFIER ;
     /// ```
     fn primary(&mut self) -> Result<Expr<'src>, SyntaxError> {
         let expr = match self.peek_type()? {
