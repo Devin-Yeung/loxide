@@ -37,13 +37,14 @@ impl<'src> Parser<'src> {
         (statements, errors)
     }
 
-    fn consume(&mut self, ty: TokenType) -> Result<(), SyntaxError> {
-        return if self.peek_type()? == ty {
-            self.advance()?;
-            Ok(())
-        } else {
-            todo!()
-        };
+    fn consume(&mut self, ty: TokenType) -> Result<Token<'src>, SyntaxError> {
+        match self.peek_type()? {
+            found if found == ty => Ok(self.advance()?),
+            found => Err(SyntaxError::UnexpectedToken {
+                expected: ty.name(),
+                found: found.name(),
+            }),
+        }
     }
 
     fn consume_if(&mut self, ty: TokenType) {

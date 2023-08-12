@@ -94,6 +94,37 @@ pub enum TokenType<'src> {
     Identifier,
 }
 
+impl<'src> TokenType<'src> {
+    pub fn name(&self) -> &'static str {
+        match self {
+            TokenType::LeftParen => "(",
+            TokenType::RightParen => ")",
+            TokenType::LeftBrace => "{",
+            TokenType::RightBrace => "}",
+            TokenType::Comma => ",",
+            TokenType::Dot => ".",
+            TokenType::Minus => "-",
+            TokenType::Plus => "+",
+            TokenType::Semicolon => ";",
+            TokenType::Slash => "/",
+            TokenType::Star => "*",
+            TokenType::Bang => "!",
+            TokenType::BangEqual => "!=",
+            TokenType::Equal => "=",
+            TokenType::EqualEqual => "==",
+            TokenType::Greater => ">",
+            TokenType::GreaterEqual => ">=",
+            TokenType::Less => "<",
+            TokenType::LessEqual => "<=",
+            TokenType::Comment => "comment",
+            TokenType::EOF => "eof",
+            TokenType::Identifier => "identifier",
+            TokenType::Literal(_) => "literal",
+            TokenType::Keyword(_) => "keyword",
+        }
+    }
+}
+
 #[derive(Debug)]
 pub struct Token<'src> {
     pub(crate) ty: TokenType<'src>,
