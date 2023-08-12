@@ -1,6 +1,7 @@
 ---
-source: crates/loxide_parser/src/parser.rs
-expression: results
+source: crates/loxide_parser/tests/regression/issue6.rs
+expression: result
+input_file: crates/loxide_parser/snapshots/regression/snapshots-inputs/issue6.lox
 ---
 (
     [
@@ -11,18 +12,18 @@ expression: results
                         lhs: Expr {
                             kind: Literal(
                                 Number(
-                                    1.0,
+                                    2.0,
                                 ),
                             ),
                         },
                         rhs: Expr {
                             kind: Literal(
                                 Number(
-                                    2.0,
+                                    1.0,
                                 ),
                             ),
                         },
-                        operator: Plus,
+                        operator: GreaterEqual,
                     },
                 ),
             },
@@ -34,57 +35,22 @@ expression: results
                         lhs: Expr {
                             kind: Literal(
                                 Number(
-                                    3.0,
+                                    2.0,
                                 ),
                             ),
                         },
                         rhs: Expr {
                             kind: Literal(
                                 Number(
-                                    4.0,
+                                    1.0,
                                 ),
                             ),
                         },
-                        operator: Plus,
+                        operator: Greater,
                     },
                 ),
             },
         ),
-        Expression(
-            Expr {
-                kind: Literal(
-                    Boolean(
-                        true,
-                    ),
-                ),
-            },
-        ),
-        Expression(
-            Expr {
-                kind: Literal(
-                    Boolean(
-                        false,
-                    ),
-                ),
-            },
-        ),
-        Expression(
-            Expr {
-                kind: Literal(
-                    Nil,
-                ),
-            },
-        ),
     ],
-    [
-        Expect(
-            "expression",
-        ),
-        Expect(
-            "expression",
-        ),
-        Expect(
-            "expression",
-        ),
-    ],
+    [],
 )

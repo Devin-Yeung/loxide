@@ -6,5 +6,3 @@
 true ;
 false;
 nil;
-2 >= 1; // comments
-2 > 1 ; // comments
