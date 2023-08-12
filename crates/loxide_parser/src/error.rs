@@ -6,6 +6,11 @@ pub enum SyntaxError {
     UnexpectedChar(usize),
     #[error("Unexpected EOF")]
     UnexpectedEOF,
+    #[error("Expected token {expected}, found {found}")]
+    UnexpectedToken {
+        expected: &'static str,
+        found: &'static str,
+    },
     #[error("Expected")]
     Expect(&'static str),
     #[error("Invalid Conversion")]
