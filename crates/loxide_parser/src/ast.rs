@@ -1,5 +1,3 @@
-use crate::token::Token;
-
 #[derive(Debug)]
 pub struct Expr<'src> {
     pub kind: ExprKind<'src>,
@@ -11,6 +9,7 @@ pub enum ExprKind<'src> {
     Unary(UnaryExpr<'src>),
     Binary(BinaryExpr<'src>),
     Grouped(Box<Expr<'src>>),
+    Variable(Variable<'src>),
 }
 
 #[derive(Debug)]

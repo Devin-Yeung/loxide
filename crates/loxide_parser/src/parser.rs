@@ -306,6 +306,12 @@ impl<'src> Parser<'src> {
                     kind: ExprKind::Grouped(Box::new(expr)),
                 }
             }
+            TokenType::Identifier => {
+                let name = self.consume(TokenType::Identifier)?.lexeme;
+                Expr {
+                    kind: ExprKind::Variable(Variable { name }),
+                }
+            }
             _ => return Err(SyntaxError::Expect("expression")),
         };
         Ok(expr)

@@ -2,7 +2,7 @@ use crate::error::RuntimeError;
 use crate::value::Value;
 use loxide_parser::ast::{
     BinaryExpr, BinaryOperator, Expr, ExprKind, GroupedExpr, Literal, Stmt, UnaryExpr,
-    UnaryOperator,
+    UnaryOperator, Variable,
 };
 
 pub trait Evaluable {
@@ -38,6 +38,7 @@ impl<'src> Evaluable for Expr<'src> {
             ExprKind::Unary(u) => u.eval(),
             ExprKind::Binary(b) => b.eval(),
             ExprKind::Grouped(g) => g.eval(),
+            ExprKind::Variable(v) => v.eval(),
         };
     }
 }
@@ -115,6 +116,12 @@ impl<'src> Evaluable for UnaryExpr<'src> {
 impl<'src> Evaluable for GroupedExpr<'src> {
     fn eval(&self) -> Result<Value, RuntimeError> {
         self.expr.eval()
+    }
+}
+
+impl<'src> Evaluable for Variable<'src> {
+    fn eval(&self) -> Result<Value, RuntimeError> {
+        todo!()
     }
 }
 
