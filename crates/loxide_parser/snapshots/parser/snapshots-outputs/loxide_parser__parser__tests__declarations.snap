@@ -1,0 +1,29 @@
+---
+source: crates/loxide_parser/src/parser.rs
+expression: results
+---
+(
+    [
+        VarDeclaration(
+            Variable {
+                name: "a",
+            },
+            Some(
+                Expr {
+                    kind: Literal(
+                        Number(
+                            1.0,
+                        ),
+                    ),
+                },
+            ),
+        ),
+        VarDeclaration(
+            Variable {
+                name: "b",
+            },
+            None,
+        ),
+    ],
+    [],
+)

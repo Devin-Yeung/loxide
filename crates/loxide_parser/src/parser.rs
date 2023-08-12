@@ -1,7 +1,7 @@
 use crate::ast;
 use crate::ast::ExprKind::Binary;
 use crate::ast::Literal::{Boolean, Nil};
-use crate::ast::{BinaryExpr, Expr, ExprKind, Stmt, UnaryExpr};
+use crate::ast::{BinaryExpr, Expr, ExprKind, Stmt, UnaryExpr, Variable};
 use crate::error::SyntaxError;
 use crate::scanner::Scanner;
 use crate::token::{Keyword, Token, TokenType};
@@ -24,8 +24,11 @@ impl<'src> Parser<'src> {
         loop {
             match self.peek_type() {
                 Ok(TokenType::EOF) => break,
-                Ok(_) => match self.statement() {
-                    Ok(stmt) => statements.push(stmt),
+                Ok(_) => match self.declaration() {
+                    Ok(stmt) => {
+                        statements.push(stmt);
+                        self.consume_if(TokenType::Comment);
+                    }
                     Err(err) => {
                         errors.push(err);
                         self.synchronize();
@@ -74,7 +77,10 @@ impl<'src> Parser<'src> {
     ///              | statement ;
     /// ```
     fn declaration(&mut self) -> Result<Stmt<'src>, SyntaxError> {
-        todo!()
+        match self.peek_type()? {
+            TokenType::Keyword(Keyword::Var) => self.var_declaration(),
+            _ => self.statement(),
+        }
     }
 
     /// parse var declaration according to following rules:
@@ -82,8 +88,16 @@ impl<'src> Parser<'src> {
     /// ```text
     /// varDecl  → "var" IDENTIFIER ( "=" expression )? ";" ;
     /// ```
-    fn var_delaration(&mut self) -> Result<Stmt<'src>, SyntaxError> {
-        todo!()
+    fn var_declaration(&mut self) -> Result<Stmt<'src>, SyntaxError> {
+        self.consume(TokenType::Keyword(Keyword::Var))?;
+        let name = self.consume(TokenType::Identifier)?.lexeme;
+        let mut expr: Option<Expr<'src>> = None;
+        if self.peek_type() == Ok(TokenType::Equal) {
+            self.consume(TokenType::Equal)?;
+            expr = Some(self.expression()?);
+        }
+        self.consume(TokenType::Semicolon)?;
+        Ok(Stmt::VarDeclaration(Variable { name }, expr))
     }
 
     /// parse statement according to following rules:
@@ -426,6 +440,16 @@ mod tests {
     fn many_statements() {
         insta::with_settings!({snapshot_path => SNAPSHOT_OUTPUT_BASE},{
             let src = src!(SNAPSHOT_INPUT_BASE, "many_statements.lox");
+            let mut parser = Parser::new(&src);
+            let results = parser.parse();
+            insta::assert_debug_snapshot!(results);
+        })
+    }
+
+    #[test]
+    fn declarations() {
+        insta::with_settings!({snapshot_path => SNAPSHOT_OUTPUT_BASE},{
+            let src = src!(SNAPSHOT_INPUT_BASE, "declarations.lox");
             let mut parser = Parser::new(&src);
             let results = parser.parse();
             insta::assert_debug_snapshot!(results);
