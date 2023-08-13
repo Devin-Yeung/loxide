@@ -27,8 +27,23 @@ impl<'src> Evaluable for Stmt<'src> {
         match self {
             Stmt::Expression(e) => e.eval(env),
             Stmt::PrintStmt(_) => todo!("design decision: print stmt cant be evaluated to a value"),
+            Stmt::VarDeclaration(var, expr) => {
+                let val = expr.eval(env)?;
+                env.define(var.name.to_string(), val);
+                Ok(Value::Void)
+            }
             _ => unreachable!(),
         }
+    }
+}
+
+impl<'src> Evaluable for Option<Expr<'src>> {
+    fn eval(&self, env: &mut Environment) -> Result<Value, RuntimeError> {
+        let val = match self {
+            None => Value::Nil,
+            Some(e) => e.eval(env)?,
+        };
+        Ok(val)
     }
 }
 
@@ -121,8 +136,8 @@ impl<'src> Evaluable for GroupedExpr<'src> {
 }
 
 impl<'src> Evaluable for Variable<'src> {
-    fn eval(&self, _env: &mut Environment) -> Result<Value, RuntimeError> {
-        todo!()
+    fn eval(&self, env: &mut Environment) -> Result<Value, RuntimeError> {
+        env.get(self.name).map(|v| v.to_owned())
     }
 }
 
@@ -187,6 +202,15 @@ mod tests {
     fn valid_binary() {
         insta::with_settings!({snapshot_path => SNAPSHOT_OUTPUT},{
             let src = src!(SNAPSHOT_INPUT_BASE, "valid_binary.lox");
+            let results = eval(&src);
+            insta::assert_debug_snapshot!(results);
+        })
+    }
+
+    #[test]
+    fn variable() {
+        insta::with_settings!({snapshot_path => SNAPSHOT_OUTPUT},{
+            let src = src!(SNAPSHOT_INPUT_BASE, "variable.lox");
             let results = eval(&src);
             insta::assert_debug_snapshot!(results);
         })
