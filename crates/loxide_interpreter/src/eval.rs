@@ -2,7 +2,7 @@ use crate::environment::Environment;
 use crate::error::RuntimeError;
 use crate::value::Value;
 use loxide_parser::ast::{
-    BinaryExpr, BinaryOperator, Expr, ExprKind, GroupedExpr, Literal, Stmt, UnaryExpr,
+    AssignExpr, BinaryExpr, BinaryOperator, Expr, ExprKind, GroupedExpr, Literal, Stmt, UnaryExpr,
     UnaryOperator, Variable,
 };
 
@@ -55,9 +55,17 @@ impl<'src> Evaluable for Expr<'src> {
             ExprKind::Binary(b) => b.eval(env),
             ExprKind::Grouped(g) => g.eval(env),
             ExprKind::Variable(v) => v.eval(env),
-            ExprKind::Assign(a) => todo!(),
+            ExprKind::Assign(a) => a.eval(env),
             _ => unreachable!(),
         };
+    }
+}
+
+impl<'src> Evaluable for AssignExpr<'src> {
+    fn eval(&self, env: &mut Environment) -> Result<Value, RuntimeError> {
+        let val = self.value.eval(env)?;
+        env.update(self.name.name, val.clone())?;
+        Ok(val)
     }
 }
 

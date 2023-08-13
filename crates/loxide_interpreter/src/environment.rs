@@ -23,4 +23,14 @@ impl<'src> Environment {
     pub fn define(&mut self, name: String, value: Value) {
         self.values.insert(name, value);
     }
+
+    pub fn update(&mut self, name: &str, value: Value) -> Result<(), RuntimeError> {
+        match self.values.get_mut(name) {
+            None => return Err(RuntimeError::UndefinedVariable(name.to_string())),
+            Some(existed) => {
+                *existed = value;
+                Ok(())
+            }
+        }
+    }
 }
