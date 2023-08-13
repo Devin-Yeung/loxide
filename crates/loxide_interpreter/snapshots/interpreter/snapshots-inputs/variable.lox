@@ -2,3 +2,4 @@ var a = 1;
 a;
 var b;
 b;
+b = a;

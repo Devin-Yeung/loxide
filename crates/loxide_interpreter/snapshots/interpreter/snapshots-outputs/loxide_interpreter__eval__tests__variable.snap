@@ -17,4 +17,9 @@ expression: results
     Ok(
         Nil,
     ),
+    Ok(
+        Number(
+            1.0,
+        ),
+    ),
 ]
