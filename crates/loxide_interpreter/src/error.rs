@@ -12,4 +12,6 @@ pub enum RuntimeError {
         lhs: &'static str,
         rhs: &'static str,
     },
+    #[error("Undefined Variable: {0}")]
+    UndefinedVariable(String),
 }

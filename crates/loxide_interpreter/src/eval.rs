@@ -1,3 +1,4 @@
+use crate::environment::Environment;
 use crate::error::RuntimeError;
 use crate::value::Value;
 use loxide_parser::ast::{
@@ -6,7 +7,7 @@ use loxide_parser::ast::{
 };
 
 pub trait Evaluable {
-    fn eval(&self) -> Result<Value, RuntimeError>;
+    fn eval(&self, env: &mut Environment) -> Result<Value, RuntimeError>;
 }
 
 macro_rules! inner_or {
@@ -22,9 +23,9 @@ macro_rules! inner_or {
 }
 
 impl<'src> Evaluable for Stmt<'src> {
-    fn eval(&self) -> Result<Value, RuntimeError> {
+    fn eval(&self, env: &mut Environment) -> Result<Value, RuntimeError> {
         match self {
-            Stmt::Expression(e) => e.eval(),
+            Stmt::Expression(e) => e.eval(env),
             Stmt::PrintStmt(_) => todo!("design decision: print stmt cant be evaluated to a value"),
             _ => unreachable!(),
         }
@@ -32,21 +33,21 @@ impl<'src> Evaluable for Stmt<'src> {
 }
 
 impl<'src> Evaluable for Expr<'src> {
-    fn eval(&self) -> Result<Value, RuntimeError> {
+    fn eval(&self, env: &mut Environment) -> Result<Value, RuntimeError> {
         return match &self.kind {
-            ExprKind::Literal(l) => l.eval(),
-            ExprKind::Unary(u) => u.eval(),
-            ExprKind::Binary(b) => b.eval(),
-            ExprKind::Grouped(g) => g.eval(),
-            ExprKind::Variable(v) => v.eval(),
+            ExprKind::Literal(l) => l.eval(env),
+            ExprKind::Unary(u) => u.eval(env),
+            ExprKind::Binary(b) => b.eval(env),
+            ExprKind::Grouped(g) => g.eval(env),
+            ExprKind::Variable(v) => v.eval(env),
         };
     }
 }
 
 impl<'src> Evaluable for BinaryExpr<'src> {
-    fn eval(&self) -> Result<Value, RuntimeError> {
-        let lhs = self.lhs.eval()?;
-        let rhs = self.rhs.eval()?;
+    fn eval(&self, env: &mut Environment) -> Result<Value, RuntimeError> {
+        let lhs = self.lhs.eval(env)?;
+        let rhs = self.rhs.eval(env)?;
         let val = match &self.operator {
             // TODO: design decision, if two types is incompatible, give error or false?
             BinaryOperator::EqualEqual => Value::Boolean(lhs == rhs),
@@ -98,8 +99,8 @@ impl<'src> Evaluable for BinaryExpr<'src> {
 }
 
 impl<'src> Evaluable for UnaryExpr<'src> {
-    fn eval(&self) -> Result<Value, RuntimeError> {
-        let value = self.expr.eval()?;
+    fn eval(&self, env: &mut Environment) -> Result<Value, RuntimeError> {
+        let value = self.expr.eval(env)?;
         return match self.operator {
             UnaryOperator::Minus => {
                 let num = inner_or!(value, number, RuntimeError::InvalidUnaryOperand("number"))?;
@@ -114,19 +115,19 @@ impl<'src> Evaluable for UnaryExpr<'src> {
 }
 
 impl<'src> Evaluable for GroupedExpr<'src> {
-    fn eval(&self) -> Result<Value, RuntimeError> {
-        self.expr.eval()
+    fn eval(&self, env: &mut Environment) -> Result<Value, RuntimeError> {
+        self.expr.eval(env)
     }
 }
 
 impl<'src> Evaluable for Variable<'src> {
-    fn eval(&self) -> Result<Value, RuntimeError> {
+    fn eval(&self, _env: &mut Environment) -> Result<Value, RuntimeError> {
         todo!()
     }
 }
 
 impl Evaluable for Literal<'_> {
-    fn eval(&self) -> Result<Value, RuntimeError> {
+    fn eval(&self, _env: &mut Environment) -> Result<Value, RuntimeError> {
         let value = match *self {
             Literal::String(ref v) => Value::String(v.to_string()),
             Literal::Number(v) => Value::Number(v),
@@ -139,6 +140,7 @@ impl Evaluable for Literal<'_> {
 
 #[cfg(test)]
 mod tests {
+    use crate::environment::Environment;
     use crate::error::RuntimeError;
     use crate::eval::Evaluable;
     use crate::value::Value;
@@ -149,8 +151,9 @@ mod tests {
 
     fn eval(src: &str) -> Vec<Result<Value, RuntimeError>> {
         let mut parser = loxide_parser::parser::Parser::new(src);
+        let mut env = Environment::new();
         let (stmts, _) = parser.parse();
-        stmts.into_iter().map(|stmt| stmt.eval()).collect()
+        stmts.into_iter().map(|stmt| stmt.eval(&mut env)).collect()
     }
 
     #[test]
