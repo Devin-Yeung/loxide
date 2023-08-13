@@ -10,6 +10,7 @@ pub enum ExprKind<'src> {
     Binary(BinaryExpr<'src>),
     Grouped(Box<Expr<'src>>),
     Variable(Variable<'src>),
+    Assign(AssignExpr<'src>),
 }
 
 #[derive(Debug)]
@@ -56,6 +57,21 @@ pub struct BinaryExpr<'src> {
 #[derive(Debug)]
 pub struct GroupedExpr<'src> {
     pub expr: Box<Expr<'src>>,
+}
+
+#[derive(Debug)]
+pub struct AssignExpr<'src> {
+    pub name: Variable<'src>,
+    pub value: Box<Expr<'src>>,
+}
+
+impl<'src> AssignExpr<'src> {
+    pub fn new(name: &'src str, value: Expr<'src>) -> Self {
+        AssignExpr {
+            name: Variable { name },
+            value: Box::new(value),
+        }
+    }
 }
 
 #[derive(Debug)]

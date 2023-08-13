@@ -18,4 +18,49 @@ expression: asts
             "expression",
         ),
     ),
+    Ok(
+        Expr {
+            kind: Assign(
+                AssignExpr {
+                    name: Variable {
+                        name: "a",
+                    },
+                    value: Expr {
+                        kind: Variable(
+                            Variable {
+                                name: "b",
+                            },
+                        ),
+                    },
+                },
+            ),
+        },
+    ),
+    Ok(
+        Expr {
+            kind: Assign(
+                AssignExpr {
+                    name: Variable {
+                        name: "a",
+                    },
+                    value: Expr {
+                        kind: Assign(
+                            AssignExpr {
+                                name: Variable {
+                                    name: "b",
+                                },
+                                value: Expr {
+                                    kind: Variable(
+                                        Variable {
+                                            name: "c",
+                                        },
+                                    ),
+                                },
+                            },
+                        ),
+                    },
+                },
+            ),
+        },
+    ),
 ]
