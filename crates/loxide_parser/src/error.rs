@@ -21,4 +21,6 @@ pub enum SyntaxError {
     InvalidStringLiteral,
     #[error("Invalid keyword")]
     InvalidKeywords,
+    #[error("Invalid assignment target.")]
+    InvalidAssignmentTarget,
 }

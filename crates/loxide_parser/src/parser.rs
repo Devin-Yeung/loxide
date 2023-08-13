@@ -1,7 +1,7 @@
 use crate::ast;
 use crate::ast::ExprKind::Binary;
 use crate::ast::Literal::{Boolean, Nil};
-use crate::ast::{BinaryExpr, Expr, ExprKind, Stmt, UnaryExpr, Variable};
+use crate::ast::{AssignExpr, BinaryExpr, Expr, ExprKind, Stmt, UnaryExpr, Variable};
 use crate::error::SyntaxError;
 use crate::scanner::Scanner;
 use crate::token::{Keyword, Token, TokenType};
@@ -142,10 +142,27 @@ impl<'src> Parser<'src> {
     /// parse expression according to following rules:
     ///
     /// ```text
-    /// expression  → equality ;
+    /// expression  → assignment ;
     /// ```
     fn expression(&mut self) -> Result<Expr<'src>, SyntaxError> {
-        self.equality()
+        self.assignment()
+    }
+
+    /// assignment  → IDENTIFIER "=" assignment
+    ///             | equality ;
+    fn assignment(&mut self) -> Result<Expr<'src>, SyntaxError> {
+        let expr = self.equality()?;
+
+        if self.consume_if(TokenType::Equal) {
+            let value = self.assignment()?;
+            return match expr.kind {
+                ExprKind::Variable(v) => Ok(Expr {
+                    kind: ExprKind::Assign(AssignExpr::new(v.name, value)),
+                }),
+                _ => Err(SyntaxError::InvalidAssignmentTarget),
+            };
+        }
+        Ok(expr)
     }
 
     /// parse equality expression according to following rules:

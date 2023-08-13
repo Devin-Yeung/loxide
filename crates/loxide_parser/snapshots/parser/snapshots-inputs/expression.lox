@@ -1,3 +1,5 @@
 1 +             // expect expression
 1 <             // expect expression
 !               // expect expression
+a = b
+a = b = c

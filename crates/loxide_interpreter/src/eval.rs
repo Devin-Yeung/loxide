@@ -55,6 +55,8 @@ impl<'src> Evaluable for Expr<'src> {
             ExprKind::Binary(b) => b.eval(env),
             ExprKind::Grouped(g) => g.eval(env),
             ExprKind::Variable(v) => v.eval(env),
+            ExprKind::Assign(a) => todo!(),
+            _ => unreachable!(),
         };
     }
 }
