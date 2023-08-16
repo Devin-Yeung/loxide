@@ -1,7 +1,7 @@
 use once_cell::sync::Lazy;
 use std::backtrace::Backtrace;
 use std::collections::HashMap;
-use std::fmt::{Debug, Formatter, Pointer};
+use std::fmt::{Debug, Formatter};
 use std::sync::Mutex;
 
 static PROBE: Lazy<Mutex<Probe>> = Lazy::new(|| Mutex::new(Probe::new()));
@@ -76,6 +76,7 @@ impl Probe {
     }
 }
 
+#[cfg(test)]
 mod tests {
     use crate::{footprints, probe, register};
 
