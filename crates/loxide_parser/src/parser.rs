@@ -144,6 +144,7 @@ impl<'src> Parser<'src> {
     fn print_stmt(&mut self) -> Result<Stmt<'src>, SyntaxError> {
         self.consume(TokenType::Keyword(Keyword::Print))?;
         let expr = self.expression()?;
+        self.consume(TokenType::Semicolon)?;
         Ok(Stmt::PrintStmt(expr))
     }
 
