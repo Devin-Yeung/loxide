@@ -1,0 +1,51 @@
+---
+source: crates/loxide_interpreter/src/eval.rs
+expression: footprints!()
+---
+[
+    Ok(
+        String(
+            "inner a",
+        ),
+    ),
+    Ok(
+        String(
+            "outer b",
+        ),
+    ),
+    Ok(
+        String(
+            "global c",
+        ),
+    ),
+    Ok(
+        String(
+            "outer a",
+        ),
+    ),
+    Ok(
+        String(
+            "outer b",
+        ),
+    ),
+    Ok(
+        String(
+            "global c",
+        ),
+    ),
+    Ok(
+        String(
+            "global a",
+        ),
+    ),
+    Ok(
+        String(
+            "global b",
+        ),
+    ),
+    Ok(
+        String(
+            "global c",
+        ),
+    ),
+]

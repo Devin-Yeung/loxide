@@ -5,6 +5,7 @@ use loxide_parser::ast::{
     AssignExpr, BinaryExpr, BinaryOperator, Expr, ExprKind, GroupedExpr, Literal, Stmt, UnaryExpr,
     UnaryOperator, Variable,
 };
+use loxide_testsuite::probe;
 
 pub trait Evaluable {
     fn eval(&self, env: &mut Environment) -> Result<Value, RuntimeError>;
@@ -26,7 +27,10 @@ impl<'src> Evaluable for Stmt<'src> {
     fn eval(&self, env: &mut Environment) -> Result<Value, RuntimeError> {
         match self {
             Stmt::Expression(e) => e.eval(env),
-            Stmt::PrintStmt(_) => todo!("design decision: print stmt cant be evaluated to a value"),
+            Stmt::PrintStmt(e) => {
+                let val = probe!(e.eval(env))?;
+                Ok(Value::Void)
+            }
             Stmt::VarDeclaration(var, expr) => {
                 let val = expr.eval(env)?;
                 env.define(var.name.to_string(), val);
@@ -178,6 +182,7 @@ mod tests {
     use crate::eval::Evaluable;
     use crate::value::Value;
     use loxide_macros::src;
+    use loxide_testsuite::{footprints, register};
 
     const SNAPSHOT_INPUT_BASE: &'static str = "snapshots/interpreter/snapshots-inputs";
     const SNAPSHOT_OUTPUT: &'static str = "../snapshots/interpreter/snapshots-outputs";
@@ -231,6 +236,16 @@ mod tests {
             let src = src!(SNAPSHOT_INPUT_BASE, "variable.lox");
             let results = eval(&src);
             insta::assert_debug_snapshot!(results);
+        })
+    }
+
+    #[test]
+    fn block_stmt() {
+        insta::with_settings!({snapshot_path => SNAPSHOT_OUTPUT},{
+            register!();
+            let src = src!(SNAPSHOT_INPUT_BASE, "block_stmt.lox");
+            eval(&src);
+            insta::assert_debug_snapshot!(footprints!());
         })
     }
 }
