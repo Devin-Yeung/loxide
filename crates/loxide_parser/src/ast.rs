@@ -85,4 +85,5 @@ pub enum Stmt<'src> {
     Expression(Expr<'src>),
     PrintStmt(Expr<'src>),
     VarDeclaration(Variable<'src>, Option<Expr<'src>>),
+    Block(Vec<Stmt<'src>>),
 }
