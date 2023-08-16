@@ -1,0 +1,2 @@
+[env]
+RUST_BACKTRACE = "1" # always enable backtrace since we need backtrace in probe
