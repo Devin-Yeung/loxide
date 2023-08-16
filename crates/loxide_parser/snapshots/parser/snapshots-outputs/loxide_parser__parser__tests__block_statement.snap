@@ -1,0 +1,81 @@
+---
+source: crates/loxide_parser/src/parser.rs
+expression: results
+---
+(
+    [
+        Block(
+            [
+                VarDeclaration(
+                    Variable {
+                        name: "a",
+                    },
+                    Some(
+                        Expr {
+                            kind: Literal(
+                                Number(
+                                    1.0,
+                                ),
+                            ),
+                        },
+                    ),
+                ),
+                Expression(
+                    Expr {
+                        kind: Assign(
+                            AssignExpr {
+                                name: Variable {
+                                    name: "a",
+                                },
+                                value: Expr {
+                                    kind: Literal(
+                                        Number(
+                                            2.0,
+                                        ),
+                                    ),
+                                },
+                            },
+                        ),
+                    },
+                ),
+            ],
+        ),
+        Block(
+            [
+                VarDeclaration(
+                    Variable {
+                        name: "a",
+                    },
+                    Some(
+                        Expr {
+                            kind: Literal(
+                                Number(
+                                    1.0,
+                                ),
+                            ),
+                        },
+                    ),
+                ),
+                Block(
+                    [
+                        VarDeclaration(
+                            Variable {
+                                name: "a",
+                            },
+                            Some(
+                                Expr {
+                                    kind: Literal(
+                                        Number(
+                                            2.0,
+                                        ),
+                                    ),
+                                },
+                            ),
+                        ),
+                    ],
+                ),
+            ],
+        ),
+    ],
+    [],
+)

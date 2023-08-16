@@ -108,13 +108,32 @@ impl<'src> Parser<'src> {
     ///
     /// ```text
     /// statement  → exprStmt
-    ///            | printStmt ;
+    ///            | printStmt
+    ///            | block ;
     /// ```
     fn statement(&mut self) -> Result<Stmt<'src>, SyntaxError> {
         match self.peek_type()? {
             TokenType::Keyword(Keyword::Print) => self.print_stmt(),
+            TokenType::LeftBrace => self.block(),
             _ => self.expression_stmt(),
         }
+    }
+
+    /// parse block statement according to following rules:
+    /// ```text
+    /// block  → "{" declaration* "}" ;
+    /// ```
+    fn block(&mut self) -> Result<Stmt<'src>, SyntaxError> {
+        self.consume(TokenType::LeftBrace)?;
+        let mut stmts: Vec<Stmt> = Vec::new();
+        loop {
+            match self.peek_type()? {
+                TokenType::RightBrace => break,
+                _ => stmts.push(self.declaration()?),
+            }
+        }
+        self.consume(TokenType::RightBrace)?;
+        Ok(Stmt::Block(stmts))
     }
 
     /// parse print statement according to following rules:
@@ -477,6 +496,16 @@ mod tests {
     fn declarations() {
         insta::with_settings!({snapshot_path => SNAPSHOT_OUTPUT_BASE},{
             let src = src!(SNAPSHOT_INPUT_BASE, "declarations.lox");
+            let mut parser = Parser::new(&src);
+            let results = parser.parse();
+            insta::assert_debug_snapshot!(results);
+        })
+    }
+
+    #[test]
+    fn block_statement() {
+        insta::with_settings!({snapshot_path => SNAPSHOT_OUTPUT_BASE},{
+            let src = src!(SNAPSHOT_INPUT_BASE, "block_statement.lox");
             let mut parser = Parser::new(&src);
             let results = parser.parse();
             insta::assert_debug_snapshot!(results);
