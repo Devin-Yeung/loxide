@@ -7,9 +7,10 @@ macro_rules! register {
 
 #[macro_export]
 macro_rules! probe {
-    ($target:expr) => {
+    ($target:expr) => {{
         $crate::__private_api::probe(::std::format!("{:#?}", $target));
-    };
+        $target
+    }};
 }
 
 #[macro_export]

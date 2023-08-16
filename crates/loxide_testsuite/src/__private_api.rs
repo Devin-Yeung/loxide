@@ -1,4 +1,4 @@
-use crate::probe::Probe;
+use crate::probe::{FootPrint, Probe};
 
 #[doc(hidden)]
 #[macro_export]
@@ -24,6 +24,6 @@ pub fn probe(content: String) {
     Probe::probe(content);
 }
 
-pub fn footprints(test_name: &str) -> Vec<String> {
+pub fn footprints(test_name: &str) -> Vec<FootPrint> {
     Probe::footprints(test_name)
 }
