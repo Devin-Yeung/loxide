@@ -22,4 +22,9 @@ expression: results
             1.0,
         ),
     ),
+    Err(
+        UndefinedVariable(
+            "c",
+        ),
+    ),
 ]
