@@ -32,6 +32,14 @@ impl<'src> Evaluable for Stmt<'src> {
                 env.define(var.name.to_string(), val);
                 Ok(Value::Void)
             }
+            Stmt::Block(stmts) => {
+                // TODO: find a way to test the correctness of this evaluation
+                let mut scope = Environment::new(Some(env));
+                for stmt in stmts {
+                    stmt.eval(&mut scope)?;
+                }
+                Ok(Value::Void)
+            }
             _ => unreachable!(),
         }
     }
@@ -176,7 +184,7 @@ mod tests {
 
     fn eval(src: &str) -> Vec<Result<Value, RuntimeError>> {
         let mut parser = loxide_parser::parser::Parser::new(src);
-        let mut env = Environment::new();
+        let mut env = Environment::new(None);
         let (stmts, _) = parser.parse();
         stmts.into_iter().map(|stmt| stmt.eval(&mut env)).collect()
     }
