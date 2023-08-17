@@ -129,7 +129,12 @@ impl<'src> Parser<'src> {
         loop {
             match self.peek_type()? {
                 TokenType::RightBrace => break,
-                _ => stmts.push(self.declaration()?),
+                _ => {
+                    stmts.push(self.declaration()?);
+                    while self.consume_if(TokenType::Comment) {
+                        continue;
+                    }
+                }
             }
         }
         self.consume(TokenType::RightBrace)?;
