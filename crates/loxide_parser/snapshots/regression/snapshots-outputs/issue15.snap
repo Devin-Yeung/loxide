@@ -1,0 +1,28 @@
+---
+source: crates/loxide_parser/tests/regression/issue15.rs
+expression: result
+input_file: crates/loxide_parser/snapshots/regression/snapshots-inputs/issue15.lox
+---
+(
+    [
+        Block(
+            [
+                VarDeclaration(
+                    Variable {
+                        name: "a",
+                    },
+                    Some(
+                        Expr {
+                            kind: Literal(
+                                Number(
+                                    1.0,
+                                ),
+                            ),
+                        },
+                    ),
+                ),
+            ],
+        ),
+    ],
+    [],
+)
