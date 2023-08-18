@@ -1,0 +1,5 @@
+if (first)
+    if (second)
+        "when true";
+else
+    "when false";

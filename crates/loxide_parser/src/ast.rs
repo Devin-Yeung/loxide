@@ -80,10 +80,18 @@ pub struct Variable<'src> {
 }
 
 #[derive(Debug)]
+pub struct ConditionStmt<'src> {
+    pub condition: Expr<'src>,
+    pub then_branch: Box<Stmt<'src>>,
+    pub else_branch: Option<Box<Stmt<'src>>>,
+}
+
+#[derive(Debug)]
 #[non_exhaustive]
 pub enum Stmt<'src> {
     Expression(Expr<'src>),
     PrintStmt(Expr<'src>),
     VarDeclaration(Variable<'src>, Option<Expr<'src>>),
     Block(Vec<Stmt<'src>>),
+    Condition(ConditionStmt<'src>),
 }
