@@ -1,0 +1,52 @@
+---
+source: crates/loxide_parser/src/parser.rs
+expression: results
+---
+(
+    [
+        Condition(
+            ConditionStmt {
+                condition: Expr {
+                    kind: Variable(
+                        Variable {
+                            name: "first",
+                        },
+                    ),
+                },
+                then_branch: Condition(
+                    ConditionStmt {
+                        condition: Expr {
+                            kind: Variable(
+                                Variable {
+                                    name: "second",
+                                },
+                            ),
+                        },
+                        then_branch: Expression(
+                            Expr {
+                                kind: Literal(
+                                    String(
+                                        "when true",
+                                    ),
+                                ),
+                            },
+                        ),
+                        else_branch: Some(
+                            Expression(
+                                Expr {
+                                    kind: Literal(
+                                        String(
+                                            "when false",
+                                        ),
+                                    ),
+                                },
+                            ),
+                        ),
+                    },
+                ),
+                else_branch: None,
+            },
+        ),
+    ],
+    [],
+)

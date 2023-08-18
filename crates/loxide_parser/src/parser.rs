@@ -1,7 +1,9 @@
 use crate::ast;
 use crate::ast::ExprKind::Binary;
 use crate::ast::Literal::{Boolean, Nil};
-use crate::ast::{AssignExpr, BinaryExpr, Expr, ExprKind, Stmt, UnaryExpr, Variable};
+use crate::ast::{
+    AssignExpr, BinaryExpr, ConditionStmt, Expr, ExprKind, Stmt, UnaryExpr, Variable,
+};
 use crate::error::SyntaxError;
 use crate::scanner::Scanner;
 use crate::token::{Keyword, Token, TokenType};
@@ -115,8 +117,52 @@ impl<'src> Parser<'src> {
         match self.peek_type()? {
             TokenType::Keyword(Keyword::Print) => self.print_stmt(),
             TokenType::LeftBrace => self.block(),
+            TokenType::Keyword(Keyword::If) => self.if_stmt(),
             _ => self.expression_stmt(),
         }
+    }
+
+    /// parse if statement according to following rules:
+    /// ```text
+    /// ifStmt  → "if" "(" expression ")" statement
+    ///           ( "else" statement )? ;
+    /// ```
+    ///
+    /// note: the else is bound to the nearest if that precedes it
+    /// for the following dangling else case
+    /// ```text
+    /// if (first)
+    /// |   if (second)
+    /// |      when_true();
+    /// else
+    ///     when_false();
+    /// ```
+    /// the actual semantic is:
+    /// ```text
+    /// if (first)
+    ///     if (second)
+    ///     |   when_true();
+    ///     else
+    ///         when_false();
+    /// ```
+    fn if_stmt(&mut self) -> Result<Stmt<'src>, SyntaxError> {
+        self.consume(TokenType::Keyword(Keyword::If))?;
+        self.consume(TokenType::LeftParen)?;
+        let condition = self.expression()?;
+        self.consume(TokenType::RightParen)?;
+        let then_branch = Box::new(self.statement()?);
+        // else statement if optional
+        let else_branch = if self.consume_if(TokenType::Keyword(Keyword::Else)) {
+            // the else is bound to the nearest if that precedes it
+            Some(Box::new(self.statement()?))
+        } else {
+            None
+        };
+        Ok(Stmt::Condition(ConditionStmt {
+            condition,
+            then_branch,
+            else_branch,
+        }))
     }
 
     /// parse block statement according to following rules:
@@ -512,6 +558,16 @@ mod tests {
     fn block_statement() {
         insta::with_settings!({snapshot_path => SNAPSHOT_OUTPUT_BASE},{
             let src = src!(SNAPSHOT_INPUT_BASE, "block_statement.lox");
+            let mut parser = Parser::new(&src);
+            let results = parser.parse();
+            insta::assert_debug_snapshot!(results);
+        })
+    }
+
+    #[test]
+    fn if_statement() {
+        insta::with_settings!({snapshot_path => SNAPSHOT_OUTPUT_BASE},{
+            let src = src!(SNAPSHOT_INPUT_BASE, "if_statement.lox");
             let mut parser = Parser::new(&src);
             let results = parser.parse();
             insta::assert_debug_snapshot!(results);
