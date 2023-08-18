@@ -1,42 +1,77 @@
 use crate::error::RuntimeError;
 use crate::value::Value;
+use std::cell::RefCell;
 use std::collections::HashMap;
+use std::rc::Rc;
 
-pub struct Environment<'a> {
+struct Inner {
     values: HashMap<String, Value>,
-    parent: Option<&'a Environment<'a>>,
+    parent: Option<Rc<RefCell<Inner>>>,
 }
 
-impl<'a> Environment<'a> {
-    pub fn new(parent: Option<&'a Environment<'a>>) -> Environment<'a> {
-        Environment {
-            values: HashMap::new(),
-            parent,
-        }
-    }
-
-    pub fn get(&self, name: &str) -> Result<&Value, RuntimeError> {
+impl Inner {
+    fn get(&self, name: &str) -> Result<Value, RuntimeError> {
         self.values.get(name).map_or_else(
             || {
                 self.parent
-                    .map(|parent| parent.get(name))
+                    .as_ref()
+                    .map(|parent| parent.borrow().get(name))
                     .unwrap_or(Err(RuntimeError::UndefinedVariable(name.to_string())))
             },
-            Ok,
+            |v| Ok(v.clone()),
         )
     }
 
-    pub fn define(&mut self, name: String, value: Value) {
+    fn define(&mut self, name: String, value: Value) {
         self.values.insert(name, value);
     }
 
-    pub fn update(&mut self, name: &str, value: Value) -> Result<(), RuntimeError> {
+    fn update(&mut self, name: &str, value: Value) -> Result<(), RuntimeError> {
         match self.values.get_mut(name) {
-            None => return Err(RuntimeError::UndefinedVariable(name.to_string())),
             Some(existed) => {
                 *existed = value;
                 Ok(())
             }
+            None => match &self.parent {
+                None => Err(RuntimeError::UndefinedVariable(name.to_string())),
+                Some(env) => env.borrow_mut().update(name, value),
+            },
+        }
+    }
+}
+
+pub struct Environment {
+    inner: Rc<RefCell<Inner>>,
+}
+
+impl Environment {
+    pub fn global() -> Environment {
+        Environment {
+            inner: Rc::new(RefCell::new(Inner {
+                values: HashMap::new(),
+                parent: None,
+            })),
+        }
+    }
+
+    pub fn get(&self, name: &str) -> Result<Value, RuntimeError> {
+        self.inner.borrow().get(name)
+    }
+
+    pub fn define(&mut self, name: String, value: Value) {
+        self.inner.borrow_mut().define(name, value);
+    }
+
+    pub fn update(&mut self, name: &str, value: Value) -> Result<(), RuntimeError> {
+        self.inner.borrow_mut().update(name, value)
+    }
+
+    pub fn extend(&self) -> Environment {
+        Environment {
+            inner: Rc::new(RefCell::new(Inner {
+                values: HashMap::new(),
+                parent: Some(self.inner.clone()),
+            })),
         }
     }
 }
@@ -46,19 +81,94 @@ mod test {
     use crate::environment::Environment;
     use crate::value::Value;
 
+    macro_rules! define {
+        ($scope:expr, {$($name:expr => $val:expr),*$(,)?}) => {{
+            $($scope.define($name.to_string(), $val));*
+        }};
+    }
+
+    macro_rules! check_scope {
+        ($scope:expr, {$($name:expr => $val:expr),*$(,)?}) => {{
+            $(assert_eq!($scope.get($name).unwrap().as_number().unwrap(), $val);)*
+        }};
+    }
+
     #[test]
     fn nested() {
-        let mut global = Environment::new(None);
-        global.define("a".to_string(), Value::Number(1.0));
-        let mut outer = Environment::new(Some(&global));
-        outer.define("b".to_string(), Value::Number(2.0));
-        outer.define("c".to_string(), Value::Number(0.0));
-        let mut inner = Environment::new(Some(&outer));
-        inner.define("c".to_string(), Value::Number(3.0)); // shadow c
+        let mut global = Environment::global();
+        define!(global, {
+            "a" => Value::Number(1.0),
+        });
 
-        assert_eq!(inner.get("a").unwrap().as_number().unwrap(), 1.0);
-        assert_eq!(inner.get("b").unwrap().as_number().unwrap(), 2.0);
-        assert_eq!(inner.get("c").unwrap().as_number().unwrap(), 3.0);
-        assert_eq!(outer.get("c").unwrap().as_number().unwrap(), 0.0);
+        let mut outer = global.extend();
+        define!(outer, {
+            "b" => Value::Number(2.0),
+            "c" => Value::Number(0.0),
+        });
+
+        let mut inner = outer.extend();
+        define!(inner, {
+            "c" => Value::Number(3.0)
+        });
+
+        check_scope!(inner, {
+            "a" => 1.0,
+            "b" => 2.0,
+            "c" => 3.0,
+        });
+
+        check_scope!(outer, {
+            "c" => 0.0,
+        });
+    }
+
+    #[test]
+    fn update_outer_scope() {
+        let mut global = Environment::global();
+        define!(global, {
+            "a" => Value::Number(1.0),
+        });
+
+        let mut inner = global.extend();
+        inner.update("a", Value::Number(2.0)).unwrap();
+        // if inner scope does not define a var, but outer scope does
+        // update will update the outer scope
+        check_scope!(global, {
+            "a" => 2.0,
+        })
+    }
+
+    #[test]
+    fn shadowing_dont_update_outer_scope() {
+        let mut global = Environment::global();
+        define!(global, {
+            "a" => Value::Number(1.0),
+        });
+
+        let mut inner = global.extend();
+        define!(inner, {
+            "a" => Value::Number(88.0),
+        });
+        // update the inner scope
+        inner.update("a", Value::Number(0.0)).unwrap();
+
+        check_scope!(global, {
+            "a" => 1.0,
+        });
+        check_scope!(inner, {
+            "a" => 0.0,
+        });
+    }
+
+    #[test]
+    fn inherit_outer_scope() {
+        let mut global = Environment::global();
+        define!(global, {
+            "a" => Value::Number(1.0),
+        });
+        let inner = global.extend();
+        check_scope!(inner, {
+            "a" => 1.0,
+        });
     }
 }
