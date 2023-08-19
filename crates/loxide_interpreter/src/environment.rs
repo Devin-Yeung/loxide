@@ -26,7 +26,7 @@ impl Inner {
         self.values.insert(name, value);
     }
 
-    fn update(&mut self, name: &str, value: Value) -> Result<(), RuntimeError> {
+    fn mutate(&mut self, name: &str, value: Value) -> Result<(), RuntimeError> {
         match self.values.get_mut(name) {
             Some(existed) => {
                 *existed = value;
@@ -34,7 +34,7 @@ impl Inner {
             }
             None => match &self.parent {
                 None => Err(RuntimeError::UndefinedVariable(name.to_string())),
-                Some(env) => env.borrow_mut().update(name, value),
+                Some(env) => env.borrow_mut().mutate(name, value),
             },
         }
     }
@@ -62,8 +62,8 @@ impl Environment {
         self.inner.borrow_mut().define(name, value);
     }
 
-    pub fn update(&mut self, name: &str, value: Value) -> Result<(), RuntimeError> {
-        self.inner.borrow_mut().update(name, value)
+    pub fn mutate(&mut self, name: &str, value: Value) -> Result<(), RuntimeError> {
+        self.inner.borrow_mut().mutate(name, value)
     }
 
     pub fn extend(&self) -> Environment {
@@ -130,7 +130,7 @@ mod test {
         });
 
         let mut inner = global.extend();
-        inner.update("a", Value::Number(2.0)).unwrap();
+        inner.mutate("a", Value::Number(2.0)).unwrap();
         // if inner scope does not define a var, but outer scope does
         // update will update the outer scope
         check_scope!(global, {
@@ -150,7 +150,7 @@ mod test {
             "a" => Value::Number(88.0),
         });
         // update the inner scope
-        inner.update("a", Value::Number(0.0)).unwrap();
+        inner.mutate("a", Value::Number(0.0)).unwrap();
 
         check_scope!(global, {
             "a" => 1.0,
