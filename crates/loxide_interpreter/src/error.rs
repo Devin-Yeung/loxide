@@ -14,4 +14,6 @@ pub enum RuntimeError {
     },
     #[error("Undefined Variable: {0}")]
     UndefinedVariable(String),
+    #[error("Expected boolean in condition expression")]
+    ExpectedBoolean,
 }

@@ -1,0 +1,16 @@
+---
+source: crates/loxide_interpreter/src/eval.rs
+expression: footprints!()
+---
+[
+    Ok(
+        String(
+            "baz",
+        ),
+    ),
+    Err(
+        UndefinedVariable(
+            "b",
+        ),
+    ),
+]
