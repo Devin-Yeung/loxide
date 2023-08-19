@@ -1,0 +1,12 @@
+var a = "foo";
+if (true) {
+    if (false) {
+        a = "bar";
+    }
+    else {
+        a = "baz";
+        var b = "Hello World";
+    }
+}
+print a; // should mutate a to "baz"
+print b; // should not leak b
