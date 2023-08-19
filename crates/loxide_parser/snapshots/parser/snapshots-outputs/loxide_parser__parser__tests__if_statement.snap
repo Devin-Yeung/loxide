@@ -47,6 +47,15 @@ expression: results
                 else_branch: None,
             },
         ),
+        Expression(
+            Expr {
+                kind: Literal(
+                    String(
+                        "not part of else branch",
+                    ),
+                ),
+            },
+        ),
     ],
     [],
 )

@@ -3,3 +3,4 @@ if (first)
         "when true";
 else
     "when false";
+    "not part of else branch"; // this is not part of else branch
