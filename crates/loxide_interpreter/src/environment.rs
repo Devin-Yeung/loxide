@@ -93,6 +93,12 @@ mod test {
         }};
     }
 
+    macro_rules! mutate {
+        ($scope:expr, {$($name:expr => $val:expr),*$(,)?}) => {{
+            $($scope.mutate($name, $val).unwrap());*
+        }};
+    }
+
     #[test]
     fn nested() {
         let mut global = Environment::global();
@@ -130,7 +136,9 @@ mod test {
         });
 
         let mut inner = global.extend();
-        inner.mutate("a", Value::Number(2.0)).unwrap();
+        mutate!(inner, {
+            "a" => Value::Number(2.0)
+        });
         // if inner scope does not define a var, but outer scope does
         // update will update the outer scope
         check_scope!(global, {
@@ -150,7 +158,9 @@ mod test {
             "a" => Value::Number(88.0),
         });
         // update the inner scope
-        inner.mutate("a", Value::Number(0.0)).unwrap();
+        mutate!(inner, {
+            "a" => Value::Number(0.0)
+        });
 
         check_scope!(global, {
             "a" => 1.0,
