@@ -76,7 +76,7 @@ impl<'src> Evaluable for Expr<'src> {
 impl<'src> Evaluable for AssignExpr<'src> {
     fn eval(&self, env: &mut Environment) -> Result<Value, RuntimeError> {
         let val = self.value.eval(env)?;
-        env.update(self.name.name, val.clone())?;
+        env.mutate(self.name.name, val.clone())?;
         Ok(val)
     }
 }
