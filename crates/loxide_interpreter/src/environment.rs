@@ -45,6 +45,7 @@ pub struct Environment {
 }
 
 impl Environment {
+    /// create a global scope
     pub fn global() -> Environment {
         Environment {
             inner: Rc::new(RefCell::new(Inner {
@@ -54,18 +55,31 @@ impl Environment {
         }
     }
 
+    /// get the value of variable from the current scope,
+    /// if current does not define this variable, search
+    /// in the ancestor scope, if nothing found,
+    /// return an UndefinedVariable runtime error
     pub fn get(&self, name: &str) -> Result<Value, RuntimeError> {
         self.inner.borrow().get(name)
     }
 
+    /// define variable in current scope,
+    /// if variable already defined in current scope,
+    /// the previous value will be overwritten
     pub fn define(&mut self, name: String, value: Value) {
         self.inner.borrow_mut().define(name, value);
     }
 
+    /// mutate variable in current scope,
+    /// if current does not define this variable,
+    /// mutate the variable in the ancestor scope,
+    /// if nothing found in ancestor scope,
+    /// return an UndefinedVariable runtime error
     pub fn mutate(&mut self, name: &str, value: Value) -> Result<(), RuntimeError> {
         self.inner.borrow_mut().mutate(name, value)
     }
 
+    /// create a descendant scope
     pub fn extend(&self) -> Environment {
         Environment {
             inner: Rc::new(RefCell::new(Inner {
