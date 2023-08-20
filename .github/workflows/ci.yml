@@ -80,24 +80,24 @@ jobs:
       # https://github.com/rust-lang/cargo/issues/6669
       - name: cargo test --doc
         run: cargo test --locked --all-features --doc
-#  os-check:
-#    runs-on: ${{ matrix.os }}
-#    name: ${{ matrix.os }} / stable / test
-#    strategy:
-#      fail-fast: false
-#      matrix:
-#        os: [macos-latest]
-#    steps:
-#      - uses: actions/checkout@v3
-#        with:
-#          submodules: true
-#      - name: Install stable
-#        uses: dtolnay/rust-toolchain@stable
-#      - name: cargo generate-lockfile
-#        if: hashFiles('Cargo.lock') == ''
-#        run: cargo generate-lockfile
-#      - name: cargo test
-#        run: cargo test --locked --all-features --all-targets
+  os-check:
+    runs-on: ${{ matrix.os }}
+    name: ${{ matrix.os }} / stable / test
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+      - name: Install stable
+        uses: dtolnay/rust-toolchain@stable
+      - name: cargo generate-lockfile
+        if: hashFiles('Cargo.lock') == ''
+        run: cargo generate-lockfile
+      - name: cargo test
+        run: cargo test --locked --all-features --all-targets
   coverage:
     runs-on: ubuntu-latest
     name: ubuntu / stable / coverage
