@@ -3,7 +3,7 @@ use crate::error::RuntimeError;
 use crate::value::Value;
 use loxide_parser::ast::{
     AssignExpr, BinaryExpr, BinaryOperator, ConditionStmt, Expr, ExprKind, GroupedExpr, Literal,
-    Stmt, UnaryExpr, UnaryOperator, Variable,
+    Stmt, UnaryExpr, UnaryOperator, Variable, WhileStmt,
 };
 use loxide_testsuite::probe;
 
@@ -45,6 +45,7 @@ impl<'src> Evaluable for Stmt<'src> {
                 Ok(Value::Void)
             }
             Stmt::Condition(cond) => cond.eval(env),
+            Stmt::While(cond) => cond.eval(env),
             _ => unreachable!(),
         }
     }
@@ -66,6 +67,19 @@ impl<'src> Evaluable for ConditionStmt<'src> {
             }
             _ => Err(RuntimeError::ExpectedBoolean),
         }
+    }
+}
+
+impl<'src> Evaluable for WhileStmt<'src> {
+    fn eval(&self, env: &mut Environment) -> Result<Value, RuntimeError> {
+        while let Value::Boolean(b) = self.condition.eval(env)? {
+            if b {
+                self.body.eval(env)?;
+            } else {
+                return Ok(Value::Void);
+            }
+        }
+        Err(RuntimeError::ExpectedBoolean)
     }
 }
 
@@ -274,6 +288,16 @@ mod tests {
         insta::with_settings!({snapshot_path => SNAPSHOT_OUTPUT},{
             register!();
             let src = src!(SNAPSHOT_INPUT_BASE, "if_stmt.lox");
+            eval(&src);
+            insta::assert_debug_snapshot!(footprints!());
+        })
+    }
+
+    #[test]
+    fn while_stmt() {
+        insta::with_settings!({snapshot_path => SNAPSHOT_OUTPUT},{
+            register!();
+            let src = src!(SNAPSHOT_INPUT_BASE, "while_stmt.lox");
             eval(&src);
             insta::assert_debug_snapshot!(footprints!());
         })
