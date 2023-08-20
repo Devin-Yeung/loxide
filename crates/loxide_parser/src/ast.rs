@@ -87,6 +87,12 @@ pub struct ConditionStmt<'src> {
 }
 
 #[derive(Debug)]
+pub struct WhileStmt<'src> {
+    pub condition: Expr<'src>,
+    pub body: Box<Stmt<'src>>,
+}
+
+#[derive(Debug)]
 #[non_exhaustive]
 pub enum Stmt<'src> {
     Expression(Expr<'src>),
@@ -94,4 +100,5 @@ pub enum Stmt<'src> {
     VarDeclaration(Variable<'src>, Option<Expr<'src>>),
     Block(Vec<Stmt<'src>>),
     Condition(ConditionStmt<'src>),
+    While(WhileStmt<'src>),
 }

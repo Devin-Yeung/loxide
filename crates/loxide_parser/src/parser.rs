@@ -2,7 +2,7 @@ use crate::ast;
 use crate::ast::ExprKind::Binary;
 use crate::ast::Literal::{Boolean, Nil};
 use crate::ast::{
-    AssignExpr, BinaryExpr, ConditionStmt, Expr, ExprKind, Stmt, UnaryExpr, Variable,
+    AssignExpr, BinaryExpr, ConditionStmt, Expr, ExprKind, Stmt, UnaryExpr, Variable, WhileStmt,
 };
 use crate::error::SyntaxError;
 use crate::scanner::Scanner;
@@ -111,6 +111,8 @@ impl<'src> Parser<'src> {
     /// ```text
     /// statement  → exprStmt
     ///            | printStmt
+    ///            | ifStmt
+    ///            | whileStmt
     ///            | block ;
     /// ```
     fn statement(&mut self) -> Result<Stmt<'src>, SyntaxError> {
@@ -118,6 +120,7 @@ impl<'src> Parser<'src> {
             TokenType::Keyword(Keyword::Print) => self.print_stmt(),
             TokenType::LeftBrace => self.block(),
             TokenType::Keyword(Keyword::If) => self.if_stmt(),
+            TokenType::Keyword(Keyword::While) => self.while_stmt(),
             _ => self.expression_stmt(),
         }
     }
@@ -163,6 +166,19 @@ impl<'src> Parser<'src> {
             then_branch,
             else_branch,
         }))
+    }
+
+    /// parse while statement according to following rules:
+    /// ```text
+    /// whileStmt  → "while" "(" expression ")" statement ;
+    /// ```
+    fn while_stmt(&mut self) -> Result<Stmt<'src>, SyntaxError> {
+        self.consume(TokenType::Keyword(Keyword::While))?;
+        self.consume(TokenType::LeftParen)?;
+        let condition = self.expression()?;
+        self.consume(TokenType::RightParen)?;
+        let body = Box::new(self.statement()?);
+        Ok(Stmt::While(WhileStmt { condition, body }))
     }
 
     /// parse block statement according to following rules:
@@ -568,6 +584,16 @@ mod tests {
     fn if_statement() {
         insta::with_settings!({snapshot_path => SNAPSHOT_OUTPUT_BASE},{
             let src = src!(SNAPSHOT_INPUT_BASE, "if_statement.lox");
+            let mut parser = Parser::new(&src);
+            let results = parser.parse();
+            insta::assert_debug_snapshot!(results);
+        })
+    }
+
+    #[test]
+    fn while_statement() {
+        insta::with_settings!({snapshot_path => SNAPSHOT_OUTPUT_BASE},{
+            let src = src!(SNAPSHOT_INPUT_BASE, "while_statement.lox");
             let mut parser = Parser::new(&src);
             let results = parser.parse();
             insta::assert_debug_snapshot!(results);
