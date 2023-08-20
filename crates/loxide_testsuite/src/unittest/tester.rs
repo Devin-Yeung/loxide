@@ -17,23 +17,35 @@ pub struct Tester {
     snapshot_path: PathBuf,
 }
 
-impl Tester {}
+impl Tester {
+    fn source_exec<F: FnMut(&str)>(&self, mut f: F) {
+        let source = fs::read_to_string(&self.source_path).unwrap();
+        insta::with_settings!({
+            snapshot_path => &self.snapshot_path,
+            prepend_module_to_snapshot => false,
+        },{
+            f(&source);
+        });
+    }
+}
 
 pub struct TesterBuilder<P: AsRef<Path>, S: AsRef<str>> {
     source_name: P,
     module_path: S,
+    cargo_manifest_dir: P,
 }
 
 impl<P: AsRef<Path>, S: AsRef<str>> TesterBuilder<P, S> {
-    pub fn new(source_name: P, module_path: S) -> Self {
+    fn new(source_name: P, module_path: S, cargo_manifest_dir: P) -> Self {
         Self {
             source_name,
             module_path,
+            cargo_manifest_dir,
         }
     }
 
     fn base(&self) -> PathBuf {
-        let mut root: PathBuf = std::env!("CARGO_MANIFEST_DIR").into();
+        let mut root: PathBuf = self.cargo_manifest_dir.as_ref().into();
         root.push("snapshots");
 
         self.module_path
@@ -61,7 +73,7 @@ impl<P: AsRef<Path>, S: AsRef<str>> TesterBuilder<P, S> {
         }
     }
 
-    pub fn source_path(&self) -> PathBuf {
+    fn source_path(&self) -> PathBuf {
         let path = path!(self.base(), "input");
         Self::auto_create_dir(&path);
         let path = path!(path, &self.source_name);
@@ -69,13 +81,13 @@ impl<P: AsRef<Path>, S: AsRef<str>> TesterBuilder<P, S> {
         path
     }
 
-    pub fn snapshot_path(&self) -> PathBuf {
+    fn snapshot_path(&self) -> PathBuf {
         let path = path!(self.base(), "output");
         Self::auto_create_dir(&path);
         path
     }
 
-    pub fn build(self) -> Tester {
+    fn build(self) -> Tester {
         let tester = Tester {
             source_path: self.source_path(),
             snapshot_path: self.snapshot_path(),
@@ -84,7 +96,16 @@ impl<P: AsRef<Path>, S: AsRef<str>> TesterBuilder<P, S> {
     }
 }
 
-pub fn source_exec<F: FnMut(&str)>(source_name: &str, module_path: &str, mut f: F) {}
+pub fn source_exec<F: FnMut(&str)>(
+    source_name: &str,
+    module_path: &str,
+    cargo_manifest_dir: &str,
+    f: F,
+) {
+    TesterBuilder::new(source_name, module_path, cargo_manifest_dir.into())
+        .build()
+        .source_exec(f);
+}
 
 #[cfg(test)]
 mod tests {
@@ -94,7 +115,8 @@ mod tests {
 
     #[test]
     fn builder() {
-        let tester = TesterBuilder::new("foobar.lox", module_path!()).build();
+        let tester =
+            TesterBuilder::new("foobar.lox", module_path!(), env!("CARGO_MANIFEST_DIR")).build();
         assert!(tester
             .source_path
             .ends_with("snapshots/unittest/tester/input/foobar.lox"));
