@@ -1,0 +1,48 @@
+---
+source: crates/loxide_parser/src/parser.rs
+expression: results
+---
+(
+    [
+        While(
+            WhileStmt {
+                condition: Expr {
+                    kind: Literal(
+                        Boolean(
+                            true,
+                        ),
+                    ),
+                },
+                body: Block(
+                    [
+                        While(
+                            WhileStmt {
+                                condition: Expr {
+                                    kind: Literal(
+                                        Boolean(
+                                            false,
+                                        ),
+                                    ),
+                                },
+                                body: Block(
+                                    [
+                                        Expression(
+                                            Expr {
+                                                kind: Literal(
+                                                    String(
+                                                        "Hello world",
+                                                    ),
+                                                ),
+                                            },
+                                        ),
+                                    ],
+                                ),
+                            },
+                        ),
+                    ],
+                ),
+            },
+        ),
+    ],
+    [],
+)
