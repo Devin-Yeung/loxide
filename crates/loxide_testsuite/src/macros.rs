@@ -22,12 +22,15 @@ macro_rules! footprints {
 
 #[macro_export]
 macro_rules! unittest {
-    ($file:expr, $closure:expr) => {{
-        $crate::_macro_support::source_exec(
-            $file,
-            ::std::module_path!(),
-            ::std::env!("CARGO_MANIFEST_DIR"),
-            $closure,
-        );
-    }};
+    ($name:ident, $closure:expr) => {
+        #[test]
+        fn $name() {
+            $crate::_macro_support::source_exec(
+                concat!(stringify!($name), ".lox"),
+                ::std::module_path!(),
+                ::std::env!("CARGO_MANIFEST_DIR"),
+                $closure,
+            );
+        }
+    };
 }
