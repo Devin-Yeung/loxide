@@ -28,7 +28,7 @@ impl<'src> Evaluable for Stmt<'src> {
         match self {
             Stmt::Expression(e) => e.eval(env),
             Stmt::PrintStmt(e) => {
-                let val = probe!(e.eval(env))?;
+                probe!(e.eval(env))?;
                 Ok(Value::Void)
             }
             Stmt::VarDeclaration(var, expr) => {
@@ -102,7 +102,6 @@ impl<'src> Evaluable for Expr<'src> {
             ExprKind::Grouped(g) => g.eval(env),
             ExprKind::Variable(v) => v.eval(env),
             ExprKind::Assign(a) => a.eval(env),
-            _ => unreachable!(),
         };
     }
 }

@@ -34,10 +34,6 @@ where
         }
         self.buffer[1]
     }
-
-    fn fill(&mut self) {
-        self.buffer.push_back(self.iter.next())
-    }
 }
 
 impl<I: Iterator> Iterator for Prophet<I> {

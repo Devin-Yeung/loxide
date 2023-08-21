@@ -202,12 +202,10 @@ impl<'src> Iterator for Scanner<'src> {
 
     fn next(&mut self) -> Option<Self::Item> {
         match self.scan_token() {
-            Ok(x) if x.ty == TokenType::EOF => return None,
-            Ok(x) => return Some(Ok(x)),
-            Err(e) => return Some(Err(e)),
-            _ => {}
+            Ok(x) if x.ty == TokenType::EOF => None,
+            Ok(x) => Some(Ok(x)),
+            Err(e) => Some(Err(e)),
         }
-        None
     }
 }
 
