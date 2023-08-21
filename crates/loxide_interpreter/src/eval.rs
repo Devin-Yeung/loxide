@@ -215,11 +215,7 @@ mod tests {
     use crate::error::RuntimeError;
     use crate::eval::Evaluable;
     use crate::value::Value;
-    use loxide_macros::src;
-    use loxide_testsuite::{footprints, register};
-
-    const SNAPSHOT_INPUT_BASE: &'static str = "snapshots/interpreter/snapshots-inputs";
-    const SNAPSHOT_OUTPUT: &'static str = "../snapshots/interpreter/snapshots-outputs";
+    use loxide_testsuite::{footprints, register, unittest};
 
     fn eval(src: &str) -> Vec<Result<Value, RuntimeError>> {
         let mut parser = loxide_parser::parser::Parser::new(src);
@@ -228,78 +224,46 @@ mod tests {
         stmts.into_iter().map(|stmt| stmt.eval(&mut env)).collect()
     }
 
-    #[test]
-    fn literal() {
-        insta::with_settings!({snapshot_path => SNAPSHOT_OUTPUT},{
-            let src = src!(SNAPSHOT_INPUT_BASE, "literal.lox");
-            let results = eval(&src);
-            insta::assert_debug_snapshot!(results);
-        })
-    }
+    unittest!(literal, |src| {
+        let results = eval(&src);
+        insta::assert_debug_snapshot!(results);
+    });
 
-    #[test]
-    fn valid_unary() {
-        insta::with_settings!({snapshot_path => SNAPSHOT_OUTPUT},{
-            let src = src!(SNAPSHOT_INPUT_BASE, "valid_unary.lox");
-            let results = eval(&src);
-            insta::assert_debug_snapshot!(results);
-        })
-    }
+    unittest!(valid_unary, |src| {
+        let results = eval(&src);
+        insta::assert_debug_snapshot!(results);
+    });
 
-    #[test]
-    fn invalid_unary() {
-        insta::with_settings!({snapshot_path => SNAPSHOT_OUTPUT},{
-            let src = src!(SNAPSHOT_INPUT_BASE, "invalid_unary.lox");
-            let results: Vec<_> = src.split('\n').into_iter().map(|src| eval(&src)).collect();
-            insta::assert_debug_snapshot!(results);
-        })
-    }
+    unittest!(invalid_unary, |src| {
+        let results: Vec<_> = src.split('\n').into_iter().map(|src| eval(&src)).collect();
+        insta::assert_debug_snapshot!(results);
+    });
 
-    #[test]
-    fn valid_binary() {
-        insta::with_settings!({snapshot_path => SNAPSHOT_OUTPUT},{
-            let src = src!(SNAPSHOT_INPUT_BASE, "valid_binary.lox");
-            let results = eval(&src);
-            insta::assert_debug_snapshot!(results);
-        })
-    }
+    unittest!(valid_binary, |src| {
+        let results = eval(&src);
+        insta::assert_debug_snapshot!(results);
+    });
 
-    #[test]
-    fn variable() {
-        insta::with_settings!({snapshot_path => SNAPSHOT_OUTPUT},{
-            let src = src!(SNAPSHOT_INPUT_BASE, "variable.lox");
-            let results = eval(&src);
-            insta::assert_debug_snapshot!(results);
-        })
-    }
+    unittest!(variable, |src| {
+        let results: Vec<_> = eval(&src);
+        insta::assert_debug_snapshot!(results);
+    });
 
-    #[test]
-    fn block_stmt() {
-        insta::with_settings!({snapshot_path => SNAPSHOT_OUTPUT},{
-            register!();
-            let src = src!(SNAPSHOT_INPUT_BASE, "block_stmt.lox");
-            eval(&src);
-            insta::assert_debug_snapshot!(footprints!());
-        })
-    }
+    unittest!(block_stmt, |src| {
+        register!();
+        eval(&src);
+        insta::assert_debug_snapshot!(footprints!());
+    });
 
-    #[test]
-    fn if_stmt() {
-        insta::with_settings!({snapshot_path => SNAPSHOT_OUTPUT},{
-            register!();
-            let src = src!(SNAPSHOT_INPUT_BASE, "if_stmt.lox");
-            eval(&src);
-            insta::assert_debug_snapshot!(footprints!());
-        })
-    }
+    unittest!(if_stmt, |src| {
+        register!();
+        eval(&src);
+        insta::assert_debug_snapshot!(footprints!());
+    });
 
-    #[test]
-    fn while_stmt() {
-        insta::with_settings!({snapshot_path => SNAPSHOT_OUTPUT},{
-            register!();
-            let src = src!(SNAPSHOT_INPUT_BASE, "while_stmt.lox");
-            eval(&src);
-            insta::assert_debug_snapshot!(footprints!());
-        })
-    }
+    unittest!(while_stmt, |src| {
+        register!();
+        eval(&src);
+        insta::assert_debug_snapshot!(footprints!());
+    });
 }
