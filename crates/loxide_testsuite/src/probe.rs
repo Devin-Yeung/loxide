@@ -38,7 +38,7 @@ impl Probe {
         }
     }
 
-    pub(crate) fn register(test_name: &str) {
+    pub fn register(test_name: &str) {
         PROBE
             .lock()
             .unwrap()
@@ -46,7 +46,7 @@ impl Probe {
             .insert(test_name.to_string(), Vec::new());
     }
 
-    pub(crate) fn probe(content: String) {
+    pub fn probe(content: String) {
         let raw = Backtrace::capture().to_string();
         let backtrace = Self::backtrace(&raw);
         let mut guard = PROBE.lock().unwrap();
@@ -58,7 +58,7 @@ impl Probe {
         }
     }
 
-    pub(crate) fn footprints(test_name: &str) -> Vec<FootPrint> {
+    pub fn footprints(test_name: &str) -> Vec<FootPrint> {
         let guard = PROBE.lock().unwrap();
         guard.mapping.get(test_name).unwrap_or(&Vec::new()).clone()
     }
