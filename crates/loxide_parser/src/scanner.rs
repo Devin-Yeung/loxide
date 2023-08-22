@@ -244,9 +244,7 @@ impl<'src> From<&'src String> for Scanner<'src> {
 #[cfg(test)]
 mod tests {
     use crate::scanner::Scanner;
-    use loxide_macros::src;
-    const SNAPSHOT_OUTPUT_BASE: &'static str = "../snapshots/tokenizer/snapshots-outputs";
-    const SNAPSHOT_INPUT_BASE: &'static str = "snapshots/tokenizer/snapshots-inputs";
+    use loxide_testsuite::unittest;
 
     macro_rules! tokens {
         ($src:expr) => {{
@@ -255,92 +253,51 @@ mod tests {
         }};
     }
 
-    #[test]
-    fn single_char() {
-        insta::with_settings!({snapshot_path => SNAPSHOT_OUTPUT_BASE},{
-                let src = src!(SNAPSHOT_INPUT_BASE, "single_char.lox");
-                let scanner = Scanner::from(&src);
-                let tokens = scanner
-                    .map(|x| x.unwrap())
-                    .collect::<Vec<_>>();
-                insta::assert_debug_snapshot!(tokens);
-            }
-        )
-    }
+    unittest!(single_char, |src| {
+        let scanner = Scanner::from(src);
+        let tokens = scanner.map(|x| x.unwrap()).collect::<Vec<_>>();
+        insta::assert_debug_snapshot!(tokens);
+    });
 
-    #[test]
-    fn single_or_double_char() {
-        insta::with_settings!({snapshot_path => SNAPSHOT_OUTPUT_BASE},{
-                let src = src!(SNAPSHOT_INPUT_BASE, "single_or_double_char.lox");
-                let scanner = Scanner::from(&src);
-                let tokens = scanner
-                    .map(|x| x.unwrap())
-                    .collect::<Vec<_>>();
-                insta::assert_debug_snapshot!(tokens);
-            }
-        )
-    }
+    unittest!(single_or_double_char, |src| {
+        let scanner = Scanner::from(src);
+        let tokens = scanner.map(|x| x.unwrap()).collect::<Vec<_>>();
+        insta::assert_debug_snapshot!(tokens);
+    });
 
-    #[test]
-    fn valid_number() {
-        insta::with_settings!({snapshot_path => SNAPSHOT_OUTPUT_BASE},{
-                let src = src!(SNAPSHOT_INPUT_BASE, "valid_number.lox");
-                let scanner = Scanner::from(&src);
-                let tokens = scanner
-                    .collect::<Vec<_>>();
-                insta::assert_debug_snapshot!(tokens);
-            }
-        )
-    }
+    unittest!(valid_number, |src| {
+        let scanner = Scanner::from(src);
+        let tokens = scanner.collect::<Vec<_>>();
+        insta::assert_debug_snapshot!(tokens);
+    });
 
-    #[test]
-    fn invalid_number() {
-        insta::with_settings!({snapshot_path => SNAPSHOT_OUTPUT_BASE},{
-            let src = src!(SNAPSHOT_INPUT_BASE, "invalid_number.lox");
-            // each line a single new src
-            let tokens = src.split('\n').map(|l| tokens!(l)).collect::<Vec<_>>();
-            insta::assert_debug_snapshot!(tokens);
-        })
-    }
+    unittest!(invalid_number, |src| {
+        // each line a single new src
+        let tokens = src.split('\n').map(|l| tokens!(l)).collect::<Vec<_>>();
+        insta::assert_debug_snapshot!(tokens);
+    });
 
-    #[test]
-    fn valid_string() {
-        insta::with_settings!({snapshot_path => SNAPSHOT_OUTPUT_BASE},{
-            let src = src!(SNAPSHOT_INPUT_BASE, "valid_string.lox");
-            let scanner = Scanner::from(&src);
-            let tokens = scanner
-                .collect::<Vec<_>>();
-            insta::assert_debug_snapshot!(tokens);
-        })
-    }
+    unittest!(valid_string, |src| {
+        let scanner = Scanner::from(src);
+        let tokens = scanner.collect::<Vec<_>>();
+        insta::assert_debug_snapshot!(tokens);
+    });
 
-    #[test]
-    fn invalid_string() {
-        insta::with_settings!({snapshot_path => SNAPSHOT_OUTPUT_BASE},{
-            let src = src!(SNAPSHOT_INPUT_BASE, "invalid_string.lox");
-            // each line a single new src
-            let tokens = src.split('\n').map(|l| tokens!(l)).collect::<Vec<_>>();
-            insta::assert_debug_snapshot!(tokens);
-        })
-    }
+    unittest!(invalid_string, |src| {
+        // each line a single new src
+        let tokens = src.split('\n').map(|l| tokens!(l)).collect::<Vec<_>>();
+        insta::assert_debug_snapshot!(tokens);
+    });
 
-    #[test]
-    fn valid_indents_and_keywords() {
-        insta::with_settings!({snapshot_path => SNAPSHOT_OUTPUT_BASE},{
-            let src = src!(SNAPSHOT_INPUT_BASE, "valid_idents_and_keywords.lox");
-            let scanner = Scanner::from(&src);
-            let tokens = scanner.collect::<Vec<_>>();
-            insta::assert_debug_snapshot!(tokens);
-        })
-    }
+    unittest!(valid_idents_and_keywords, |src| {
+        let scanner = Scanner::from(src);
+        let tokens = scanner.collect::<Vec<_>>();
+        insta::assert_debug_snapshot!(tokens);
+    });
 
-    #[test]
-    fn expressions() {
-        insta::with_settings!({snapshot_path => SNAPSHOT_OUTPUT_BASE},{
-            let src = src!(SNAPSHOT_INPUT_BASE, "comments.lox");
-            let scanner = Scanner::from(&src);
-            let tokens = scanner.collect::<Vec<_>>();
-            insta::assert_debug_snapshot!(tokens);
-        })
-    }
+    unittest!(expressions, |src| {
+        let scanner = Scanner::from(src);
+        let tokens = scanner.collect::<Vec<_>>();
+        insta::assert_debug_snapshot!(tokens);
+    });
 }
