@@ -458,145 +458,99 @@ impl<'src> Parser<'src> {
 #[cfg(test)]
 mod tests {
     use crate::parser::Parser;
-    use loxide_macros::src;
-    const SNAPSHOT_OUTPUT_BASE: &'static str = "../snapshots/parser/snapshots-outputs";
-    const SNAPSHOT_INPUT_BASE: &'static str = "snapshots/parser/snapshots-inputs";
+    use loxide_testsuite::unittest;
 
-    #[test]
-    fn primary() {
-        insta::with_settings!({snapshot_path => SNAPSHOT_OUTPUT_BASE},{
-            let src = src!(SNAPSHOT_INPUT_BASE, "primary.lox");
-            let asts = src.split('\n').map(|line| {
-                Parser::new(line).primary()
-            }).collect::<Vec<_>>();
-            insta::assert_debug_snapshot!(asts);
-        })
-    }
+    unittest!(primary, |src| {
+        let asts = src
+            .split('\n')
+            .map(|line| Parser::new(line).primary())
+            .collect::<Vec<_>>();
+        insta::assert_debug_snapshot!(asts);
+    });
 
-    #[test]
-    fn unary() {
-        insta::with_settings!({snapshot_path => SNAPSHOT_OUTPUT_BASE},{
-            let src = src!(SNAPSHOT_INPUT_BASE, "unary.lox");
-            let asts = src.split('\n').map(|line| {
-                Parser::new(line).unary()
-            }).collect::<Vec<_>>();
-            insta::assert_debug_snapshot!(asts);
-        })
-    }
+    unittest!(unary, |src| {
+        let asts = src
+            .split('\n')
+            .map(|line| Parser::new(line).unary())
+            .collect::<Vec<_>>();
+        insta::assert_debug_snapshot!(asts);
+    });
 
-    #[test]
-    fn factor() {
-        insta::with_settings!({snapshot_path => SNAPSHOT_OUTPUT_BASE},{
-            let src = src!(SNAPSHOT_INPUT_BASE, "factor.lox");
-            let asts = src.split('\n').map(|line| {
-                Parser::new(line).factor()
-            }).collect::<Vec<_>>();
-            insta::assert_debug_snapshot!(asts);
-        })
-    }
+    unittest!(factor, |src| {
+        let asts = src
+            .split('\n')
+            .map(|line| Parser::new(line).factor())
+            .collect::<Vec<_>>();
+        insta::assert_debug_snapshot!(asts);
+    });
 
-    #[test]
-    fn term() {
-        insta::with_settings!({snapshot_path => SNAPSHOT_OUTPUT_BASE},{
-            let src = src!(SNAPSHOT_INPUT_BASE, "term.lox");
-            let asts = src.split('\n').map(|line| {
-                Parser::new(line).term()
-            }).collect::<Vec<_>>();
-            insta::assert_debug_snapshot!(asts);
-        })
-    }
+    unittest!(term, |src| {
+        let asts = src
+            .split('\n')
+            .map(|line| Parser::new(line).term())
+            .collect::<Vec<_>>();
+        insta::assert_debug_snapshot!(asts);
+    });
 
-    #[test]
-    fn comparison() {
-        insta::with_settings!({snapshot_path => SNAPSHOT_OUTPUT_BASE},{
-            let src = src!(SNAPSHOT_INPUT_BASE, "comparison.lox");
-            let asts = src.split('\n').map(|line| {
-                Parser::new(line).comparison()
-            }).collect::<Vec<_>>();
-            insta::assert_debug_snapshot!(asts);
-        })
-    }
+    unittest!(comparison, |src| {
+        let asts = src
+            .split('\n')
+            .map(|line| Parser::new(line).comparison())
+            .collect::<Vec<_>>();
+        insta::assert_debug_snapshot!(asts);
+    });
 
-    #[test]
-    fn equality() {
-        insta::with_settings!({snapshot_path => SNAPSHOT_OUTPUT_BASE},{
-            let src = src!(SNAPSHOT_INPUT_BASE, "equality.lox");
-            let asts = src.split('\n').map(|line| {
-                Parser::new(line).equality()
-            }).collect::<Vec<_>>();
-            insta::assert_debug_snapshot!(asts);
-        })
-    }
+    unittest!(equality, |src| {
+        let asts = src
+            .split('\n')
+            .map(|line| Parser::new(line).equality())
+            .collect::<Vec<_>>();
+        insta::assert_debug_snapshot!(asts);
+    });
 
-    #[test]
-    fn expression() {
-        insta::with_settings!({snapshot_path => SNAPSHOT_OUTPUT_BASE},{
-            let src = src!(SNAPSHOT_INPUT_BASE, "expression.lox");
-            let asts = src.split('\n').map(|line| {
-                Parser::new(line).expression()
-            }).collect::<Vec<_>>();
-            insta::assert_debug_snapshot!(asts);
-        })
-    }
+    unittest!(expression, |src| {
+        let asts = src
+            .split('\n')
+            .map(|line| Parser::new(line).expression())
+            .collect::<Vec<_>>();
+        insta::assert_debug_snapshot!(asts);
+    });
 
-    #[test]
-    fn single_statement() {
-        insta::with_settings!({snapshot_path => SNAPSHOT_OUTPUT_BASE},{
-            let src = src!(SNAPSHOT_INPUT_BASE, "single_statement.lox");
-            let asts = src.split('\n').map(|line| {
-                Parser::new(line).statement()
-            }).collect::<Vec<_>>();
-            insta::assert_debug_snapshot!(asts);
-        })
-    }
+    unittest!(single_statement, |src| {
+        let asts = src
+            .split('\n')
+            .map(|line| Parser::new(line).statement())
+            .collect::<Vec<_>>();
+        insta::assert_debug_snapshot!(asts);
+    });
 
-    #[test]
-    fn many_statements() {
-        insta::with_settings!({snapshot_path => SNAPSHOT_OUTPUT_BASE},{
-            let src = src!(SNAPSHOT_INPUT_BASE, "many_statements.lox");
-            let mut parser = Parser::new(&src);
-            let results = parser.parse();
-            insta::assert_debug_snapshot!(results);
-        })
-    }
+    unittest!(many_statements, |src| {
+        let mut parser = Parser::new(&src);
+        let results = parser.parse();
+        insta::assert_debug_snapshot!(results);
+    });
 
-    #[test]
-    fn declarations() {
-        insta::with_settings!({snapshot_path => SNAPSHOT_OUTPUT_BASE},{
-            let src = src!(SNAPSHOT_INPUT_BASE, "declarations.lox");
-            let mut parser = Parser::new(&src);
-            let results = parser.parse();
-            insta::assert_debug_snapshot!(results);
-        })
-    }
+    unittest!(declarations, |src| {
+        let mut parser = Parser::new(&src);
+        let results = parser.parse();
+        insta::assert_debug_snapshot!(results);
+    });
 
-    #[test]
-    fn block_statement() {
-        insta::with_settings!({snapshot_path => SNAPSHOT_OUTPUT_BASE},{
-            let src = src!(SNAPSHOT_INPUT_BASE, "block_statement.lox");
-            let mut parser = Parser::new(&src);
-            let results = parser.parse();
-            insta::assert_debug_snapshot!(results);
-        })
-    }
+    unittest!(block_statement, |src| {
+        let mut parser = Parser::new(&src);
+        let results = parser.parse();
+        insta::assert_debug_snapshot!(results);
+    });
 
-    #[test]
-    fn if_statement() {
-        insta::with_settings!({snapshot_path => SNAPSHOT_OUTPUT_BASE},{
-            let src = src!(SNAPSHOT_INPUT_BASE, "if_statement.lox");
-            let mut parser = Parser::new(&src);
-            let results = parser.parse();
-            insta::assert_debug_snapshot!(results);
-        })
-    }
+    unittest!(if_statement, |src| {
+        let mut parser = Parser::new(&src);
+        let results = parser.parse();
+        insta::assert_debug_snapshot!(results);
+    });
 
-    #[test]
-    fn while_statement() {
-        insta::with_settings!({snapshot_path => SNAPSHOT_OUTPUT_BASE},{
-            let src = src!(SNAPSHOT_INPUT_BASE, "while_statement.lox");
-            let mut parser = Parser::new(&src);
-            let results = parser.parse();
-            insta::assert_debug_snapshot!(results);
-        })
-    }
+    unittest!(while_statement, |src| {
+        let mut parser = Parser::new(&src);
+        let results = parser.parse();
+        insta::assert_debug_snapshot!(results);
+    });
 }
