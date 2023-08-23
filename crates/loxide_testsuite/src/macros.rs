@@ -49,4 +49,16 @@ macro_rules! unittest {
             );
         }
     };
+
+    ($pin_to:expr, $name:ident, $closure:expr) => {
+        #[test]
+        fn $name() {
+            $crate::_macro_support::source_exec(
+                concat!(stringify!($name), ".lox"),
+                $pin_to,
+                ::std::env!("CARGO_MANIFEST_DIR"),
+                $closure,
+            );
+        }
+    };
 }

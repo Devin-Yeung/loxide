@@ -8,3 +8,4 @@ edition = "2021"
 [dependencies]
 insta = { workspace = true, features = ["glob"] }
 once_cell = "1.18.0"
+loxide_testsuite_macros = { workspace = true }
