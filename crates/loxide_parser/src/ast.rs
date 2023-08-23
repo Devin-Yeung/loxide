@@ -93,6 +93,14 @@ pub struct WhileStmt<'src> {
 }
 
 #[derive(Debug)]
+pub struct ForStmt<'src> {
+    pub initializer: Option<Box<Stmt<'src>>>,
+    pub condition: Option<Box<Expr<'src>>>,
+    pub increment: Option<Box<Expr<'src>>>,
+    pub body: Box<Stmt<'src>>,
+}
+
+#[derive(Debug)]
 #[non_exhaustive]
 pub enum Stmt<'src> {
     Expression(Expr<'src>),
@@ -101,4 +109,5 @@ pub enum Stmt<'src> {
     Block(Vec<Stmt<'src>>),
     Condition(ConditionStmt<'src>),
     While(WhileStmt<'src>),
+    For(ForStmt<'src>),
 }
