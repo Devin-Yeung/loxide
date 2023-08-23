@@ -2,7 +2,8 @@ use crate::ast;
 use crate::ast::ExprKind::Binary;
 use crate::ast::Literal::{Boolean, Nil};
 use crate::ast::{
-    AssignExpr, BinaryExpr, ConditionStmt, Expr, ExprKind, Stmt, UnaryExpr, Variable, WhileStmt,
+    AssignExpr, BinaryExpr, ConditionStmt, Expr, ExprKind, ForStmt, Stmt, UnaryExpr, Variable,
+    WhileStmt,
 };
 use crate::error::SyntaxError;
 use crate::scanner::Scanner;
@@ -113,6 +114,7 @@ impl<'src> Parser<'src> {
     ///            | printStmt
     ///            | ifStmt
     ///            | whileStmt
+    ///            | forStmt
     ///            | block ;
     /// ```
     fn statement(&mut self) -> Result<Stmt<'src>, SyntaxError> {
@@ -121,6 +123,7 @@ impl<'src> Parser<'src> {
             TokenType::LeftBrace => self.block(),
             TokenType::Keyword(Keyword::If) => self.if_stmt(),
             TokenType::Keyword(Keyword::While) => self.while_stmt(),
+            TokenType::Keyword(Keyword::For) => self.for_stmt(),
             _ => self.expression_stmt(),
         }
     }
@@ -179,6 +182,45 @@ impl<'src> Parser<'src> {
         self.consume(TokenType::RightParen)?;
         let body = Box::new(self.statement()?);
         Ok(Stmt::While(WhileStmt { condition, body }))
+    }
+
+    /// parse for statement according to following rules:
+    /// ```text
+    /// forStmt  → "for"
+    ///          "("
+    ///             ( varDecl | exprStmt | ";" )
+    ///               expression? ";"
+    ///               expression?
+    ///          ")"
+    ///          statement ;
+    /// ```
+    fn for_stmt(&mut self) -> Result<Stmt<'src>, SyntaxError> {
+        self.consume(TokenType::Keyword(Keyword::For))?;
+        self.consume(TokenType::LeftParen)?;
+        let initializer = match self.peek_type()? {
+            TokenType::Semicolon => {
+                self.consume(TokenType::Semicolon)?;
+                None
+            }
+            _ => Some(Box::new(self.declaration()?)),
+        };
+        let condition = match self.peek_type()? {
+            TokenType::Semicolon => None,
+            _ => Some(Box::new(self.expression()?)),
+        };
+        self.consume(TokenType::Semicolon)?;
+        let increment = match self.peek_type()? {
+            TokenType::RightParen => None,
+            _ => Some(Box::new(self.expression()?)),
+        };
+        self.consume(TokenType::RightParen)?;
+        let body = Box::new(self.statement()?);
+        Ok(Stmt::For(ForStmt {
+            initializer,
+            condition,
+            increment,
+            body,
+        }))
     }
 
     /// parse block statement according to following rules:
@@ -549,6 +591,12 @@ mod tests {
     });
 
     unittest!(while_statement, |src| {
+        let mut parser = Parser::new(&src);
+        let results = parser.parse();
+        insta::assert_debug_snapshot!(results);
+    });
+
+    unittest!(for_statement, |src| {
         let mut parser = Parser::new(&src);
         let results = parser.parse();
         insta::assert_debug_snapshot!(results);

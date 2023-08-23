@@ -1,0 +1,97 @@
+---
+source: crates/loxide_parser/src/parser.rs
+expression: results
+---
+(
+    [
+        For(
+            ForStmt {
+                initializer: Some(
+                    VarDeclaration(
+                        Variable {
+                            name: "a",
+                        },
+                        Some(
+                            Expr {
+                                kind: Literal(
+                                    Number(
+                                        1.0,
+                                    ),
+                                ),
+                            },
+                        ),
+                    ),
+                ),
+                condition: Some(
+                    Expr {
+                        kind: Binary(
+                            BinaryExpr {
+                                lhs: Expr {
+                                    kind: Variable(
+                                        Variable {
+                                            name: "a",
+                                        },
+                                    ),
+                                },
+                                rhs: Expr {
+                                    kind: Literal(
+                                        Number(
+                                            10.0,
+                                        ),
+                                    ),
+                                },
+                                operator: Less,
+                            },
+                        ),
+                    },
+                ),
+                increment: Some(
+                    Expr {
+                        kind: Assign(
+                            AssignExpr {
+                                name: Variable {
+                                    name: "a",
+                                },
+                                value: Expr {
+                                    kind: Binary(
+                                        BinaryExpr {
+                                            lhs: Expr {
+                                                kind: Variable(
+                                                    Variable {
+                                                        name: "a",
+                                                    },
+                                                ),
+                                            },
+                                            rhs: Expr {
+                                                kind: Literal(
+                                                    Number(
+                                                        1.0,
+                                                    ),
+                                                ),
+                                            },
+                                            operator: Plus,
+                                        },
+                                    ),
+                                },
+                            },
+                        ),
+                    },
+                ),
+                body: Block(
+                    [
+                        PrintStmt(
+                            Expr {
+                                kind: Variable(
+                                    Variable {
+                                        name: "a",
+                                    },
+                                ),
+                            },
+                        ),
+                    ],
+                ),
+            },
+        ),
+    ],
+    [],
+)
