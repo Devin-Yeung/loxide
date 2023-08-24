@@ -2,10 +2,11 @@ use crate::environment::Environment;
 use crate::error::RuntimeError;
 use crate::value::Value;
 use loxide_parser::ast::{
-    AssignExpr, BinaryExpr, BinaryOperator, ConditionStmt, Expr, ExprKind, GroupedExpr, Literal,
-    Stmt, UnaryExpr, UnaryOperator, Variable, WhileStmt,
+    AssignExpr, BinaryExpr, BinaryOperator, ConditionStmt, Expr, ExprKind, ForStmt, GroupedExpr,
+    Literal, Stmt, UnaryExpr, UnaryOperator, Variable, WhileStmt,
 };
 use loxide_testsuite::probe;
+use std::ops::Deref;
 
 pub trait Evaluable {
     fn eval(&self, env: &mut Environment) -> Result<Value, RuntimeError>;
@@ -46,6 +47,7 @@ impl<'src> Evaluable for Stmt<'src> {
             }
             Stmt::Condition(cond) => cond.eval(env),
             Stmt::While(cond) => cond.eval(env),
+            Stmt::For(stmt) => stmt.eval(env),
             _ => unreachable!(),
         }
     }
@@ -80,6 +82,38 @@ impl<'src> Evaluable for WhileStmt<'src> {
             }
         }
         Err(RuntimeError::ExpectedBoolean)
+    }
+}
+
+impl<'src> Evaluable for ForStmt<'src> {
+    fn eval(&self, env: &mut Environment) -> Result<Value, RuntimeError> {
+        let mut env = env.extend();
+        let _ = &self.initializer.eval(&mut env)?;
+        while self.condition.eval(&mut env)?.as_boolean().unwrap() {
+            self.body.eval(&mut env)?;
+            self.increment.eval(&mut env)?;
+        }
+        Ok(Value::Void)
+    }
+}
+
+impl<'src> Evaluable for Option<Box<Stmt<'src>>> {
+    fn eval(&self, env: &mut Environment) -> Result<Value, RuntimeError> {
+        if let Some(stmt) = self {
+            stmt.eval(env)
+        } else {
+            Ok(Value::Void)
+        }
+    }
+}
+
+impl<'src> Evaluable for Option<Box<Expr<'src>>> {
+    fn eval(&self, env: &mut Environment) -> Result<Value, RuntimeError> {
+        let val = match self {
+            None => Value::Nil,
+            Some(e) => e.eval(env)?,
+        };
+        Ok(val)
     }
 }
 
@@ -261,6 +295,12 @@ mod tests {
     });
 
     unittest!(while_stmt, |src| {
+        register!();
+        eval(&src);
+        insta::assert_debug_snapshot!(footprints!());
+    });
+
+    unittest!(for_stmt, |src| {
         register!();
         eval(&src);
         insta::assert_debug_snapshot!(footprints!());
