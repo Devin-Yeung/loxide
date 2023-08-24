@@ -88,12 +88,23 @@ impl<'src> Evaluable for ForStmt<'src> {
     fn eval(&self, env: &mut Environment) -> Result<Value, RuntimeError> {
         let mut env = env.extend();
         let _ = &self.initializer.eval(&mut env)?;
-        while let Value::Boolean(b) = self.condition.eval(&mut env)? {
-            if b {
-                self.body.eval(&mut env)?;
-                self.increment.eval(&mut env)?;
-            } else {
-                return Ok(Value::Void);
+        match &self.condition {
+            None => {
+                // infinite loop
+                loop {
+                    self.body.eval(&mut env)?;
+                    self.increment.eval(&mut env)?;
+                }
+            }
+            Some(cond) => {
+                while let Value::Boolean(b) = cond.eval(&mut env)? {
+                    if b {
+                        self.body.eval(&mut env)?;
+                        self.increment.eval(&mut env)?;
+                    } else {
+                        return Ok(Value::Void);
+                    }
+                }
             }
         }
         Err(RuntimeError::ExpectedBoolean)
