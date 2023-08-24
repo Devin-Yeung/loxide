@@ -6,7 +6,6 @@ use loxide_parser::ast::{
     Literal, Stmt, UnaryExpr, UnaryOperator, Variable, WhileStmt,
 };
 use loxide_testsuite::probe;
-use std::ops::Deref;
 
 pub trait Evaluable {
     fn eval(&self, env: &mut Environment) -> Result<Value, RuntimeError>;
@@ -89,11 +88,15 @@ impl<'src> Evaluable for ForStmt<'src> {
     fn eval(&self, env: &mut Environment) -> Result<Value, RuntimeError> {
         let mut env = env.extend();
         let _ = &self.initializer.eval(&mut env)?;
-        while self.condition.eval(&mut env)?.as_boolean().unwrap() {
-            self.body.eval(&mut env)?;
-            self.increment.eval(&mut env)?;
+        while let Value::Boolean(b) = self.condition.eval(&mut env)? {
+            if b {
+                self.body.eval(&mut env)?;
+                self.increment.eval(&mut env)?;
+            } else {
+                return Ok(Value::Void);
+            }
         }
-        Ok(Value::Void)
+        Err(RuntimeError::ExpectedBoolean)
     }
 }
 
@@ -304,5 +307,10 @@ mod tests {
         register!();
         eval(&src);
         insta::assert_debug_snapshot!(footprints!());
+    });
+
+    unittest!(for_stmt_expect_bool, |src| {
+        let results: Vec<_> = eval(&src);
+        insta::assert_debug_snapshot!(results);
     });
 }
