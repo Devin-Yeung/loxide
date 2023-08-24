@@ -92,6 +92,16 @@ expression: results
                 ),
             },
         ),
+        For(
+            ForStmt {
+                initializer: None,
+                condition: None,
+                increment: None,
+                body: Block(
+                    [],
+                ),
+            },
+        ),
     ],
     [],
 )
