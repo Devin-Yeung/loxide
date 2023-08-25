@@ -122,3 +122,11 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           file: cobertura.xml
           compare-ref: origin/master
+  typos:
+    name: Spell Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: crate-ci/typos@master
+        with:
+          files: .
