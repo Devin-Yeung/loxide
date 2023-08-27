@@ -23,6 +23,7 @@ jobs:
           # Accept 429 for now due to GitHub rate limit.
           # See https://github.com/lycheeverse/lychee/issues/634
           args: --accept 200,429 --verbose --no-progress .
+          fail: true
   nightly:
     runs-on: ubuntu-latest
     name: ubuntu / nightly
