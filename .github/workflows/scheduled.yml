@@ -11,6 +11,16 @@ concurrency:
   cancel-in-progress: true
 name: Rolling
 jobs:
+  link-check:
+    runs-on: ubuntu-latest
+    name: check-links
+    steps:
+      - uses: actions/checkout@v3
+      - name: Check Links
+        uses: lycheeverse/lychee-action@master
+        with:
+          # For parameter description, see https://github.com/lycheeverse/lychee#commandline-parameters
+          args: --exclude-all-private --insecure --no-progress .
   nightly:
     runs-on: ubuntu-latest
     name: ubuntu / nightly

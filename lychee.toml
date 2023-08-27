@@ -1,0 +1,7 @@
+# Comma-separated list of accepted status codes for valid links.
+# Accept 429 for now due to GitHub rate limit.
+# See https://github.com/lycheeverse/lychee/issues/634
+accept = [200, 429]
+
+# Website timeout from connect to response finished
+timeout = 10
