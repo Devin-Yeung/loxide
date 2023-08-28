@@ -1,4 +1,8 @@
 name: ReviewDog-Suggester
+permissions:
+  checks: write
+  contents: read
+  pull-requests: write # see https://github.com/reviewdog/action-eslint/issues/147
 on: [ pull_request ] # Support only pull_request event.
 jobs:
   cargo-clippy-suggest:
