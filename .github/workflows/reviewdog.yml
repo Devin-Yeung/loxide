@@ -1,0 +1,24 @@
+name: ReviewDog-Suggester
+on: [ pull_request ] # Support only pull_request event.
+jobs:
+  cargo-clippy-suggest:
+    strategy:
+      fail-fast: false
+      matrix:
+        toolchain: [ stable ]
+    name: suggester / cargo-clippy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+      - name: Install ${{ matrix.toolchain }}
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ matrix.toolchain }}
+          components: clippy
+      - run: cargo clippy --fix
+      - name: Suggest in PR comments
+        uses: reviewdog/action-suggester@v1
+        with:
+          tool_name: clippy
