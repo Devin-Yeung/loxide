@@ -143,14 +143,14 @@ impl<'src> Evaluable for Option<Expr<'src>> {
 
 impl<'src> Evaluable for Expr<'src> {
     fn eval(&self, env: &mut Environment) -> Result<Value, RuntimeError> {
-        return match &self.kind {
+        match &self.kind {
             ExprKind::Literal(l) => l.eval(env),
             ExprKind::Unary(u) => u.eval(env),
             ExprKind::Binary(b) => b.eval(env),
             ExprKind::Grouped(g) => g.eval(env),
             ExprKind::Variable(v) => v.eval(env),
             ExprKind::Assign(a) => a.eval(env),
-        };
+        }
     }
 }
 
@@ -219,7 +219,7 @@ impl<'src> Evaluable for BinaryExpr<'src> {
 impl<'src> Evaluable for UnaryExpr<'src> {
     fn eval(&self, env: &mut Environment) -> Result<Value, RuntimeError> {
         let value = self.expr.eval(env)?;
-        return match self.operator {
+        match self.operator {
             UnaryOperator::Minus => {
                 let num = inner_or!(value, number, RuntimeError::InvalidUnaryOperand("number"))?;
                 Ok(Value::Number(-num))
@@ -228,7 +228,7 @@ impl<'src> Evaluable for UnaryExpr<'src> {
                 let bool = inner_or!(value, boolean, RuntimeError::InvalidUnaryOperand("boolean"))?;
                 Ok(Value::Boolean(!bool))
             }
-        };
+        }
     }
 }
 
@@ -240,7 +240,7 @@ impl<'src> Evaluable for GroupedExpr<'src> {
 
 impl<'src> Evaluable for Variable<'src> {
     fn eval(&self, env: &mut Environment) -> Result<Value, RuntimeError> {
-        env.get(self.name).map(|v| v.to_owned())
+        env.get(self.name)
     }
 }
 
@@ -272,56 +272,56 @@ mod tests {
     }
 
     unittest!(literal, |src| {
-        let results = eval(&src);
+        let results = eval(src);
         insta::assert_debug_snapshot!(results);
     });
 
     unittest!(valid_unary, |src| {
-        let results = eval(&src);
+        let results = eval(src);
         insta::assert_debug_snapshot!(results);
     });
 
     unittest!(invalid_unary, |src| {
-        let results: Vec<_> = src.split('\n').into_iter().map(|src| eval(&src)).collect();
+        let results: Vec<_> = src.split('\n').map(eval).collect();
         insta::assert_debug_snapshot!(results);
     });
 
     unittest!(valid_binary, |src| {
-        let results = eval(&src);
+        let results = eval(src);
         insta::assert_debug_snapshot!(results);
     });
 
     unittest!(variable, |src| {
-        let results: Vec<_> = eval(&src);
+        let results: Vec<_> = eval(src);
         insta::assert_debug_snapshot!(results);
     });
 
     unittest!(block_stmt, |src| {
         register!();
-        eval(&src);
+        eval(src);
         insta::assert_debug_snapshot!(footprints!());
     });
 
     unittest!(if_stmt, |src| {
         register!();
-        eval(&src);
+        eval(src);
         insta::assert_debug_snapshot!(footprints!());
     });
 
     unittest!(while_stmt, |src| {
         register!();
-        eval(&src);
+        eval(src);
         insta::assert_debug_snapshot!(footprints!());
     });
 
     unittest!(for_stmt, |src| {
         register!();
-        eval(&src);
+        eval(src);
         insta::assert_debug_snapshot!(footprints!());
     });
 
     unittest!(for_stmt_expect_bool, |src| {
-        let results: Vec<_> = eval(&src);
+        let results: Vec<_> = eval(src);
         insta::assert_debug_snapshot!(results);
     });
 }

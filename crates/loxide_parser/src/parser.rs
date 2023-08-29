@@ -66,15 +66,15 @@ impl<'src> Parser<'src> {
     fn peek_type(&mut self) -> Result<TokenType<'src>, SyntaxError> {
         match self.tokens.peek() {
             None => Ok(TokenType::EOF),
-            Some(&Ok(ref token)) => Ok(token.ty.clone()),
-            Some(&Err(ref err)) => Err(err.clone()),
+            Some(Ok(token)) => Ok(token.ty.clone()),
+            Some(Err(err)) => Err(*err),
         }
     }
 
     fn advance(&mut self) -> Result<Token<'src>, SyntaxError> {
         self.tokens
             .next()
-            .unwrap_or_else(|| Err(SyntaxError::UnexpectedEOF))
+            .unwrap_or(Err(SyntaxError::UnexpectedEOF))
     }
 
     /// parse declaration according to following rules:
@@ -567,37 +567,37 @@ mod tests {
     });
 
     unittest!(many_statements, |src| {
-        let mut parser = Parser::new(&src);
+        let mut parser = Parser::new(src);
         let results = parser.parse();
         insta::assert_debug_snapshot!(results);
     });
 
     unittest!(declarations, |src| {
-        let mut parser = Parser::new(&src);
+        let mut parser = Parser::new(src);
         let results = parser.parse();
         insta::assert_debug_snapshot!(results);
     });
 
     unittest!(block_statement, |src| {
-        let mut parser = Parser::new(&src);
+        let mut parser = Parser::new(src);
         let results = parser.parse();
         insta::assert_debug_snapshot!(results);
     });
 
     unittest!(if_statement, |src| {
-        let mut parser = Parser::new(&src);
+        let mut parser = Parser::new(src);
         let results = parser.parse();
         insta::assert_debug_snapshot!(results);
     });
 
     unittest!(while_statement, |src| {
-        let mut parser = Parser::new(&src);
+        let mut parser = Parser::new(src);
         let results = parser.parse();
         insta::assert_debug_snapshot!(results);
     });
 
     unittest!(for_statement, |src| {
-        let mut parser = Parser::new(&src);
+        let mut parser = Parser::new(src);
         let results = parser.parse();
         insta::assert_debug_snapshot!(results);
     });
