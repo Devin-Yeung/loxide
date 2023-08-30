@@ -28,12 +28,12 @@ impl<'src> Scanner<'src> {
     }
 
     pub fn consume_if(&mut self, expected: char) -> bool {
-        return if self.peek() == Some(expected) {
+        if self.peek() == Some(expected) {
             self.advance();
             true
         } else {
             false
-        };
+        }
     }
 
     fn peek(&mut self) -> Option<char> {
@@ -61,7 +61,7 @@ impl<'src> Scanner<'src> {
     }
 
     pub fn is_at_end(&self) -> bool {
-        self.prophet.peek() == None
+        self.prophet.peek().is_none()
     }
 
     fn eat_whitespace(&mut self) {
@@ -118,7 +118,7 @@ impl<'src> Scanner<'src> {
                 false => TokenType::Slash,
             },
             Some('\"') => self.string()?,
-            Some(c) if c.is_digit(10) => self.number()?,
+            Some(c) if c.is_ascii_digit() => self.number()?,
             Some(c) if c.is_ascii_alphabetic() || c == '_' => self.identifier(),
             None => TokenType::EOF,
             _ => return Err(SyntaxError::UnexpectedChar(self.current.line)),
@@ -163,13 +163,13 @@ impl<'src> Scanner<'src> {
         while let Some(c) = self.peek() {
             match c {
                 '.' => {
-                    if self.peek_next().map_or(false, |c| c.is_digit(10)) {
+                    if self.peek_next().map_or(false, |c| c.is_ascii_digit()) {
                         self.advance()
                     } else {
                         return Err(SyntaxError::InvalidNumber);
                     }
                 }
-                c if c.is_digit(10) => self.advance(),
+                c if c.is_ascii_digit() => self.advance(),
                 _ => break,
             };
         }
@@ -192,7 +192,7 @@ impl<'src> Scanner<'src> {
             &self.src[self.consumed..self.consumed + self.current.end - self.current.start];
         content
             .parse::<Keyword>()
-            .map(|k| TokenType::Keyword(k))
+            .map(TokenType::Keyword)
             .unwrap_or(TokenType::Identifier)
     }
 }

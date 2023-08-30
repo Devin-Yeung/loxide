@@ -88,11 +88,10 @@ impl<P: AsRef<Path>, S: AsRef<str>> TesterBuilder<P, S> {
     }
 
     fn build(self) -> Tester {
-        let tester = Tester {
+        Tester {
             source_path: self.source_path(),
             snapshot_path: self.snapshot_path(),
-        };
-        tester
+        }
     }
 }
 
@@ -102,7 +101,7 @@ pub fn source_exec<F: FnMut(&str)>(
     cargo_manifest_dir: &str,
     f: F,
 ) {
-    TesterBuilder::new(source_name, module_path, cargo_manifest_dir.into())
+    TesterBuilder::new(source_name, module_path, cargo_manifest_dir)
         .build()
         .source_exec(f);
 }

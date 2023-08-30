@@ -15,13 +15,13 @@ pub struct FootPrint(String);
 
 impl PartialEq<FootPrint> for &str {
     fn eq(&self, other: &FootPrint) -> bool {
-        return self.eq(&other.0);
+        self.eq(&other.0)
     }
 }
 
 impl PartialEq<&str> for FootPrint {
     fn eq(&self, other: &&str) -> bool {
-        return self.0.eq(other);
+        self.0.eq(other)
     }
 }
 

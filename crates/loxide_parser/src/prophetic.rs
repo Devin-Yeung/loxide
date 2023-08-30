@@ -22,7 +22,7 @@ where
     }
 
     pub fn peek(&self) -> Option<I::Item> {
-        if self.buffer.len() < 1 {
+        if self.buffer.is_empty() {
             unreachable!()
         }
         self.buffer[0]
