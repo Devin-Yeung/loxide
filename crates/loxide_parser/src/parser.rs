@@ -2,8 +2,8 @@ use crate::ast;
 use crate::ast::ExprKind::Binary;
 use crate::ast::Literal::{Boolean, Nil};
 use crate::ast::{
-    AssignExpr, BinaryExpr, CallExpr, ConditionStmt, Expr, ExprKind, ForStmt, Stmt, UnaryExpr,
-    Variable, WhileStmt,
+    AssignExpr, BinaryExpr, CallExpr, ConditionStmt, Expr, ExprKind, ForStmt, FunDeclaration, Stmt,
+    UnaryExpr, Variable, WhileStmt,
 };
 use crate::error::SyntaxError;
 use crate::scanner::Scanner;
@@ -80,14 +80,67 @@ impl<'src> Parser<'src> {
     /// parse declaration according to following rules:
     ///
     /// ```text
-    /// declaration  → varDecl
+    /// declaration  → funDecl
+    ///              | varDecl
     ///              | statement ;
     /// ```
     fn declaration(&mut self) -> Result<Stmt<'src>, SyntaxError> {
         match self.peek_type()? {
             TokenType::Keyword(Keyword::Var) => self.var_declaration(),
+            TokenType::Keyword(Keyword::Fun) => self.func_declaration(),
             _ => self.statement(),
         }
+    }
+
+    /// parse function declaration according to following rules:
+    ///
+    /// ```text
+    /// funDecl  → "fun" function ;
+    /// ```
+    fn func_declaration(&mut self) -> Result<Stmt<'src>, SyntaxError> {
+        self.consume(TokenType::Keyword(Keyword::Fun))?;
+        self.function()
+    }
+
+    /// parse function body according to following rules:
+    ///
+    /// ```text
+    /// function  → IDENTIFIER "(" parameters? ")" block ;
+    /// ```
+    fn function(&mut self) -> Result<Stmt<'src>, SyntaxError> {
+        let name = Variable {
+            name: self.consume(TokenType::Identifier)?.lexeme,
+        };
+        self.consume(TokenType::LeftParen)?;
+        let params = match self.peek_type()? {
+            TokenType::RightParen => Vec::new(),
+            _ => self.parameters()?,
+        };
+        self.consume(TokenType::RightParen)?;
+        let body = self.block()?;
+        Ok(Stmt::FunDeclaration(FunDeclaration { name, params, body }))
+    }
+
+    /// parse parameters according to following rules:
+    ///
+    /// ```text
+    /// parameters  → IDENTIFIER ( "," IDENTIFIER )* ;
+    /// ```
+    ///
+    fn parameters(&mut self) -> Result<Vec<Variable<'src>>, SyntaxError> {
+        let mut idents = Vec::<Variable>::new();
+
+        idents.push(Variable {
+            name: self.consume(TokenType::Identifier)?.lexeme.into(),
+        });
+
+        while self.consume_if(TokenType::Comma) {
+            idents.push(Variable {
+                name: self.consume(TokenType::Identifier)?.lexeme.into(),
+            });
+        }
+
+        Ok(idents)
     }
 
     /// parse var declaration according to following rules:
@@ -120,7 +173,7 @@ impl<'src> Parser<'src> {
     fn statement(&mut self) -> Result<Stmt<'src>, SyntaxError> {
         match self.peek_type()? {
             TokenType::Keyword(Keyword::Print) => self.print_stmt(),
-            TokenType::LeftBrace => self.block(),
+            TokenType::LeftBrace => self.block_stmt(),
             TokenType::Keyword(Keyword::If) => self.if_stmt(),
             TokenType::Keyword(Keyword::While) => self.while_stmt(),
             TokenType::Keyword(Keyword::For) => self.for_stmt(),
@@ -227,7 +280,15 @@ impl<'src> Parser<'src> {
     /// ```text
     /// block  → "{" declaration* "}" ;
     /// ```
-    fn block(&mut self) -> Result<Stmt<'src>, SyntaxError> {
+    fn block_stmt(&mut self) -> Result<Stmt<'src>, SyntaxError> {
+        Ok(Stmt::Block(self.block()?))
+    }
+
+    /// helper method for parsing  a block statement
+    /// ```text
+    /// block  → "{" declaration* "}" ;
+    /// ```
+    fn block(&mut self) -> Result<Vec<Stmt<'src>>, SyntaxError> {
         self.consume(TokenType::LeftBrace)?;
         let mut stmts: Vec<Stmt> = Vec::new();
         loop {
@@ -242,7 +303,7 @@ impl<'src> Parser<'src> {
             }
         }
         self.consume(TokenType::RightBrace)?;
-        Ok(Stmt::Block(stmts))
+        Ok(stmts)
     }
 
     /// parse print statement according to following rules:
@@ -646,6 +707,12 @@ mod tests {
     });
 
     unittest!(fn_call, |src| {
+        let mut parser = Parser::new(&src);
+        let results = parser.parse();
+        insta::assert_debug_snapshot!(results);
+    });
+
+    unittest!(fn_decl, |src| {
         let mut parser = Parser::new(&src);
         let results = parser.parse();
         insta::assert_debug_snapshot!(results);

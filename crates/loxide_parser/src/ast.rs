@@ -1,3 +1,5 @@
+use crate::token::Keyword::Var;
+
 #[derive(Debug)]
 pub struct Expr<'src> {
     pub kind: ExprKind<'src>,
@@ -109,11 +111,19 @@ pub struct ForStmt<'src> {
 }
 
 #[derive(Debug)]
+pub struct FunDeclaration<'src> {
+    pub name: Variable<'src>,
+    pub params: Vec<Variable<'src>>,
+    pub body: Vec<Stmt<'src>>,
+}
+
+#[derive(Debug)]
 #[non_exhaustive]
 pub enum Stmt<'src> {
     Expression(Expr<'src>),
     PrintStmt(Expr<'src>),
     VarDeclaration(Variable<'src>, Option<Expr<'src>>),
+    FunDeclaration(FunDeclaration<'src>),
     Block(Vec<Stmt<'src>>),
     Condition(ConditionStmt<'src>),
     While(WhileStmt<'src>),

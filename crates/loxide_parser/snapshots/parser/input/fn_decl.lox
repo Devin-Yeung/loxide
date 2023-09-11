@@ -1,0 +1,6 @@
+fun foo(bar, baz) {
+    print("a");
+    print("b");
+}
+
+fun bar() {}
