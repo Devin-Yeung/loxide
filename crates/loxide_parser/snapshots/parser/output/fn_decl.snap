@@ -1,0 +1,61 @@
+---
+source: crates/loxide_parser/src/parser.rs
+expression: results
+---
+(
+    [
+        FunDeclaration(
+            FunDeclaration {
+                name: Variable {
+                    name: "foo",
+                },
+                params: [
+                    Variable {
+                        name: "bar",
+                    },
+                    Variable {
+                        name: "baz",
+                    },
+                ],
+                body: [
+                    PrintStmt(
+                        Expr {
+                            kind: Grouped(
+                                Expr {
+                                    kind: Literal(
+                                        String(
+                                            "a",
+                                        ),
+                                    ),
+                                },
+                            ),
+                        },
+                    ),
+                    PrintStmt(
+                        Expr {
+                            kind: Grouped(
+                                Expr {
+                                    kind: Literal(
+                                        String(
+                                            "b",
+                                        ),
+                                    ),
+                                },
+                            ),
+                        },
+                    ),
+                ],
+            },
+        ),
+        FunDeclaration(
+            FunDeclaration {
+                name: Variable {
+                    name: "bar",
+                },
+                params: [],
+                body: [],
+            },
+        ),
+    ],
+    [],
+)
