@@ -131,12 +131,12 @@ impl<'src> Parser<'src> {
         let mut idents = Vec::<Variable>::new();
 
         idents.push(Variable {
-            name: self.consume(TokenType::Identifier)?.lexeme.into(),
+            name: self.consume(TokenType::Identifier)?.lexeme,
         });
 
         while self.consume_if(TokenType::Comma) {
             idents.push(Variable {
-                name: self.consume(TokenType::Identifier)?.lexeme.into(),
+                name: self.consume(TokenType::Identifier)?.lexeme,
             });
         }
 
@@ -707,13 +707,13 @@ mod tests {
     });
 
     unittest!(fn_call, |src| {
-        let mut parser = Parser::new(&src);
+        let mut parser = Parser::new(src);
         let results = parser.parse();
         insta::assert_debug_snapshot!(results);
     });
 
     unittest!(fn_decl, |src| {
-        let mut parser = Parser::new(&src);
+        let mut parser = Parser::new(src);
         let results = parser.parse();
         insta::assert_debug_snapshot!(results);
     });
