@@ -2,8 +2,8 @@ use crate::ast;
 use crate::ast::ExprKind::Binary;
 use crate::ast::Literal::{Boolean, Nil};
 use crate::ast::{
-    AssignExpr, BinaryExpr, ConditionStmt, Expr, ExprKind, ForStmt, Stmt, UnaryExpr, Variable,
-    WhileStmt,
+    AssignExpr, BinaryExpr, CallExpr, ConditionStmt, Expr, ExprKind, ForStmt, Stmt, UnaryExpr,
+    Variable, WhileStmt,
 };
 use crate::error::SyntaxError;
 use crate::scanner::Scanner;
@@ -397,7 +397,7 @@ impl<'src> Parser<'src> {
     ///
     /// ```text
     /// unary  → ( "!" | "-" ) unary
-    ///        | primary ;
+    ///        | call ;
     /// ```
     fn unary(&mut self) -> Result<Expr<'src>, SyntaxError> {
         let expr = match self.peek_type()? {
@@ -408,9 +408,52 @@ impl<'src> Parser<'src> {
                     kind: ExprKind::Unary(UnaryExpr { operator, expr }),
                 }
             }
-            _ => self.primary()?,
+            _ => self.call()?,
         };
         Ok(expr)
+    }
+
+    /// parse unary expression according to following rules:
+    ///
+    /// ```text
+    /// call  → primary ( "(" arguments? ")" )* ;
+    /// ```
+    fn call(&mut self) -> Result<Expr<'src>, SyntaxError> {
+        let mut expr = self.primary()?;
+        loop {
+            if self.consume_if(TokenType::LeftParen) {
+                let args = self.arguments()?;
+                expr = Expr {
+                    kind: ExprKind::Call(CallExpr {
+                        callee: Box::new(expr),
+                        args,
+                    }),
+                };
+                self.consume(TokenType::RightParen)?;
+            } else {
+                break;
+            }
+        }
+        Ok(expr)
+    }
+
+    /// parse arguments expression according to following rules:
+    ///
+    /// ```text
+    /// arguments  → expression ( "," expression )* ;
+    /// ```
+    fn arguments(&mut self) -> Result<Vec<Expr<'src>>, SyntaxError> {
+        let mut args = Vec::new();
+        loop {
+            match self.peek_type()? {
+                TokenType::RightParen => break,
+                TokenType::Comma => {
+                    self.consume(TokenType::Comma)?;
+                }
+                _ => args.push(self.expression()?),
+            }
+        }
+        Ok(args)
     }
 
     /// parse primary expression according to following rules:
@@ -598,6 +641,12 @@ mod tests {
 
     unittest!(for_statement, |src| {
         let mut parser = Parser::new(src);
+        let results = parser.parse();
+        insta::assert_debug_snapshot!(results);
+    });
+
+    unittest!(fn_call, |src| {
+        let mut parser = Parser::new(&src);
         let results = parser.parse();
         insta::assert_debug_snapshot!(results);
     });

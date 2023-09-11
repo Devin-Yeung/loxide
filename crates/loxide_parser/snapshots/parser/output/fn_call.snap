@@ -1,0 +1,102 @@
+---
+source: crates/loxide_parser/src/parser.rs
+expression: results
+---
+(
+    [
+        Expression(
+            Expr {
+                kind: Call(
+                    CallExpr {
+                        callee: Expr {
+                            kind: Variable(
+                                Variable {
+                                    name: "foo",
+                                },
+                            ),
+                        },
+                        args: [
+                            Expr {
+                                kind: Literal(
+                                    String(
+                                        "abc",
+                                    ),
+                                ),
+                            },
+                            Expr {
+                                kind: Literal(
+                                    String(
+                                        "def",
+                                    ),
+                                ),
+                            },
+                        ],
+                    },
+                ),
+            },
+        ),
+        Expression(
+            Expr {
+                kind: Call(
+                    CallExpr {
+                        callee: Expr {
+                            kind: Call(
+                                CallExpr {
+                                    callee: Expr {
+                                        kind: Variable(
+                                            Variable {
+                                                name: "nested",
+                                            },
+                                        ),
+                                    },
+                                    args: [
+                                        Expr {
+                                            kind: Literal(
+                                                String(
+                                                    "foo",
+                                                ),
+                                            ),
+                                        },
+                                    ],
+                                },
+                            ),
+                        },
+                        args: [
+                            Expr {
+                                kind: Literal(
+                                    String(
+                                        "bar",
+                                    ),
+                                ),
+                            },
+                        ],
+                    },
+                ),
+            },
+        ),
+        Expression(
+            Expr {
+                kind: Call(
+                    CallExpr {
+                        callee: Expr {
+                            kind: Call(
+                                CallExpr {
+                                    callee: Expr {
+                                        kind: Variable(
+                                            Variable {
+                                                name: "foo",
+                                            },
+                                        ),
+                                    },
+                                    args: [],
+                                },
+                            ),
+                        },
+                        args: [],
+                    },
+                ),
+            },
+        ),
+    ],
+    [],
+)
