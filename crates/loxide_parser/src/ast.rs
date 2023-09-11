@@ -4,6 +4,7 @@ pub struct Expr<'src> {
 }
 
 #[derive(Debug)]
+#[non_exhaustive]
 pub enum ExprKind<'src> {
     Literal(Literal<'src>),
     Unary(UnaryExpr<'src>),
@@ -11,6 +12,7 @@ pub enum ExprKind<'src> {
     Grouped(Box<Expr<'src>>),
     Variable(Variable<'src>),
     Assign(AssignExpr<'src>),
+    Call(CallExpr<'src>),
 }
 
 #[derive(Debug)]
@@ -63,6 +65,12 @@ pub struct GroupedExpr<'src> {
 pub struct AssignExpr<'src> {
     pub name: Variable<'src>,
     pub value: Box<Expr<'src>>,
+}
+
+#[derive(Debug)]
+pub struct CallExpr<'src> {
+    pub callee: Box<Expr<'src>>,
+    pub args: Vec<Expr<'src>>,
 }
 
 impl<'src> AssignExpr<'src> {
