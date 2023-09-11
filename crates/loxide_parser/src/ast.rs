@@ -1,5 +1,3 @@
-use crate::token::Keyword::Var;
-
 #[derive(Debug)]
 pub struct Expr<'src> {
     pub kind: ExprKind<'src>,
