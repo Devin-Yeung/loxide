@@ -5,7 +5,7 @@ expression: results
 (
     [
         VarDeclaration(
-            Variable {
+            Identifier {
                 name: "a",
             },
             Some(
@@ -19,7 +19,7 @@ expression: results
             ),
         ),
         VarDeclaration(
-            Variable {
+            Identifier {
                 name: "b",
             },
             None,

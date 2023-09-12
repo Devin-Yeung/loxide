@@ -3,7 +3,7 @@ use crate::error::RuntimeError;
 use crate::value::Value;
 use loxide_parser::ast::{
     AssignExpr, BinaryExpr, BinaryOperator, ConditionStmt, Expr, ExprKind, ForStmt, GroupedExpr,
-    Literal, Stmt, UnaryExpr, UnaryOperator, Variable, WhileStmt,
+    Identifier, Literal, Stmt, UnaryExpr, UnaryOperator, WhileStmt,
 };
 use loxide_testsuite::probe;
 
@@ -239,7 +239,7 @@ impl<'src> Evaluable for GroupedExpr<'src> {
     }
 }
 
-impl<'src> Evaluable for Variable<'src> {
+impl<'src> Evaluable for Identifier<'src> {
     fn eval(&self, env: &mut Environment) -> Result<Value, RuntimeError> {
         env.get(self.name)
     }

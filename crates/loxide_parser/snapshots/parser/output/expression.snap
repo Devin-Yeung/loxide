@@ -22,12 +22,12 @@ expression: asts
         Expr {
             kind: Assign(
                 AssignExpr {
-                    name: Variable {
+                    name: Identifier {
                         name: "a",
                     },
                     value: Expr {
                         kind: Variable(
-                            Variable {
+                            Identifier {
                                 name: "b",
                             },
                         ),
@@ -40,18 +40,18 @@ expression: asts
         Expr {
             kind: Assign(
                 AssignExpr {
-                    name: Variable {
+                    name: Identifier {
                         name: "a",
                     },
                     value: Expr {
                         kind: Assign(
                             AssignExpr {
-                                name: Variable {
+                                name: Identifier {
                                     name: "b",
                                 },
                                 value: Expr {
                                     kind: Variable(
-                                        Variable {
+                                        Identifier {
                                             name: "c",
                                         },
                                     ),

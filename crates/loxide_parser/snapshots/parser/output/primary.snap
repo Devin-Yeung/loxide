@@ -83,7 +83,7 @@ expression: asts
     Ok(
         Expr {
             kind: Variable(
-                Variable {
+                Identifier {
                     name: "foo",
                 },
             ),
@@ -92,7 +92,7 @@ expression: asts
     Ok(
         Expr {
             kind: Variable(
-                Variable {
+                Identifier {
                     name: "bar",
                 },
             ),

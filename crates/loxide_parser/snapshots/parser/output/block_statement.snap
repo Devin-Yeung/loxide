@@ -7,7 +7,7 @@ expression: results
         Block(
             [
                 VarDeclaration(
-                    Variable {
+                    Identifier {
                         name: "a",
                     },
                     Some(
@@ -24,7 +24,7 @@ expression: results
                     Expr {
                         kind: Assign(
                             AssignExpr {
-                                name: Variable {
+                                name: Identifier {
                                     name: "a",
                                 },
                                 value: Expr {
@@ -43,7 +43,7 @@ expression: results
         Block(
             [
                 VarDeclaration(
-                    Variable {
+                    Identifier {
                         name: "a",
                     },
                     Some(
@@ -59,7 +59,7 @@ expression: results
                 Block(
                     [
                         VarDeclaration(
-                            Variable {
+                            Identifier {
                                 name: "a",
                             },
                             Some(

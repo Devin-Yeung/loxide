@@ -10,7 +10,7 @@ expression: results
                     CallExpr {
                         callee: Expr {
                             kind: Variable(
-                                Variable {
+                                Identifier {
                                     name: "foo",
                                 },
                             ),
@@ -44,7 +44,7 @@ expression: results
                                 CallExpr {
                                     callee: Expr {
                                         kind: Variable(
-                                            Variable {
+                                            Identifier {
                                                 name: "nested",
                                             },
                                         ),
@@ -83,7 +83,7 @@ expression: results
                                 CallExpr {
                                     callee: Expr {
                                         kind: Variable(
-                                            Variable {
+                                            Identifier {
                                                 name: "foo",
                                             },
                                         ),

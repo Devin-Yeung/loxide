@@ -8,7 +8,7 @@ expression: results
             ConditionStmt {
                 condition: Expr {
                     kind: Variable(
-                        Variable {
+                        Identifier {
                             name: "first",
                         },
                     ),
@@ -17,7 +17,7 @@ expression: results
                     ConditionStmt {
                         condition: Expr {
                             kind: Variable(
-                                Variable {
+                                Identifier {
                                     name: "second",
                                 },
                             ),

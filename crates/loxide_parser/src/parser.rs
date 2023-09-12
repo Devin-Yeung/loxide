@@ -2,8 +2,8 @@ use crate::ast;
 use crate::ast::ExprKind::Binary;
 use crate::ast::Literal::{Boolean, Nil};
 use crate::ast::{
-    AssignExpr, BinaryExpr, CallExpr, ConditionStmt, Expr, ExprKind, ForStmt, FunDeclaration, Stmt,
-    UnaryExpr, Variable, WhileStmt,
+    AssignExpr, BinaryExpr, CallExpr, ConditionStmt, Expr, ExprKind, ForStmt, FunDeclaration,
+    Identifier, Stmt, UnaryExpr, WhileStmt,
 };
 use crate::error::SyntaxError;
 use crate::scanner::Scanner;
@@ -108,7 +108,7 @@ impl<'src> Parser<'src> {
     /// function  → IDENTIFIER "(" parameters? ")" block ;
     /// ```
     fn function(&mut self) -> Result<Stmt<'src>, SyntaxError> {
-        let name = Variable {
+        let name = Identifier {
             name: self.consume(TokenType::Identifier)?.lexeme,
         };
         self.consume(TokenType::LeftParen)?;
@@ -127,15 +127,15 @@ impl<'src> Parser<'src> {
     /// parameters  → IDENTIFIER ( "," IDENTIFIER )* ;
     /// ```
     ///
-    fn parameters(&mut self) -> Result<Vec<Variable<'src>>, SyntaxError> {
-        let mut idents = Vec::<Variable>::new();
+    fn parameters(&mut self) -> Result<Vec<Identifier<'src>>, SyntaxError> {
+        let mut idents = Vec::<Identifier>::new();
 
-        idents.push(Variable {
+        idents.push(Identifier {
             name: self.consume(TokenType::Identifier)?.lexeme,
         });
 
         while self.consume_if(TokenType::Comma) {
-            idents.push(Variable {
+            idents.push(Identifier {
                 name: self.consume(TokenType::Identifier)?.lexeme,
             });
         }
@@ -157,7 +157,7 @@ impl<'src> Parser<'src> {
             expr = Some(self.expression()?);
         }
         self.consume(TokenType::Semicolon)?;
-        Ok(Stmt::VarDeclaration(Variable { name }, expr))
+        Ok(Stmt::VarDeclaration(Identifier { name }, expr))
     }
 
     /// parse statement according to following rules:
@@ -561,7 +561,7 @@ impl<'src> Parser<'src> {
             TokenType::Identifier => {
                 let name = self.consume(TokenType::Identifier)?.lexeme;
                 Expr {
-                    kind: ExprKind::Variable(Variable { name }),
+                    kind: ExprKind::Variable(Identifier { name }),
                 }
             }
             _ => return Err(SyntaxError::Expect("expression")),
