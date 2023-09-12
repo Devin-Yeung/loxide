@@ -8,7 +8,7 @@ expression: results
             ForStmt {
                 initializer: Some(
                     VarDeclaration(
-                        Variable {
+                        Identifier {
                             name: "a",
                         },
                         Some(
@@ -28,7 +28,7 @@ expression: results
                             BinaryExpr {
                                 lhs: Expr {
                                     kind: Variable(
-                                        Variable {
+                                        Identifier {
                                             name: "a",
                                         },
                                     ),
@@ -49,7 +49,7 @@ expression: results
                     Expr {
                         kind: Assign(
                             AssignExpr {
-                                name: Variable {
+                                name: Identifier {
                                     name: "a",
                                 },
                                 value: Expr {
@@ -57,7 +57,7 @@ expression: results
                                         BinaryExpr {
                                             lhs: Expr {
                                                 kind: Variable(
-                                                    Variable {
+                                                    Identifier {
                                                         name: "a",
                                                     },
                                                 ),
@@ -82,7 +82,7 @@ expression: results
                         PrintStmt(
                             Expr {
                                 kind: Variable(
-                                    Variable {
+                                    Identifier {
                                         name: "a",
                                     },
                                 ),

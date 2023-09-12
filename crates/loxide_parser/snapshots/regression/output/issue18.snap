@@ -1,14 +1,13 @@
 ---
 source: crates/loxide_parser/tests/regression/issue18.rs
 expression: result
-input_file: crates/loxide_parser/snapshots/regression/snapshots-inputs/issue18.lox
 ---
 (
     [
         PrintStmt(
             Expr {
                 kind: Variable(
-                    Variable {
+                    Identifier {
                         name: "a",
                     },
                 ),

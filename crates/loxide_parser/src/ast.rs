@@ -10,7 +10,7 @@ pub enum ExprKind<'src> {
     Unary(UnaryExpr<'src>),
     Binary(BinaryExpr<'src>),
     Grouped(Box<Expr<'src>>),
-    Variable(Variable<'src>),
+    Variable(Identifier<'src>),
     Assign(AssignExpr<'src>),
     Call(CallExpr<'src>),
 }
@@ -63,7 +63,7 @@ pub struct GroupedExpr<'src> {
 
 #[derive(Debug)]
 pub struct AssignExpr<'src> {
-    pub name: Variable<'src>,
+    pub name: Identifier<'src>,
     pub value: Box<Expr<'src>>,
 }
 
@@ -76,14 +76,14 @@ pub struct CallExpr<'src> {
 impl<'src> AssignExpr<'src> {
     pub fn new(name: &'src str, value: Expr<'src>) -> Self {
         AssignExpr {
-            name: Variable { name },
+            name: Identifier { name },
             value: Box::new(value),
         }
     }
 }
 
 #[derive(Debug)]
-pub struct Variable<'src> {
+pub struct Identifier<'src> {
     pub name: &'src str,
 }
 
@@ -110,8 +110,8 @@ pub struct ForStmt<'src> {
 
 #[derive(Debug)]
 pub struct FunDeclaration<'src> {
-    pub name: Variable<'src>,
-    pub params: Vec<Variable<'src>>,
+    pub name: Identifier<'src>,
+    pub params: Vec<Identifier<'src>>,
     pub body: Vec<Stmt<'src>>,
 }
 
@@ -120,7 +120,7 @@ pub struct FunDeclaration<'src> {
 pub enum Stmt<'src> {
     Expression(Expr<'src>),
     PrintStmt(Expr<'src>),
-    VarDeclaration(Variable<'src>, Option<Expr<'src>>),
+    VarDeclaration(Identifier<'src>, Option<Expr<'src>>),
     FunDeclaration(FunDeclaration<'src>),
     Block(Vec<Stmt<'src>>),
     Condition(ConditionStmt<'src>),
