@@ -3,7 +3,7 @@ use crate::ast::ExprKind::Binary;
 use crate::ast::Literal::{Boolean, Nil};
 use crate::ast::{
     AssignExpr, BinaryExpr, CallExpr, ConditionStmt, Expr, ExprKind, ForStmt, FunDeclaration,
-    Identifier, Stmt, UnaryExpr, WhileStmt,
+    Identifier, ReturnStmt, Stmt, UnaryExpr, WhileStmt,
 };
 use crate::error::SyntaxError;
 use crate::scanner::Scanner;
@@ -165,6 +165,7 @@ impl<'src> Parser<'src> {
     /// ```text
     /// statement  → exprStmt
     ///            | printStmt
+    ///            | returnStmt
     ///            | ifStmt
     ///            | whileStmt
     ///            | forStmt
@@ -177,6 +178,7 @@ impl<'src> Parser<'src> {
             TokenType::Keyword(Keyword::If) => self.if_stmt(),
             TokenType::Keyword(Keyword::While) => self.while_stmt(),
             TokenType::Keyword(Keyword::For) => self.for_stmt(),
+            TokenType::Keyword(Keyword::Return) => self.return_stmt(),
             _ => self.expression_stmt(),
         }
     }
@@ -327,6 +329,21 @@ impl<'src> Parser<'src> {
         let expr = self.expression()?;
         self.consume(TokenType::Semicolon)?;
         Ok(Stmt::Expression(expr))
+    }
+
+    /// parse return statement according to following rules:
+    ///
+    /// ```text
+    /// returnStmt  → "return" expression? ";" ;
+    /// ```
+    fn return_stmt(&mut self) -> Result<Stmt<'src>, SyntaxError> {
+        self.consume(TokenType::Keyword(Keyword::Return))?;
+        let value = match self.peek_type()? {
+            TokenType::Semicolon => None,
+            _ => Some(self.expression()?),
+        };
+        self.consume(TokenType::Semicolon)?;
+        Ok(Stmt::ReturnStmt(ReturnStmt { value }))
     }
 
     /// parse expression according to following rules:
@@ -713,6 +730,12 @@ mod tests {
     });
 
     unittest!(fn_decl, |src| {
+        let mut parser = Parser::new(src);
+        let results = parser.parse();
+        insta::assert_debug_snapshot!(results);
+    });
+
+    unittest!(return_stmt, |src| {
         let mut parser = Parser::new(src);
         let results = parser.parse();
         insta::assert_debug_snapshot!(results);

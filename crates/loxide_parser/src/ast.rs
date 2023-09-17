@@ -116,10 +116,16 @@ pub struct FunDeclaration<'src> {
 }
 
 #[derive(Debug)]
+pub struct ReturnStmt<'src> {
+    pub value: Option<Expr<'src>>,
+}
+
+#[derive(Debug)]
 #[non_exhaustive]
 pub enum Stmt<'src> {
     Expression(Expr<'src>),
     PrintStmt(Expr<'src>),
+    ReturnStmt(ReturnStmt<'src>),
     VarDeclaration(Identifier<'src>, Option<Expr<'src>>),
     FunDeclaration(FunDeclaration<'src>),
     Block(Vec<Stmt<'src>>),

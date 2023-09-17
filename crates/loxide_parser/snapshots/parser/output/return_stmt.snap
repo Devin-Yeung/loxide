@@ -1,0 +1,47 @@
+---
+source: crates/loxide_parser/src/parser.rs
+expression: results
+---
+(
+    [
+        FunDeclaration(
+            FunDeclaration {
+                name: Identifier {
+                    name: "foo",
+                },
+                params: [],
+                body: [
+                    ReturnStmt(
+                        ReturnStmt {
+                            value: None,
+                        },
+                    ),
+                ],
+            },
+        ),
+        FunDeclaration(
+            FunDeclaration {
+                name: Identifier {
+                    name: "bar",
+                },
+                params: [],
+                body: [
+                    ReturnStmt(
+                        ReturnStmt {
+                            value: Some(
+                                Expr {
+                                    kind: Variable(
+                                        Identifier {
+                                            name: "bar",
+                                        },
+                                    ),
+                                },
+                            ),
+                        },
+                    ),
+                ],
+            },
+        ),
+    ],
+    [],
+)
