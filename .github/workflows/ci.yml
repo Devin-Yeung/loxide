@@ -115,7 +115,7 @@ jobs:
         if: hashFiles('Cargo.lock') == ''
         run: cargo generate-lockfile
       - name: cargo tarpaulin
-        run: cargo tarpaulin --verbose --all-features --workspace --timeout 120 -o Xml
+        run: cargo tarpaulin --verbose --all-features --workspace --timeout 120 -o xml
       - name: upload to coveralls
         uses: coverallsapp/github-action@main
         with:
