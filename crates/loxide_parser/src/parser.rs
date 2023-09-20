@@ -2,8 +2,8 @@ use crate::ast;
 use crate::ast::ExprKind::Binary;
 use crate::ast::Literal::{Boolean, Nil};
 use crate::ast::{
-    AssignExpr, BinaryExpr, CallExpr, ConditionStmt, Expr, ExprKind, ForStmt, FunDeclaration,
-    Identifier, ReturnStmt, Stmt, UnaryExpr, WhileStmt,
+    AssignExpr, BinaryExpr, BinaryOperator, CallExpr, ConditionStmt, Expr, ExprKind, ForStmt,
+    FunDeclaration, Identifier, ReturnStmt, Stmt, UnaryExpr, WhileStmt,
 };
 use crate::error::SyntaxError;
 use crate::scanner::Scanner;
@@ -45,7 +45,7 @@ impl<'src> Parser<'src> {
         (statements, errors)
     }
 
-    fn consume(&mut self, ty: TokenType) -> Result<Token<'src>, SyntaxError> {
+    fn consume(&mut self, ty: TokenType) -> Result<Token, SyntaxError> {
         match self.peek_type()? {
             found if found == ty => Ok(self.advance()?),
             found => Err(SyntaxError::UnexpectedToken {
@@ -63,7 +63,7 @@ impl<'src> Parser<'src> {
         false
     }
 
-    fn peek_type(&mut self) -> Result<TokenType<'src>, SyntaxError> {
+    fn peek_type(&mut self) -> Result<TokenType, SyntaxError> {
         match self.tokens.peek() {
             None => Ok(TokenType::EOF),
             Some(Ok(token)) => Ok(token.ty.clone()),
@@ -71,7 +71,7 @@ impl<'src> Parser<'src> {
         }
     }
 
-    fn advance(&mut self) -> Result<Token<'src>, SyntaxError> {
+    fn advance(&mut self) -> Result<Token, SyntaxError> {
         self.tokens
             .next()
             .unwrap_or(Err(SyntaxError::UnexpectedEOF))
@@ -84,7 +84,7 @@ impl<'src> Parser<'src> {
     ///              | varDecl
     ///              | statement ;
     /// ```
-    fn declaration(&mut self) -> Result<Stmt<'src>, SyntaxError> {
+    fn declaration(&mut self) -> Result<Stmt, SyntaxError> {
         match self.peek_type()? {
             TokenType::Keyword(Keyword::Var) => self.var_declaration(),
             TokenType::Keyword(Keyword::Fun) => self.func_declaration(),
@@ -97,7 +97,7 @@ impl<'src> Parser<'src> {
     /// ```text
     /// funDecl  → "fun" function ;
     /// ```
-    fn func_declaration(&mut self) -> Result<Stmt<'src>, SyntaxError> {
+    fn func_declaration(&mut self) -> Result<Stmt, SyntaxError> {
         self.consume(TokenType::Keyword(Keyword::Fun))?;
         self.function()
     }
@@ -107,9 +107,9 @@ impl<'src> Parser<'src> {
     /// ```text
     /// function  → IDENTIFIER "(" parameters? ")" block ;
     /// ```
-    fn function(&mut self) -> Result<Stmt<'src>, SyntaxError> {
+    fn function(&mut self) -> Result<Stmt, SyntaxError> {
         let name = Identifier {
-            name: self.consume(TokenType::Identifier)?.lexeme,
+            name: self.consume(TokenType::Identifier)?.lexeme.to_string(),
         };
         self.consume(TokenType::LeftParen)?;
         let params = match self.peek_type()? {
@@ -127,16 +127,16 @@ impl<'src> Parser<'src> {
     /// parameters  → IDENTIFIER ( "," IDENTIFIER )* ;
     /// ```
     ///
-    fn parameters(&mut self) -> Result<Vec<Identifier<'src>>, SyntaxError> {
+    fn parameters(&mut self) -> Result<Vec<Identifier>, SyntaxError> {
         let mut idents = Vec::<Identifier>::new();
 
         idents.push(Identifier {
-            name: self.consume(TokenType::Identifier)?.lexeme,
+            name: self.consume(TokenType::Identifier)?.lexeme.to_string(),
         });
 
         while self.consume_if(TokenType::Comma) {
             idents.push(Identifier {
-                name: self.consume(TokenType::Identifier)?.lexeme,
+                name: self.consume(TokenType::Identifier)?.lexeme.to_string(),
             });
         }
 
@@ -148,10 +148,10 @@ impl<'src> Parser<'src> {
     /// ```text
     /// varDecl  → "var" IDENTIFIER ( "=" expression )? ";" ;
     /// ```
-    fn var_declaration(&mut self) -> Result<Stmt<'src>, SyntaxError> {
+    fn var_declaration(&mut self) -> Result<Stmt, SyntaxError> {
         self.consume(TokenType::Keyword(Keyword::Var))?;
-        let name = self.consume(TokenType::Identifier)?.lexeme;
-        let mut expr: Option<Expr<'src>> = None;
+        let name = self.consume(TokenType::Identifier)?.lexeme.to_string();
+        let mut expr: Option<Expr> = None;
         if self.peek_type() == Ok(TokenType::Equal) {
             self.consume(TokenType::Equal)?;
             expr = Some(self.expression()?);
@@ -171,7 +171,7 @@ impl<'src> Parser<'src> {
     ///            | forStmt
     ///            | block ;
     /// ```
-    fn statement(&mut self) -> Result<Stmt<'src>, SyntaxError> {
+    fn statement(&mut self) -> Result<Stmt, SyntaxError> {
         match self.peek_type()? {
             TokenType::Keyword(Keyword::Print) => self.print_stmt(),
             TokenType::LeftBrace => self.block_stmt(),
@@ -206,7 +206,7 @@ impl<'src> Parser<'src> {
     ///     else
     ///         when_false();
     /// ```
-    fn if_stmt(&mut self) -> Result<Stmt<'src>, SyntaxError> {
+    fn if_stmt(&mut self) -> Result<Stmt, SyntaxError> {
         self.consume(TokenType::Keyword(Keyword::If))?;
         self.consume(TokenType::LeftParen)?;
         let condition = self.expression()?;
@@ -230,7 +230,7 @@ impl<'src> Parser<'src> {
     /// ```text
     /// whileStmt  → "while" "(" expression ")" statement ;
     /// ```
-    fn while_stmt(&mut self) -> Result<Stmt<'src>, SyntaxError> {
+    fn while_stmt(&mut self) -> Result<Stmt, SyntaxError> {
         self.consume(TokenType::Keyword(Keyword::While))?;
         self.consume(TokenType::LeftParen)?;
         let condition = self.expression()?;
@@ -249,7 +249,7 @@ impl<'src> Parser<'src> {
     ///          ")"
     ///          statement ;
     /// ```
-    fn for_stmt(&mut self) -> Result<Stmt<'src>, SyntaxError> {
+    fn for_stmt(&mut self) -> Result<Stmt, SyntaxError> {
         self.consume(TokenType::Keyword(Keyword::For))?;
         self.consume(TokenType::LeftParen)?;
         let initializer = match self.peek_type()? {
@@ -282,7 +282,7 @@ impl<'src> Parser<'src> {
     /// ```text
     /// block  → "{" declaration* "}" ;
     /// ```
-    fn block_stmt(&mut self) -> Result<Stmt<'src>, SyntaxError> {
+    fn block_stmt(&mut self) -> Result<Stmt, SyntaxError> {
         Ok(Stmt::Block(self.block()?))
     }
 
@@ -290,7 +290,7 @@ impl<'src> Parser<'src> {
     /// ```text
     /// block  → "{" declaration* "}" ;
     /// ```
-    fn block(&mut self) -> Result<Vec<Stmt<'src>>, SyntaxError> {
+    fn block(&mut self) -> Result<Vec<Stmt>, SyntaxError> {
         self.consume(TokenType::LeftBrace)?;
         let mut stmts: Vec<Stmt> = Vec::new();
         loop {
@@ -313,7 +313,7 @@ impl<'src> Parser<'src> {
     /// ```text
     /// printStmt  → "print" expression ";" ;
     /// ```
-    fn print_stmt(&mut self) -> Result<Stmt<'src>, SyntaxError> {
+    fn print_stmt(&mut self) -> Result<Stmt, SyntaxError> {
         self.consume(TokenType::Keyword(Keyword::Print))?;
         let expr = self.expression()?;
         self.consume(TokenType::Semicolon)?;
@@ -325,7 +325,7 @@ impl<'src> Parser<'src> {
     /// ```text
     /// exprStmt  → expression ";" ;
     /// ```
-    fn expression_stmt(&mut self) -> Result<Stmt<'src>, SyntaxError> {
+    fn expression_stmt(&mut self) -> Result<Stmt, SyntaxError> {
         let expr = self.expression()?;
         self.consume(TokenType::Semicolon)?;
         Ok(Stmt::Expression(expr))
@@ -336,7 +336,7 @@ impl<'src> Parser<'src> {
     /// ```text
     /// returnStmt  → "return" expression? ";" ;
     /// ```
-    fn return_stmt(&mut self) -> Result<Stmt<'src>, SyntaxError> {
+    fn return_stmt(&mut self) -> Result<Stmt, SyntaxError> {
         self.consume(TokenType::Keyword(Keyword::Return))?;
         let value = match self.peek_type()? {
             TokenType::Semicolon => None,
@@ -351,20 +351,20 @@ impl<'src> Parser<'src> {
     /// ```text
     /// expression  → assignment ;
     /// ```
-    fn expression(&mut self) -> Result<Expr<'src>, SyntaxError> {
+    fn expression(&mut self) -> Result<Expr, SyntaxError> {
         self.assignment()
     }
 
     /// assignment  → IDENTIFIER "=" assignment
     ///             | equality ;
-    fn assignment(&mut self) -> Result<Expr<'src>, SyntaxError> {
+    fn assignment(&mut self) -> Result<Expr, SyntaxError> {
         let expr = self.equality()?;
 
         if self.consume_if(TokenType::Equal) {
             let value = self.assignment()?;
             return match expr.kind {
                 ExprKind::Variable(v) => Ok(Expr {
-                    kind: ExprKind::Assign(AssignExpr::new(v.name, value)),
+                    kind: ExprKind::Assign(AssignExpr::new(&v.name, value)),
                 }),
                 _ => Err(SyntaxError::InvalidAssignmentTarget),
             };
@@ -377,19 +377,19 @@ impl<'src> Parser<'src> {
     /// ```text
     /// equality  → comparison ( ( "!=" | "==" ) comparison )* ;
     /// ```
-    fn equality(&mut self) -> Result<Expr<'src>, SyntaxError> {
+    fn equality(&mut self) -> Result<Expr, SyntaxError> {
         let mut expr = self.comparison()?;
         loop {
-            let token = match self.peek_type()? {
-                TokenType::EqualEqual | TokenType::BangEqual => self.advance()?,
+            let ops = match self.peek_type()? {
+                TokenType::EqualEqual | TokenType::BangEqual => self.advance()?.try_into()?,
                 _ => break,
             };
-            let rhs = self.comparison()?;
+            let rhs: Expr = self.comparison()?;
             expr = Expr {
                 kind: Binary(BinaryExpr {
                     lhs: Box::new(expr),
                     rhs: Box::new(rhs),
-                    operator: token.try_into()?,
+                    operator: ops,
                 }),
             }
         }
@@ -401,14 +401,14 @@ impl<'src> Parser<'src> {
     /// ```text
     /// comparison  → term ( ( ">" | ">=" | "<" | "<=" ) term )* ;
     /// ```
-    fn comparison(&mut self) -> Result<Expr<'src>, SyntaxError> {
+    fn comparison(&mut self) -> Result<Expr, SyntaxError> {
         let mut expr = self.term()?;
         loop {
-            let token = match self.peek_type()? {
+            let ops = match self.peek_type()? {
                 TokenType::Greater
                 | TokenType::GreaterEqual
                 | TokenType::Less
-                | TokenType::LessEqual => self.advance()?,
+                | TokenType::LessEqual => self.advance()?.try_into()?,
                 _ => break,
             };
             let rhs = self.term()?;
@@ -416,7 +416,7 @@ impl<'src> Parser<'src> {
                 kind: Binary(BinaryExpr {
                     lhs: Box::new(expr),
                     rhs: Box::new(rhs),
-                    operator: token.try_into()?,
+                    operator: ops,
                 }),
             }
         }
@@ -428,11 +428,11 @@ impl<'src> Parser<'src> {
     /// ```text
     /// term  → factor ( ( "-" | "+" ) factor )* ;
     /// ```
-    fn term(&mut self) -> Result<Expr<'src>, SyntaxError> {
+    fn term(&mut self) -> Result<Expr, SyntaxError> {
         let mut expr = self.factor()?;
         loop {
-            let token = match self.peek_type()? {
-                TokenType::Minus | TokenType::Plus => self.advance()?,
+            let ops = match self.peek_type()? {
+                TokenType::Minus | TokenType::Plus => self.advance()?.try_into()?,
                 _ => break,
             };
             let rhs = self.factor()?;
@@ -440,7 +440,7 @@ impl<'src> Parser<'src> {
                 kind: Binary(BinaryExpr {
                     lhs: Box::new(expr),
                     rhs: Box::new(rhs),
-                    operator: token.try_into()?,
+                    operator: ops,
                 }),
             }
         }
@@ -452,11 +452,11 @@ impl<'src> Parser<'src> {
     /// ```text
     /// factor  → unary ( ( "/" | "*" ) unary )* ;
     /// ```
-    fn factor(&mut self) -> Result<Expr<'src>, SyntaxError> {
+    fn factor(&mut self) -> Result<Expr, SyntaxError> {
         let mut expr = self.unary()?;
         loop {
-            let token = match self.peek_type()? {
-                TokenType::Slash | TokenType::Star => self.advance()?,
+            let ops = match self.peek_type()? {
+                TokenType::Slash | TokenType::Star => self.advance()?.try_into()?,
                 _ => break,
             };
             let rhs = self.unary()?;
@@ -464,7 +464,7 @@ impl<'src> Parser<'src> {
                 kind: Binary(BinaryExpr {
                     lhs: Box::new(expr),
                     rhs: Box::new(rhs),
-                    operator: token.try_into()?,
+                    operator: ops,
                 }),
             }
         }
@@ -477,7 +477,7 @@ impl<'src> Parser<'src> {
     /// unary  → ( "!" | "-" ) unary
     ///        | call ;
     /// ```
-    fn unary(&mut self) -> Result<Expr<'src>, SyntaxError> {
+    fn unary(&mut self) -> Result<Expr, SyntaxError> {
         let expr = match self.peek_type()? {
             TokenType::Bang | TokenType::Minus => {
                 let operator = self.advance()?.try_into()?;
@@ -496,7 +496,7 @@ impl<'src> Parser<'src> {
     /// ```text
     /// call  → primary ( "(" arguments? ")" )* ;
     /// ```
-    fn call(&mut self) -> Result<Expr<'src>, SyntaxError> {
+    fn call(&mut self) -> Result<Expr, SyntaxError> {
         let mut expr = self.primary()?;
         loop {
             if self.consume_if(TokenType::LeftParen) {
@@ -520,7 +520,7 @@ impl<'src> Parser<'src> {
     /// ```text
     /// arguments  → expression ( "," expression )* ;
     /// ```
-    fn arguments(&mut self) -> Result<Vec<Expr<'src>>, SyntaxError> {
+    fn arguments(&mut self) -> Result<Vec<Expr>, SyntaxError> {
         let mut args = Vec::new();
         loop {
             match self.peek_type()? {
@@ -541,7 +541,7 @@ impl<'src> Parser<'src> {
     ///          | "(" expression ")"
     ///          | IDENTIFIER ;
     /// ```
-    fn primary(&mut self) -> Result<Expr<'src>, SyntaxError> {
+    fn primary(&mut self) -> Result<Expr, SyntaxError> {
         let expr = match self.peek_type()? {
             TokenType::Keyword(Keyword::True) => {
                 self.advance()?;
@@ -578,7 +578,9 @@ impl<'src> Parser<'src> {
             TokenType::Identifier => {
                 let name = self.consume(TokenType::Identifier)?.lexeme;
                 Expr {
-                    kind: ExprKind::Variable(Identifier { name }),
+                    kind: ExprKind::Variable(Identifier {
+                        name: name.to_string(),
+                    }),
                 }
             }
             _ => return Err(SyntaxError::Expect("expression")),
