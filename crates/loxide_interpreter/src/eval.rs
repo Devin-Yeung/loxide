@@ -4,7 +4,7 @@ use crate::error::RuntimeError;
 use crate::value::Value;
 use loxide_parser::ast::{
     AssignExpr, BinaryExpr, BinaryOperator, CallExpr, ConditionStmt, Expr, ExprKind, ForStmt,
-    GroupedExpr, Identifier, Literal, Stmt, UnaryExpr, UnaryOperator, WhileStmt,
+    GroupedExpr, Identifier, Literal, ReturnStmt, Stmt, UnaryExpr, UnaryOperator, WhileStmt,
 };
 use loxide_testsuite::probe;
 
@@ -53,6 +53,7 @@ impl Evaluable for Stmt {
             Stmt::Condition(cond) => cond.eval(env),
             Stmt::While(cond) => cond.eval(env),
             Stmt::For(stmt) => stmt.eval(env),
+            Stmt::ReturnStmt(stmt) => stmt.eval(env),
             _ => unreachable!(),
         }
     }
@@ -117,6 +118,17 @@ impl Evaluable for ForStmt {
     }
 }
 
+impl Evaluable for ReturnStmt {
+    fn eval(&self, env: &mut Environment) -> Result<Value, RuntimeError> {
+        self.value
+            .as_ref()
+            .map_or(Err(RuntimeError::ReturnValue(Value::Void)), |expr| {
+                let value = expr.eval(env)?;
+                Err(RuntimeError::ReturnValue(value))
+            })
+    }
+}
+
 impl Evaluable for Option<Box<Stmt>> {
     fn eval(&self, env: &mut Environment) -> Result<Value, RuntimeError> {
         if let Some(stmt) = self {
@@ -171,7 +183,6 @@ impl Evaluable for CallExpr {
             .map(|expr| expr.eval(env))
             .collect::<Result<Vec<Value>, RuntimeError>>()?;
 
-        println!("{:?}", args);
         if let Value::Callable(callable) = callee {
             return callable.call(args, env);
         }

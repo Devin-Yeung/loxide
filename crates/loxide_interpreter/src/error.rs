@@ -1,3 +1,4 @@
+use crate::value::Value;
 use thiserror::Error;
 
 #[derive(Debug, Error)]
@@ -16,4 +17,6 @@ pub enum RuntimeError {
     UndefinedVariable(String),
     #[error("Expected boolean in condition expression")]
     ExpectedBoolean,
+    #[error("Return value")]
+    ReturnValue(Value),
 }
