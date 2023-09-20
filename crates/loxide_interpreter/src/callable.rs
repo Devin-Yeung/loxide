@@ -1,5 +1,6 @@
 use crate::environment::Environment;
 use crate::error::RuntimeError;
+use crate::eval::Evaluable;
 use crate::value::Value;
 use loxide_parser::ast::FunDeclaration;
 use std::rc::Rc;
@@ -47,7 +48,19 @@ impl LoxFunction {
         arguments: Vec<Value>,
         env: &mut Environment,
     ) -> Result<Value, RuntimeError> {
-        todo!()
+        let mut env = env.extend();
+
+        // binding args to the environment
+        for (value, arg) in arguments.into_iter().zip(&self.declaration.params) {
+            env.define(arg.name.to_string(), value);
+        }
+
+        for stmt in &self.declaration.body {
+            stmt.eval(&mut env)?;
+        }
+
+        // TODO: support return value
+        Ok(Value::Void)
     }
 }
 
