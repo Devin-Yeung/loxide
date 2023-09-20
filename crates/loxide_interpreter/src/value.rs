@@ -1,3 +1,5 @@
+use crate::callable::Callable;
+
 #[derive(Debug, Clone, PartialEq)]
 #[non_exhaustive]
 pub enum Value {
@@ -6,6 +8,7 @@ pub enum Value {
     Boolean(bool),
     Nil,
     Void,
+    Callable(Callable),
 }
 
 impl Value {
