@@ -1,3 +1,5 @@
+use std::rc::Rc;
+
 #[derive(Debug)]
 pub struct Expr {
     pub kind: ExprKind,
@@ -129,7 +131,7 @@ pub enum Stmt {
     PrintStmt(Expr),
     ReturnStmt(ReturnStmt),
     VarDeclaration(Identifier, Option<Expr>),
-    FunDeclaration(FunDeclaration),
+    FunDeclaration(Rc<FunDeclaration>),
     Block(Vec<Stmt>),
     Condition(ConditionStmt),
     While(WhileStmt),

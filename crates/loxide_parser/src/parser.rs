@@ -9,6 +9,7 @@ use crate::error::SyntaxError;
 use crate::scanner::Scanner;
 use crate::token::{Keyword, Token, TokenType};
 use std::iter::Peekable;
+use std::rc::Rc;
 
 pub struct Parser<'src> {
     tokens: Peekable<Scanner<'src>>,
@@ -118,7 +119,11 @@ impl<'src> Parser<'src> {
         };
         self.consume(TokenType::RightParen)?;
         let body = self.block()?;
-        Ok(Stmt::FunDeclaration(FunDeclaration { name, params, body }))
+        Ok(Stmt::FunDeclaration(Rc::new(FunDeclaration {
+            name,
+            params,
+            body,
+        })))
     }
 
     /// parse parameters according to following rules:

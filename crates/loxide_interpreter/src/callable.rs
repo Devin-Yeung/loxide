@@ -5,16 +5,10 @@ use crate::value::Value;
 use loxide_parser::ast::FunDeclaration;
 use std::rc::Rc;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 #[non_exhaustive]
 pub enum Callable {
     Function(LoxFunction),
-}
-
-impl Clone for Callable {
-    fn clone(&self) -> Self {
-        todo!()
-    }
 }
 
 impl PartialEq for Callable {
@@ -24,14 +18,18 @@ impl PartialEq for Callable {
 }
 
 impl Callable {
-    fn call(&self, arguments: Vec<Value>, env: &mut Environment) -> Result<Value, RuntimeError> {
+    pub fn call(
+        &self,
+        arguments: Vec<Value>,
+        env: &mut Environment,
+    ) -> Result<Value, RuntimeError> {
         match self {
             Callable::Function(func) => func.call(arguments, env),
         }
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct LoxFunction {
     // we don't want to introduce any lifetime here,
     // since it will propagate to `Value`
