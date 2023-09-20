@@ -2,8 +2,8 @@ use crate::ast;
 use crate::ast::ExprKind::Binary;
 use crate::ast::Literal::{Boolean, Nil};
 use crate::ast::{
-    AssignExpr, BinaryExpr, BinaryOperator, CallExpr, ConditionStmt, Expr, ExprKind, ForStmt,
-    FunDeclaration, Identifier, ReturnStmt, Stmt, UnaryExpr, WhileStmt,
+    AssignExpr, BinaryExpr, CallExpr, ConditionStmt, Expr, ExprKind, ForStmt, FunDeclaration,
+    Identifier, ReturnStmt, Stmt, UnaryExpr, WhileStmt,
 };
 use crate::error::SyntaxError;
 use crate::scanner::Scanner;
