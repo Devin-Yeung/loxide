@@ -1,9 +1,10 @@
+use crate::callable::Callable;
 use crate::environment::Environment;
 use crate::error::RuntimeError;
 use crate::value::Value;
 use loxide_parser::ast::{
-    AssignExpr, BinaryExpr, BinaryOperator, ConditionStmt, Expr, ExprKind, ForStmt, GroupedExpr,
-    Identifier, Literal, Stmt, UnaryExpr, UnaryOperator, WhileStmt,
+    AssignExpr, BinaryExpr, BinaryOperator, CallExpr, ConditionStmt, Expr, ExprKind, ForStmt,
+    GroupedExpr, Identifier, Literal, Stmt, UnaryExpr, UnaryOperator, WhileStmt,
 };
 use loxide_testsuite::probe;
 
@@ -34,6 +35,11 @@ impl Evaluable for Stmt {
             Stmt::VarDeclaration(var, expr) => {
                 let val = expr.eval(env)?;
                 env.define(var.name.to_string(), val);
+                Ok(Value::Void)
+            }
+            Stmt::FunDeclaration(decl) => {
+                let callable = Callable::function(decl.clone());
+                env.define(decl.name.name.to_string(), Value::Callable(callable));
                 Ok(Value::Void)
             }
             Stmt::Block(stmts) => {
@@ -150,8 +156,27 @@ impl Evaluable for Expr {
             ExprKind::Grouped(g) => g.eval(env),
             ExprKind::Variable(v) => v.eval(env),
             ExprKind::Assign(a) => a.eval(env),
+            ExprKind::Call(c) => c.eval(env),
             _ => unreachable!(),
         }
+    }
+}
+
+impl Evaluable for CallExpr {
+    fn eval(&self, env: &mut Environment) -> Result<Value, RuntimeError> {
+        let callee = self.callee.eval(env)?;
+        let args = self
+            .args
+            .iter()
+            .map(|expr| expr.eval(env))
+            .collect::<Result<Vec<Value>, RuntimeError>>()?;
+
+        println!("{:?}", args);
+        if let Value::Callable(callable) = callee {
+            return callable.call(args, env);
+        }
+
+        todo!("RUNTIME ERROR")
     }
 }
 
@@ -324,5 +349,11 @@ mod tests {
     unittest!(for_stmt_expect_bool, |src| {
         let results: Vec<_> = eval(src);
         insta::assert_debug_snapshot!(results);
+    });
+
+    unittest!(fn_call, |src| {
+        register!();
+        eval(src);
+        insta::assert_debug_snapshot!(footprints!());
     });
 }
