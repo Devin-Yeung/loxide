@@ -1,23 +1,23 @@
 #[derive(Debug)]
-pub struct Expr<'src> {
-    pub kind: ExprKind<'src>,
+pub struct Expr {
+    pub kind: ExprKind,
 }
 
 #[derive(Debug)]
 #[non_exhaustive]
-pub enum ExprKind<'src> {
-    Literal(Literal<'src>),
-    Unary(UnaryExpr<'src>),
-    Binary(BinaryExpr<'src>),
-    Grouped(Box<Expr<'src>>),
-    Variable(Identifier<'src>),
-    Assign(AssignExpr<'src>),
-    Call(CallExpr<'src>),
+pub enum ExprKind {
+    Literal(Literal),
+    Unary(UnaryExpr),
+    Binary(BinaryExpr),
+    Grouped(Box<Expr>),
+    Variable(Identifier),
+    Assign(AssignExpr),
+    Call(CallExpr),
 }
 
 #[derive(Debug)]
-pub enum Literal<'src> {
-    String(std::borrow::Cow<'src, str>),
+pub enum Literal {
+    String(String),
     Number(f64),
     Boolean(bool),
     Nil,
@@ -30,9 +30,9 @@ pub enum UnaryOperator {
 }
 
 #[derive(Debug)]
-pub struct UnaryExpr<'src> {
+pub struct UnaryExpr {
     pub operator: UnaryOperator,
-    pub expr: Box<Expr<'src>>,
+    pub expr: Box<Expr>,
 }
 
 #[derive(Debug)]
@@ -50,86 +50,88 @@ pub enum BinaryOperator {
 }
 
 #[derive(Debug)]
-pub struct BinaryExpr<'src> {
-    pub lhs: Box<Expr<'src>>,
-    pub rhs: Box<Expr<'src>>,
+pub struct BinaryExpr {
+    pub lhs: Box<Expr>,
+    pub rhs: Box<Expr>,
     pub operator: BinaryOperator,
 }
 
 #[derive(Debug)]
-pub struct GroupedExpr<'src> {
-    pub expr: Box<Expr<'src>>,
+pub struct GroupedExpr {
+    pub expr: Box<Expr>,
 }
 
 #[derive(Debug)]
-pub struct AssignExpr<'src> {
-    pub name: Identifier<'src>,
-    pub value: Box<Expr<'src>>,
+pub struct AssignExpr {
+    pub name: Identifier,
+    pub value: Box<Expr>,
 }
 
 #[derive(Debug)]
-pub struct CallExpr<'src> {
-    pub callee: Box<Expr<'src>>,
-    pub args: Vec<Expr<'src>>,
+pub struct CallExpr {
+    pub callee: Box<Expr>,
+    pub args: Vec<Expr>,
 }
 
-impl<'src> AssignExpr<'src> {
-    pub fn new(name: &'src str, value: Expr<'src>) -> Self {
+impl AssignExpr {
+    pub fn new(name: &str, value: Expr) -> Self {
         AssignExpr {
-            name: Identifier { name },
+            name: Identifier {
+                name: name.to_string(),
+            },
             value: Box::new(value),
         }
     }
 }
 
 #[derive(Debug)]
-pub struct Identifier<'src> {
-    pub name: &'src str,
+pub struct Identifier {
+    pub name: String,
 }
 
 #[derive(Debug)]
-pub struct ConditionStmt<'src> {
-    pub condition: Expr<'src>,
-    pub then_branch: Box<Stmt<'src>>,
-    pub else_branch: Option<Box<Stmt<'src>>>,
+pub struct ConditionStmt {
+    pub condition: Expr,
+    pub then_branch: Box<Stmt>,
+    pub else_branch: Option<Box<Stmt>>,
 }
 
 #[derive(Debug)]
-pub struct WhileStmt<'src> {
-    pub condition: Expr<'src>,
-    pub body: Box<Stmt<'src>>,
+pub struct WhileStmt {
+    pub condition: Expr,
+    pub body: Box<Stmt>,
 }
 
 #[derive(Debug)]
-pub struct ForStmt<'src> {
-    pub initializer: Option<Box<Stmt<'src>>>,
-    pub condition: Option<Box<Expr<'src>>>,
-    pub increment: Option<Box<Expr<'src>>>,
-    pub body: Box<Stmt<'src>>,
+pub struct ForStmt {
+    pub initializer: Option<Box<Stmt>>,
+    pub condition: Option<Box<Expr>>,
+    pub increment: Option<Box<Expr>>,
+    pub body: Box<Stmt>,
 }
 
 #[derive(Debug)]
-pub struct FunDeclaration<'src> {
-    pub name: Identifier<'src>,
-    pub params: Vec<Identifier<'src>>,
-    pub body: Vec<Stmt<'src>>,
+pub struct FunDeclaration {
+    pub name: Identifier,
+    pub params: Vec<Identifier>,
+    pub body: Vec<Stmt>,
 }
 
 #[derive(Debug)]
-pub struct ReturnStmt<'src> {
-    pub value: Option<Expr<'src>>,
+pub struct ReturnStmt {
+    pub value: Option<Expr>,
 }
 
 #[derive(Debug)]
 #[non_exhaustive]
-pub enum Stmt<'src> {
-    Expression(Expr<'src>),
-    PrintStmt(Expr<'src>),
-    ReturnStmt(ReturnStmt<'src>),
-    VarDeclaration(Identifier<'src>, Option<Expr<'src>>),
-    FunDeclaration(FunDeclaration<'src>),
-    Block(Vec<Stmt<'src>>),
-    Condition(ConditionStmt<'src>),
-    While(WhileStmt<'src>),
-    For(ForStmt<'src>),
+pub enum Stmt {
+    Expression(Expr),
+    PrintStmt(Expr),
+    ReturnStmt(ReturnStmt),
+    VarDeclaration(Identifier, Option<Expr>),
+    FunDeclaration(FunDeclaration),
+    Block(Vec<Stmt>),
+    Condition(ConditionStmt),
+    While(WhileStmt),
+    For(ForStmt),
 }

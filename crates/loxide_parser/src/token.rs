@@ -181,12 +181,12 @@ impl<'src> TryInto<UnaryOperator> for Token<'src> {
     }
 }
 
-impl<'src> TryInto<ast::Literal<'src>> for Token<'src> {
+impl<'src> TryInto<ast::Literal> for Token<'src> {
     type Error = SyntaxError;
 
-    fn try_into(self) -> Result<ast::Literal<'src>, Self::Error> {
+    fn try_into(self) -> Result<ast::Literal, Self::Error> {
         let literal = match self.ty {
-            TokenType::Literal(Literal::String(raw)) => ast::Literal::String(raw),
+            TokenType::Literal(Literal::String(raw)) => ast::Literal::String(raw.to_string()),
             TokenType::Literal(Literal::Number(raw)) => ast::Literal::Number(raw),
             TokenType::Keyword(Keyword::Nil) => ast::Literal::Nil,
             TokenType::Keyword(Keyword::True) => ast::Literal::Boolean(true),

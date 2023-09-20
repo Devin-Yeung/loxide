@@ -23,7 +23,7 @@ macro_rules! inner_or {
     }};
 }
 
-impl<'src> Evaluable for Stmt<'src> {
+impl Evaluable for Stmt {
     fn eval(&self, env: &mut Environment) -> Result<Value, RuntimeError> {
         match self {
             Stmt::Expression(e) => e.eval(env),
@@ -52,7 +52,7 @@ impl<'src> Evaluable for Stmt<'src> {
     }
 }
 
-impl<'src> Evaluable for ConditionStmt<'src> {
+impl Evaluable for ConditionStmt {
     fn eval(&self, env: &mut Environment) -> Result<Value, RuntimeError> {
         let mut env = env.extend();
         match self.condition.eval(&mut env)? {
@@ -71,7 +71,7 @@ impl<'src> Evaluable for ConditionStmt<'src> {
     }
 }
 
-impl<'src> Evaluable for WhileStmt<'src> {
+impl Evaluable for WhileStmt {
     fn eval(&self, env: &mut Environment) -> Result<Value, RuntimeError> {
         while let Value::Boolean(b) = self.condition.eval(env)? {
             if b {
@@ -84,7 +84,7 @@ impl<'src> Evaluable for WhileStmt<'src> {
     }
 }
 
-impl<'src> Evaluable for ForStmt<'src> {
+impl Evaluable for ForStmt {
     fn eval(&self, env: &mut Environment) -> Result<Value, RuntimeError> {
         let mut env = env.extend();
         let _ = &self.initializer.eval(&mut env)?;
@@ -111,7 +111,7 @@ impl<'src> Evaluable for ForStmt<'src> {
     }
 }
 
-impl<'src> Evaluable for Option<Box<Stmt<'src>>> {
+impl Evaluable for Option<Box<Stmt>> {
     fn eval(&self, env: &mut Environment) -> Result<Value, RuntimeError> {
         if let Some(stmt) = self {
             stmt.eval(env)
@@ -121,7 +121,7 @@ impl<'src> Evaluable for Option<Box<Stmt<'src>>> {
     }
 }
 
-impl<'src> Evaluable for Option<Box<Expr<'src>>> {
+impl Evaluable for Option<Box<Expr>> {
     fn eval(&self, env: &mut Environment) -> Result<Value, RuntimeError> {
         let val = match self {
             None => Value::Nil,
@@ -131,7 +131,7 @@ impl<'src> Evaluable for Option<Box<Expr<'src>>> {
     }
 }
 
-impl<'src> Evaluable for Option<Expr<'src>> {
+impl Evaluable for Option<Expr> {
     fn eval(&self, env: &mut Environment) -> Result<Value, RuntimeError> {
         let val = match self {
             None => Value::Nil,
@@ -141,7 +141,7 @@ impl<'src> Evaluable for Option<Expr<'src>> {
     }
 }
 
-impl<'src> Evaluable for Expr<'src> {
+impl Evaluable for Expr {
     fn eval(&self, env: &mut Environment) -> Result<Value, RuntimeError> {
         match &self.kind {
             ExprKind::Literal(l) => l.eval(env),
@@ -155,15 +155,15 @@ impl<'src> Evaluable for Expr<'src> {
     }
 }
 
-impl<'src> Evaluable for AssignExpr<'src> {
+impl Evaluable for AssignExpr {
     fn eval(&self, env: &mut Environment) -> Result<Value, RuntimeError> {
         let val = self.value.eval(env)?;
-        env.mutate(self.name.name, val.clone())?;
+        env.mutate(&self.name.name, val.clone())?;
         Ok(val)
     }
 }
 
-impl<'src> Evaluable for BinaryExpr<'src> {
+impl Evaluable for BinaryExpr {
     fn eval(&self, env: &mut Environment) -> Result<Value, RuntimeError> {
         let lhs = self.lhs.eval(env)?;
         let rhs = self.rhs.eval(env)?;
@@ -217,7 +217,7 @@ impl<'src> Evaluable for BinaryExpr<'src> {
     }
 }
 
-impl<'src> Evaluable for UnaryExpr<'src> {
+impl Evaluable for UnaryExpr {
     fn eval(&self, env: &mut Environment) -> Result<Value, RuntimeError> {
         let value = self.expr.eval(env)?;
         match self.operator {
@@ -233,19 +233,19 @@ impl<'src> Evaluable for UnaryExpr<'src> {
     }
 }
 
-impl<'src> Evaluable for GroupedExpr<'src> {
+impl Evaluable for GroupedExpr {
     fn eval(&self, env: &mut Environment) -> Result<Value, RuntimeError> {
         self.expr.eval(env)
     }
 }
 
-impl<'src> Evaluable for Identifier<'src> {
+impl Evaluable for Identifier {
     fn eval(&self, env: &mut Environment) -> Result<Value, RuntimeError> {
-        env.get(self.name)
+        env.get(&self.name)
     }
 }
 
-impl Evaluable for Literal<'_> {
+impl Evaluable for Literal {
     fn eval(&self, _env: &mut Environment) -> Result<Value, RuntimeError> {
         let value = match *self {
             Literal::String(ref v) => Value::String(v.to_string()),
