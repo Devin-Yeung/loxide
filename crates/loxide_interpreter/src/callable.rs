@@ -54,7 +54,11 @@ impl LoxFunction {
         }
 
         for stmt in &self.declaration.body {
-            stmt.eval(&mut env)?;
+            match stmt.eval(&mut env) {
+                Ok(_) => continue,
+                Err(RuntimeError::ReturnValue(ret)) => return Ok(ret),
+                Err(e) => return Err(e),
+            }
         }
 
         // TODO: support return value
