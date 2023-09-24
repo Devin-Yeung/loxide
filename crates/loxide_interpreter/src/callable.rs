@@ -12,7 +12,7 @@ pub enum Callable {
 }
 
 impl PartialEq for Callable {
-    fn eq(&self, other: &Self) -> bool {
+    fn eq(&self, _other: &Self) -> bool {
         todo!()
     }
 }
@@ -68,7 +68,6 @@ impl LoxFunction {
             }
         }
 
-        // TODO: support return value
         Ok(Value::Void)
     }
 }
