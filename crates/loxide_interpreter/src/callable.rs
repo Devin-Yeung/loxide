@@ -48,6 +48,13 @@ impl LoxFunction {
     ) -> Result<Value, RuntimeError> {
         let mut env = env.extend();
 
+        if self.declaration.params.len() != arguments.len() {
+            return Err(RuntimeError::BadArity {
+                expected: self.declaration.params.len(),
+                found: arguments.len(),
+            });
+        }
+
         // binding args to the environment
         for (value, arg) in arguments.into_iter().zip(&self.declaration.params) {
             env.define(arg.name.to_string(), value);
