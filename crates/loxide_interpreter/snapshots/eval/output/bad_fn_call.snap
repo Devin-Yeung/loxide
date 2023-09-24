@@ -1,0 +1,18 @@
+---
+source: crates/loxide_interpreter/src/eval.rs
+expression: results
+---
+[
+    Err(
+        CallOnNonCallable,
+    ),
+    Ok(
+        Void,
+    ),
+    Err(
+        BadArity {
+            expected: 2,
+            found: 1,
+        },
+    ),
+]

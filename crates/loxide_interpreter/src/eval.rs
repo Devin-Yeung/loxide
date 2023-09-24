@@ -187,7 +187,7 @@ impl Evaluable for CallExpr {
             return callable.call(args, env);
         }
 
-        todo!("RUNTIME ERROR")
+        Err(RuntimeError::CallOnNonCallable)
     }
 }
 
@@ -366,5 +366,10 @@ mod tests {
         register!();
         eval(src);
         insta::assert_debug_snapshot!(footprints!());
+    });
+
+    unittest!(bad_fn_call, |src| {
+        let results: Vec<_> = eval(src);
+        insta::assert_debug_snapshot!(results);
     });
 }

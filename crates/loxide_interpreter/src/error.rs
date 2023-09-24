@@ -19,4 +19,8 @@ pub enum RuntimeError {
     ExpectedBoolean,
     #[error("Return value")]
     ReturnValue(Value),
+    #[error("Bad arity, expected: {expected}, found: {found}")]
+    BadArity { expected: usize, found: usize },
+    #[error("Function call on a non-callable value")]
+    CallOnNonCallable,
 }
