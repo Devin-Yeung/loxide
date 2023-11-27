@@ -11,11 +11,11 @@ updates:
     schedule:
       interval: "weekly"
 # See: https://github.com/dependabot/dependabot-core/issues/7896
-#    groups:
-#      dependencies:
-#        update-types:
-#          - "minor"
-#          - "patch"
+    groups:
+      dependencies:
+        update-types:
+          - "minor"
+          - "patch"
 #    ignore:
 #      - dependency-name: "*"
 #        # patch and minor updates don't matter for libraries
