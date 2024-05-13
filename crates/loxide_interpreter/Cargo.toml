@@ -9,7 +9,7 @@ edition = "2021"
 loxide_parser = { workspace = true }
 loxide_testsuite = { workspace = true }
 thiserror = { workspace = true }
-paste = "1.0.14"
+paste = "1.0.15"
 
 [dev-dependencies]
 insta = { workspace = true }
