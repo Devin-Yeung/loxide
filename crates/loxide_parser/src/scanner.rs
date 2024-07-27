@@ -228,14 +228,11 @@ impl<'src> From<&'src String> for Scanner<'src> {
 #[cfg(test)]
 mod tests {
     use crate::scanner::Scanner;
+    use crate::utils::test_utils::{LINEBREAK, SPAN_FILTER};
     use loxide_diagnostic::reporter::{Reporter, Style};
     use loxide_testsuite::unittest;
     use miette::Report;
     use std::sync::Arc;
-
-    const SPAN_CONCEAL: &'static str = r"(?s)Span \{\s*start: \d*,\s*end: \d*,\s*}";
-    const SPAN_REPLACEMENT: &'static str = "[Span]";
-    const SPAN_FILTER: (&'static str, &'static str) = (SPAN_CONCEAL, SPAN_REPLACEMENT);
 
     macro_rules! tokens {
         ($src:expr) => {{
@@ -297,7 +294,7 @@ mod tests {
 
     unittest!(should_fail, |src| {
         let output = src
-            .split('\n')
+            .split(LINEBREAK)
             .map(display_tokenize_error)
             .collect::<Vec<_>>()
             .join("\n");
