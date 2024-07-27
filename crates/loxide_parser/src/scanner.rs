@@ -233,6 +233,10 @@ mod tests {
     use miette::Report;
     use std::sync::Arc;
 
+    const SPAN_CONCEAL: &'static str = r"(?s)Span \{\s*start: \d*,\s*end: \d*,\s*}";
+    const SPAN_REPLACEMENT: &'static str = "[Span]";
+    const SPAN_FILTER: (&'static str, &'static str) = (SPAN_CONCEAL, SPAN_REPLACEMENT);
+
     macro_rules! tokens {
         ($src:expr) => {{
             let scanner = $crate::scanner::Scanner::from($src);
@@ -255,37 +259,37 @@ mod tests {
         reporter.report_to_string()
     }
 
-    unittest!(single_char, |src| {
+    unittest!(single_char, filters => vec![SPAN_FILTER], |src| {
         let scanner = Scanner::from(src);
         let tokens = scanner.map(|x| x.unwrap()).collect::<Vec<_>>();
         insta::assert_debug_snapshot!(tokens);
     });
 
-    unittest!(single_or_double_char, |src| {
+    unittest!(single_or_double_char, filters => vec![SPAN_FILTER], |src| {
         let scanner = Scanner::from(src);
         let tokens = scanner.map(|x| x.unwrap()).collect::<Vec<_>>();
         insta::assert_debug_snapshot!(tokens);
     });
 
-    unittest!(valid_number, |src| {
+    unittest!(valid_number, filters => vec![SPAN_FILTER], |src| {
         let scanner = Scanner::from(src);
         let tokens = scanner.collect::<Vec<_>>();
         insta::assert_debug_snapshot!(tokens);
     });
 
-    unittest!(valid_string, |src| {
+    unittest!(valid_string, filters => vec![SPAN_FILTER], |src| {
         let scanner = Scanner::from(src);
         let tokens = scanner.collect::<Vec<_>>();
         insta::assert_debug_snapshot!(tokens);
     });
 
-    unittest!(valid_idents_and_keywords, |src| {
+    unittest!(valid_idents_and_keywords, filters => vec![SPAN_FILTER], |src| {
         let scanner = Scanner::from(src);
         let tokens = scanner.collect::<Vec<_>>();
         insta::assert_debug_snapshot!(tokens);
     });
 
-    unittest!(expressions, |src| {
+    unittest!(expressions, filters => vec![SPAN_FILTER], |src| {
         let scanner = Scanner::from(src);
         let tokens = scanner.collect::<Vec<_>>();
         insta::assert_debug_snapshot!(tokens);

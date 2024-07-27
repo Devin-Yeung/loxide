@@ -11,10 +11,7 @@ expression: tokens
                 ),
             ),
             lexeme: "123",
-            span: Span {
-                start: 0,
-                end: 3,
-            },
+            span: [Span],
         },
     ),
     Ok(
@@ -25,10 +22,7 @@ expression: tokens
                 ),
             ),
             lexeme: "123.00",
-            span: Span {
-                start: 4,
-                end: 10,
-            },
+            span: [Span],
         },
     ),
     Ok(
@@ -39,10 +33,7 @@ expression: tokens
                 ),
             ),
             lexeme: "123.456",
-            span: Span {
-                start: 11,
-                end: 18,
-            },
+            span: [Span],
         },
     ),
 ]

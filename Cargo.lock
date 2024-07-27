@@ -152,6 +152,7 @@ dependencies = [
  "globset",
  "lazy_static",
  "linked-hash-map",
+ "regex",
  "similar",
  "walkdir",
 ]

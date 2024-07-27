@@ -45,6 +45,20 @@ macro_rules! unittest {
                 concat!(stringify!($name), ".lox"),
                 ::std::module_path!(),
                 ::std::env!("CARGO_MANIFEST_DIR"),
+                ::std::vec::Vec::new(),
+                $closure,
+            );
+        }
+    };
+
+    ($name:ident, filters => $filters:expr, $closure: expr) => {
+        #[test]
+        fn $name() {
+            $crate::_macro_support::source_exec(
+                concat!(stringify!($name), ".lox"),
+                ::std::module_path!(),
+                ::std::env!("CARGO_MANIFEST_DIR"),
+                $filters,
                 $closure,
             );
         }
@@ -57,6 +71,7 @@ macro_rules! unittest {
                 concat!(stringify!($name), ".lox"),
                 $pin_to,
                 ::std::env!("CARGO_MANIFEST_DIR"),
+                ::std::vec::Vec::new(),
                 $closure,
             );
         }

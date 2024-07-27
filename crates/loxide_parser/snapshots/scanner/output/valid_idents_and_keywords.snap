@@ -9,10 +9,7 @@ expression: tokens
                 And,
             ),
             lexeme: "and",
-            span: Span {
-                start: 0,
-                end: 3,
-            },
+            span: [Span],
         },
     ),
     Ok(
@@ -21,10 +18,7 @@ expression: tokens
                 Class,
             ),
             lexeme: "class",
-            span: Span {
-                start: 4,
-                end: 9,
-            },
+            span: [Span],
         },
     ),
     Ok(
@@ -33,10 +27,7 @@ expression: tokens
                 Else,
             ),
             lexeme: "else",
-            span: Span {
-                start: 10,
-                end: 14,
-            },
+            span: [Span],
         },
     ),
     Ok(
@@ -45,10 +36,7 @@ expression: tokens
                 False,
             ),
             lexeme: "false",
-            span: Span {
-                start: 15,
-                end: 20,
-            },
+            span: [Span],
         },
     ),
     Ok(
@@ -57,10 +45,7 @@ expression: tokens
                 Fun,
             ),
             lexeme: "fun",
-            span: Span {
-                start: 21,
-                end: 24,
-            },
+            span: [Span],
         },
     ),
     Ok(
@@ -69,10 +54,7 @@ expression: tokens
                 For,
             ),
             lexeme: "for",
-            span: Span {
-                start: 25,
-                end: 28,
-            },
+            span: [Span],
         },
     ),
     Ok(
@@ -81,10 +63,7 @@ expression: tokens
                 If,
             ),
             lexeme: "if",
-            span: Span {
-                start: 29,
-                end: 31,
-            },
+            span: [Span],
         },
     ),
     Ok(
@@ -93,10 +72,7 @@ expression: tokens
                 Nil,
             ),
             lexeme: "nil",
-            span: Span {
-                start: 32,
-                end: 35,
-            },
+            span: [Span],
         },
     ),
     Ok(
@@ -105,10 +81,7 @@ expression: tokens
                 Or,
             ),
             lexeme: "or",
-            span: Span {
-                start: 36,
-                end: 38,
-            },
+            span: [Span],
         },
     ),
     Ok(
@@ -117,10 +90,7 @@ expression: tokens
                 Print,
             ),
             lexeme: "print",
-            span: Span {
-                start: 39,
-                end: 44,
-            },
+            span: [Span],
         },
     ),
     Ok(
@@ -129,10 +99,7 @@ expression: tokens
                 Return,
             ),
             lexeme: "return",
-            span: Span {
-                start: 45,
-                end: 51,
-            },
+            span: [Span],
         },
     ),
     Ok(
@@ -141,10 +108,7 @@ expression: tokens
                 Super,
             ),
             lexeme: "super",
-            span: Span {
-                start: 52,
-                end: 57,
-            },
+            span: [Span],
         },
     ),
     Ok(
@@ -153,10 +117,7 @@ expression: tokens
                 This,
             ),
             lexeme: "this",
-            span: Span {
-                start: 58,
-                end: 62,
-            },
+            span: [Span],
         },
     ),
     Ok(
@@ -165,10 +126,7 @@ expression: tokens
                 True,
             ),
             lexeme: "true",
-            span: Span {
-                start: 63,
-                end: 67,
-            },
+            span: [Span],
         },
     ),
     Ok(
@@ -177,10 +135,7 @@ expression: tokens
                 Var,
             ),
             lexeme: "var",
-            span: Span {
-                start: 68,
-                end: 71,
-            },
+            span: [Span],
         },
     ),
     Ok(
@@ -189,40 +144,28 @@ expression: tokens
                 While,
             ),
             lexeme: "while",
-            span: Span {
-                start: 72,
-                end: 77,
-            },
+            span: [Span],
         },
     ),
     Ok(
         Token {
             ty: Identifier,
             lexeme: "function",
-            span: Span {
-                start: 78,
-                end: 86,
-            },
+            span: [Span],
         },
     ),
     Ok(
         Token {
             ty: Identifier,
             lexeme: "_rusty",
-            span: Span {
-                start: 87,
-                end: 93,
-            },
+            span: [Span],
         },
     ),
     Ok(
         Token {
             ty: Identifier,
             lexeme: "rust123",
-            span: Span {
-                start: 94,
-                end: 101,
-            },
+            span: [Span],
         },
     ),
 ]
