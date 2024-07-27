@@ -18,11 +18,12 @@ pub struct Tester {
 }
 
 impl Tester {
-    fn source_exec<F: FnMut(&str)>(&self, mut f: F) {
+    fn source_exec<F: FnMut(&str)>(&self, filters: Vec<(&str, &str)>, mut f: F) {
         let source = fs::read_to_string(&self.source_path).unwrap();
         insta::with_settings!({
             snapshot_path => &self.snapshot_path,
             prepend_module_to_snapshot => false,
+            filters => filters,
         },{
             f(&source);
         });
@@ -99,11 +100,12 @@ pub fn source_exec<F: FnMut(&str)>(
     source_name: &str,
     module_path: &str,
     cargo_manifest_dir: &str,
+    filter: Vec<(&str, &str)>,
     f: F,
 ) {
     TesterBuilder::new(source_name, module_path, cargo_manifest_dir)
         .build()
-        .source_exec(f);
+        .source_exec(filter, f);
 }
 
 #[cfg(test)]

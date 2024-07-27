@@ -11,22 +11,14 @@ expression: tokens
                 ),
             ),
             lexeme: "1",
-            span: Span {
-                line: 1,
-                start: 0,
-                end: 1,
-            },
+            span: [Span],
         },
     ),
     Ok(
         Token {
             ty: Plus,
             lexeme: "+",
-            span: Span {
-                line: 1,
-                start: 2,
-                end: 3,
-            },
+            span: [Span],
         },
     ),
     Ok(
@@ -37,22 +29,14 @@ expression: tokens
                 ),
             ),
             lexeme: "2",
-            span: Span {
-                line: 1,
-                start: 4,
-                end: 5,
-            },
+            span: [Span],
         },
     ),
     Ok(
         Token {
             ty: Comment,
             lexeme: "// Hello world",
-            span: Span {
-                line: 1,
-                start: 6,
-                end: 20,
-            },
+            span: [Span],
         },
     ),
 ]

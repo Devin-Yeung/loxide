@@ -1,6 +1,7 @@
 use crate::ast;
 use crate::ast::{BinaryOperator, UnaryOperator};
 use crate::error::SyntaxError;
+use miette::SourceSpan;
 use std::borrow::Cow;
 use std::str::FromStr;
 
@@ -132,13 +133,17 @@ pub struct Token<'src> {
     pub(crate) span: Span,
 }
 
-/// The span of a token, line number indexed from 1,
-/// column number indexed from 0, right exclusive.
-#[derive(Debug, Copy, Clone)]
+/// The span of a token, indexed from 0, left inclusive, right exclusive.
+#[derive(Debug, Copy, Clone, Eq, PartialEq)]
 pub struct Span {
-    pub(crate) line: usize,
     pub(crate) start: usize,
     pub(crate) end: usize,
+}
+
+impl From<Span> for SourceSpan {
+    fn from(val: Span) -> Self {
+        SourceSpan::from(val.start..val.end)
+    }
 }
 
 impl<'src> Token<'src> {

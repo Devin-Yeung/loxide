@@ -11,11 +11,7 @@ expression: tokens
                 ),
             ),
             lexeme: "\"Hello World\"",
-            span: Span {
-                line: 1,
-                start: 0,
-                end: 13,
-            },
+            span: [Span],
         },
     ),
     Ok(
@@ -26,11 +22,7 @@ expression: tokens
                 ),
             ),
             lexeme: "\"Let's Get Rusty!\"",
-            span: Span {
-                line: 2,
-                start: 0,
-                end: 18,
-            },
+            span: [Span],
         },
     ),
     Ok(
@@ -41,11 +33,7 @@ expression: tokens
                 ),
             ),
             lexeme: "\"\"",
-            span: Span {
-                line: 3,
-                start: 0,
-                end: 2,
-            },
+            span: [Span],
         },
     ),
     Ok(
@@ -56,11 +44,7 @@ expression: tokens
                 ),
             ),
             lexeme: "\"A\"",
-            span: Span {
-                line: 4,
-                start: 0,
-                end: 3,
-            },
+            span: [Span],
         },
     ),
 ]

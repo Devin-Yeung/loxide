@@ -1,0 +1,16 @@
+---
+source: crates/loxide_diagnostic/src/reporter.rs
+expression: reporter.report_to_string()
+---
+  × Expected upper case letter
+   ╭────
+ 1 │ hello World! 
+   · ┬
+   · ╰── found lowercase letter
+   ╰────
+  × Trailing space is not allowed
+   ╭────
+ 1 │ hello World! 
+   ·             ┬
+   ·             ╰── remove this trailing space
+   ╰────

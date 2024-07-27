@@ -6,91 +6,51 @@ expression: tokens
     Token {
         ty: BangEqual,
         lexeme: "!=",
-        span: Span {
-            line: 1,
-            start: 0,
-            end: 2,
-        },
+        span: [Span],
     },
     Token {
         ty: Bang,
         lexeme: "!",
-        span: Span {
-            line: 2,
-            start: 0,
-            end: 1,
-        },
+        span: [Span],
     },
     Token {
         ty: EqualEqual,
         lexeme: "==",
-        span: Span {
-            line: 3,
-            start: 0,
-            end: 2,
-        },
+        span: [Span],
     },
     Token {
         ty: Equal,
         lexeme: "=",
-        span: Span {
-            line: 4,
-            start: 0,
-            end: 1,
-        },
+        span: [Span],
     },
     Token {
         ty: LessEqual,
         lexeme: "<=",
-        span: Span {
-            line: 5,
-            start: 0,
-            end: 2,
-        },
+        span: [Span],
     },
     Token {
         ty: Less,
         lexeme: "<",
-        span: Span {
-            line: 6,
-            start: 0,
-            end: 1,
-        },
+        span: [Span],
     },
     Token {
         ty: GreaterEqual,
         lexeme: ">=",
-        span: Span {
-            line: 7,
-            start: 0,
-            end: 2,
-        },
+        span: [Span],
     },
     Token {
         ty: Greater,
         lexeme: ">",
-        span: Span {
-            line: 8,
-            start: 0,
-            end: 1,
-        },
+        span: [Span],
     },
     Token {
         ty: Slash,
         lexeme: "/",
-        span: Span {
-            line: 9,
-            start: 0,
-            end: 1,
-        },
+        span: [Span],
     },
     Token {
         ty: Comment,
         lexeme: "//",
-        span: Span {
-            line: 10,
-            start: 0,
-            end: 2,
-        },
+        span: [Span],
     },
 ]

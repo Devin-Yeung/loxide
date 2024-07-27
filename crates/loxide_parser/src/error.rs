@@ -1,9 +1,12 @@
+use crate::token::Span;
+use miette;
+use miette::Diagnostic;
 use thiserror::Error;
 
-#[derive(Error, Debug, Eq, PartialEq, Copy, Clone)]
+#[derive(Error, Debug, Eq, PartialEq, Copy, Clone, Diagnostic)]
 pub enum SyntaxError {
-    #[error("Unexpected character at line {0}")]
-    UnexpectedChar(usize),
+    #[error("Unexpected character")]
+    UnexpectedChar(#[label("this character is unexpected")] Span),
     #[error("Unexpected EOF")]
     UnexpectedEOF,
     #[error("Expected token {expected}, found {found}")]
@@ -16,9 +19,9 @@ pub enum SyntaxError {
     #[error("Invalid Conversion")]
     InvalidConversion,
     #[error("Invalid Number")]
-    InvalidNumber,
+    InvalidNumber(#[label("this number is invalid")] Span),
     #[error("Invalid string literal")]
-    InvalidStringLiteral,
+    InvalidStringLiteral(#[label("this string literal is invalid")] Span),
     #[error("Invalid keyword")]
     InvalidKeywords,
     #[error("Invalid assignment target.")]
