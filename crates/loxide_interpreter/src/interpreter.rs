@@ -7,6 +7,12 @@ pub struct Interpreter {
     global: Environment,
 }
 
+impl Default for Interpreter {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Interpreter {
     pub fn new() -> Self {
         let global = Environment::global();

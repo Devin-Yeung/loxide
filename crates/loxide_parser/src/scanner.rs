@@ -294,7 +294,7 @@ mod tests {
     unittest!(should_fail, |src| {
         let output = src
             .split('\n')
-            .map(|line| display_tokenize_error(line))
+            .map(display_tokenize_error)
             .collect::<Vec<_>>()
             .join("\n");
 
