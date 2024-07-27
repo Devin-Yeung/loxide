@@ -12,7 +12,6 @@ expression: tokens
             ),
             lexeme: "1",
             span: Span {
-                line: 1,
                 start: 0,
                 end: 1,
             },
@@ -23,7 +22,6 @@ expression: tokens
             ty: Plus,
             lexeme: "+",
             span: Span {
-                line: 1,
                 start: 2,
                 end: 3,
             },
@@ -38,7 +36,6 @@ expression: tokens
             ),
             lexeme: "2",
             span: Span {
-                line: 1,
                 start: 4,
                 end: 5,
             },
@@ -49,7 +46,6 @@ expression: tokens
             ty: Comment,
             lexeme: "// Hello world",
             span: Span {
-                line: 1,
                 start: 6,
                 end: 20,
             },

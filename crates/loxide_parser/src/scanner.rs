@@ -18,11 +18,7 @@ impl<'src> Scanner<'src> {
         Scanner {
             src,
             prophet: Prophet::new(src.chars()),
-            current: Span {
-                line: 1,
-                start: 0,
-                end: 0,
-            },
+            current: Span { start: 0, end: 0 },
             consumed: 0,
         }
     }
@@ -47,11 +43,6 @@ impl<'src> Scanner<'src> {
     /// advance will take care of span and iter for you
     fn advance(&mut self) -> Option<char> {
         match self.prophet.peek() {
-            Some('\n') => {
-                self.current.line += 1;
-                self.current.start = 0;
-                self.current.end = 0;
-            }
             Some(_) => {
                 self.current.end += 1;
             }
@@ -121,7 +112,7 @@ impl<'src> Scanner<'src> {
             Some(c) if c.is_ascii_digit() => self.number()?,
             Some(c) if c.is_ascii_alphabetic() || c == '_' => self.identifier(),
             None => TokenType::EOF,
-            _ => return Err(SyntaxError::UnexpectedChar(self.current.line)),
+            _ => return Err(SyntaxError::UnexpectedChar(self.current)),
         };
         Ok(self.yield_token(ty))
     }
@@ -145,7 +136,7 @@ impl<'src> Scanner<'src> {
     fn string(&mut self) -> Result<TokenType<'src>, SyntaxError> {
         loop {
             match self.advance() {
-                None => return Err(SyntaxError::InvalidStringLiteral),
+                None => return Err(SyntaxError::InvalidStringLiteral(self.current)),
                 Some('\"') => {
                     // discard the left quote
                     // return owned string only when *string escape* happens
@@ -166,7 +157,10 @@ impl<'src> Scanner<'src> {
                     if self.peek_next().map_or(false, |c| c.is_ascii_digit()) {
                         self.advance()
                     } else {
-                        return Err(SyntaxError::InvalidNumber);
+                        return Err(SyntaxError::InvalidNumber(Span {
+                            start: self.current.start,
+                            end: self.current.end + 1,
+                        }));
                     }
                 }
                 c if c.is_ascii_digit() => self.advance(),
@@ -176,7 +170,7 @@ impl<'src> Scanner<'src> {
         let num = self
             .lexeme()
             .parse::<f64>()
-            .map_err(|_| SyntaxError::InvalidNumber)?;
+            .map_err(|_| SyntaxError::InvalidNumber(self.current))?;
         Ok(TokenType::Literal(Literal::Number(num)))
     }
 
@@ -214,11 +208,7 @@ impl<'src> From<&'src str> for Scanner<'src> {
         Scanner {
             src: value,
             prophet: Prophet::new(value.chars()),
-            current: Span {
-                line: 1,
-                start: 0,
-                end: 0,
-            },
+            current: Span { start: 0, end: 0 },
             consumed: 0,
         }
     }
@@ -229,11 +219,7 @@ impl<'src> From<&'src String> for Scanner<'src> {
         Scanner {
             src: value,
             prophet: Prophet::new(value.chars()),
-            current: Span {
-                line: 1,
-                start: 0,
-                end: 0,
-            },
+            current: Span { start: 0, end: 0 },
             consumed: 0,
         }
     }
@@ -242,13 +228,31 @@ impl<'src> From<&'src String> for Scanner<'src> {
 #[cfg(test)]
 mod tests {
     use crate::scanner::Scanner;
+    use loxide_diagnostic::reporter::{Reporter, Style};
     use loxide_testsuite::unittest;
+    use miette::Report;
+    use std::sync::Arc;
 
     macro_rules! tokens {
         ($src:expr) => {{
             let scanner = $crate::scanner::Scanner::from($src);
             scanner.collect::<::std::vec::Vec<_>>()
         }};
+    }
+
+    fn display_tokenize_error<S: AsRef<str>>(src: S) -> String {
+        let mut reporter = Reporter::new(Style::NoColor);
+        let source = Arc::new(src.as_ref().to_string());
+        let errs = tokens!(src.as_ref())
+            .into_iter()
+            .filter(|x| x.is_err())
+            .map(|x| {
+                let report: Report = x.unwrap_err().into();
+                report.with_source_code(source.clone())
+            })
+            .collect::<Vec<_>>();
+        reporter.extend(errs);
+        reporter.report_to_string()
     }
 
     unittest!(single_char, |src| {
@@ -269,21 +273,9 @@ mod tests {
         insta::assert_debug_snapshot!(tokens);
     });
 
-    unittest!(invalid_number, |src| {
-        // each line a single new src
-        let tokens = src.split('\n').map(|l| tokens!(l)).collect::<Vec<_>>();
-        insta::assert_debug_snapshot!(tokens);
-    });
-
     unittest!(valid_string, |src| {
         let scanner = Scanner::from(src);
         let tokens = scanner.collect::<Vec<_>>();
-        insta::assert_debug_snapshot!(tokens);
-    });
-
-    unittest!(invalid_string, |src| {
-        // each line a single new src
-        let tokens = src.split('\n').map(|l| tokens!(l)).collect::<Vec<_>>();
         insta::assert_debug_snapshot!(tokens);
     });
 
@@ -297,5 +289,15 @@ mod tests {
         let scanner = Scanner::from(src);
         let tokens = scanner.collect::<Vec<_>>();
         insta::assert_debug_snapshot!(tokens);
+    });
+
+    unittest!(should_fail, |src| {
+        let output = src
+            .split('\n')
+            .map(|line| display_tokenize_error(line))
+            .collect::<Vec<_>>()
+            .join("\n");
+
+        insta::assert_snapshot!(output);
     });
 }

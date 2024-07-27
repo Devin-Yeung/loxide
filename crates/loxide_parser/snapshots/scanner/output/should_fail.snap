@@ -1,0 +1,24 @@
+---
+source: crates/loxide_parser/src/scanner.rs
+expression: output
+---
+  × Invalid Number
+   ╭────
+ 1 │ 567.
+   · ──┬─
+   ·   ╰── this number is invalid
+   ╰────
+
+  × Invalid string literal
+   ╭────
+ 1 │ "
+   · ┬
+   · ╰── this string literal is invalid
+   ╰────
+
+  × Invalid string literal
+   ╭────
+ 1 │ """
+   ·   ┬
+   ·   ╰── this string literal is invalid
+   ╰────

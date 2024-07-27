@@ -48,7 +48,6 @@ impl Reporter {
         Ok(())
     }
 
-    #[cfg(test)]
     pub fn report_to_string(&self) -> String {
         let mut buffer = String::new();
         self.report(&mut buffer).unwrap();

@@ -223,8 +223,10 @@ version = "0.1.0"
 dependencies = [
  "automod",
  "insta",
+ "loxide_diagnostic",
  "loxide_macros",
  "loxide_testsuite",
+ "miette",
  "thiserror",
 ]
 

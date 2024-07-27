@@ -7,7 +7,6 @@ expression: tokens
         ty: LeftParen,
         lexeme: "(",
         span: Span {
-            line: 1,
             start: 0,
             end: 1,
         },
@@ -16,7 +15,6 @@ expression: tokens
         ty: RightParen,
         lexeme: ")",
         span: Span {
-            line: 1,
             start: 2,
             end: 3,
         },
@@ -25,81 +23,72 @@ expression: tokens
         ty: LeftBrace,
         lexeme: "{",
         span: Span {
-            line: 2,
-            start: 0,
-            end: 1,
+            start: 4,
+            end: 5,
         },
     },
     Token {
         ty: RightBrace,
         lexeme: "}",
         span: Span {
-            line: 2,
-            start: 2,
-            end: 3,
+            start: 6,
+            end: 7,
         },
     },
     Token {
         ty: Comma,
         lexeme: ",",
         span: Span {
-            line: 3,
-            start: 0,
-            end: 1,
+            start: 8,
+            end: 9,
         },
     },
     Token {
         ty: Dot,
         lexeme: ".",
         span: Span {
-            line: 4,
-            start: 0,
-            end: 1,
+            start: 10,
+            end: 11,
         },
     },
     Token {
         ty: Minus,
         lexeme: "-",
         span: Span {
-            line: 5,
-            start: 0,
-            end: 1,
+            start: 12,
+            end: 13,
         },
     },
     Token {
         ty: Plus,
         lexeme: "+",
         span: Span {
-            line: 6,
-            start: 0,
-            end: 1,
+            start: 14,
+            end: 15,
         },
     },
     Token {
         ty: Semicolon,
         lexeme: ";",
         span: Span {
-            line: 7,
-            start: 0,
-            end: 1,
+            start: 16,
+            end: 17,
         },
     },
     Token {
         ty: Slash,
         lexeme: "/",
         span: Span {
-            line: 8,
-            start: 0,
-            end: 1,
+            start: 18,
+            end: 19,
         },
     },
     Token {
         ty: Star,
         lexeme: "*",
         span: Span {
-            line: 9,
-            start: 0,
-            end: 1,
+            start: 20,
+            end: 21,
         },
     },
 ]
