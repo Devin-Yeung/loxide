@@ -1,13 +1,12 @@
-use crate::ast;
 use crate::ast::ExprKind::Binary;
 use crate::ast::Literal::{Boolean, Nil};
 use crate::ast::{
     AssignExpr, BinaryExpr, CallExpr, ConditionStmt, Expr, ExprKind, ForStmt, FunDeclaration,
-    Identifier, ReturnStmt, Stmt, UnaryExpr, WhileStmt,
+    Identifier, ReturnStmt, Stmt, UnaryExpr, UnaryOperator, WhileStmt,
 };
 use crate::error::SyntaxError;
 use crate::scanner::Scanner;
-use crate::token::{Keyword, Token, TokenType};
+use crate::token::{Keyword, Span, Token, TokenType};
 use std::iter::Peekable;
 use std::rc::Rc;
 
@@ -367,9 +366,11 @@ impl<'src> Parser<'src> {
 
         if self.consume_if(TokenType::Equal) {
             let value = self.assignment()?;
+            let span = Span::new(expr.span.start, value.span.end);
             return match expr.kind {
                 ExprKind::Variable(v) => Ok(Expr {
                     kind: ExprKind::Assign(AssignExpr::new(&v.name, value)),
+                    span,
                 }),
                 _ => Err(SyntaxError::InvalidAssignmentTarget),
             };
@@ -390,12 +391,14 @@ impl<'src> Parser<'src> {
                 _ => break,
             };
             let rhs: Expr = self.comparison()?;
+            let span = Span::new(expr.span.start, rhs.span.end);
             expr = Expr {
                 kind: Binary(BinaryExpr {
                     lhs: Box::new(expr),
                     rhs: Box::new(rhs),
                     operator: ops,
                 }),
+                span,
             }
         }
         Ok(expr)
@@ -417,12 +420,14 @@ impl<'src> Parser<'src> {
                 _ => break,
             };
             let rhs = self.term()?;
+            let span = Span::new(expr.span.start, rhs.span.end);
             expr = Expr {
                 kind: Binary(BinaryExpr {
                     lhs: Box::new(expr),
                     rhs: Box::new(rhs),
                     operator: ops,
                 }),
+                span,
             }
         }
         Ok(expr)
@@ -441,12 +446,14 @@ impl<'src> Parser<'src> {
                 _ => break,
             };
             let rhs = self.factor()?;
+            let span = Span::new(expr.span.start, rhs.span.end);
             expr = Expr {
                 kind: Binary(BinaryExpr {
                     lhs: Box::new(expr),
                     rhs: Box::new(rhs),
                     operator: ops,
                 }),
+                span,
             }
         }
         Ok(expr)
@@ -465,12 +472,14 @@ impl<'src> Parser<'src> {
                 _ => break,
             };
             let rhs = self.unary()?;
+            let span = Span::new(expr.span.start, rhs.span.end);
             expr = Expr {
                 kind: Binary(BinaryExpr {
                     lhs: Box::new(expr),
                     rhs: Box::new(rhs),
                     operator: ops,
                 }),
+                span,
             }
         }
         Ok(expr)
@@ -485,9 +494,13 @@ impl<'src> Parser<'src> {
     fn unary(&mut self) -> Result<Expr, SyntaxError> {
         let expr = match self.peek_type()? {
             TokenType::Bang | TokenType::Minus => {
-                let operator = self.advance()?.try_into()?;
+                let operator = self.advance()?;
+                let start = operator.span.start;
+                let operator: UnaryOperator = operator.try_into()?;
                 let expr = Box::new(self.unary()?);
+
                 Expr {
+                    span: Span::new(start, expr.span.end),
                     kind: ExprKind::Unary(UnaryExpr { operator, expr }),
                 }
             }
@@ -506,13 +519,17 @@ impl<'src> Parser<'src> {
         loop {
             if self.consume_if(TokenType::LeftParen) {
                 let args = self.arguments()?;
+                let span = Span::new(
+                    expr.span.start,
+                    self.consume(TokenType::RightParen)?.span.end,
+                );
                 expr = Expr {
                     kind: ExprKind::Call(CallExpr {
                         callee: Box::new(expr),
                         args,
                     }),
+                    span,
                 };
-                self.consume(TokenType::RightParen)?;
             } else {
                 break;
             }
@@ -549,43 +566,50 @@ impl<'src> Parser<'src> {
     fn primary(&mut self) -> Result<Expr, SyntaxError> {
         let expr = match self.peek_type()? {
             TokenType::Keyword(Keyword::True) => {
-                self.advance()?;
+                let span = self.advance()?.span;
                 Expr {
                     kind: ExprKind::Literal(Boolean(true)),
+                    span,
                 }
             }
             TokenType::Keyword(Keyword::False) => {
-                self.advance()?;
+                let span = self.advance()?.span;
                 Expr {
                     kind: ExprKind::Literal(Boolean(false)),
+                    span,
                 }
             }
             TokenType::Keyword(Keyword::Nil) => {
-                self.advance()?;
+                let span = self.advance()?.span;
                 Expr {
                     kind: ExprKind::Literal(Nil),
+                    span,
                 }
             }
             TokenType::Literal(_) => {
-                let literal: ast::Literal = self.advance()?.try_into()?;
+                let literal = self.advance()?;
+                let span = literal.span;
                 Expr {
-                    kind: ExprKind::Literal(literal),
+                    kind: ExprKind::Literal(literal.try_into()?),
+                    span,
                 }
             }
             TokenType::LeftParen => {
-                self.consume(TokenType::LeftParen)?;
+                let start = self.consume(TokenType::LeftParen)?.span.start;
                 let expr = self.expression()?;
-                self.consume(TokenType::RightParen)?;
+                let end = self.consume(TokenType::RightParen)?.span.end;
                 Expr {
                     kind: ExprKind::Grouped(Box::new(expr)),
+                    span: Span::new(start, end),
                 }
             }
             TokenType::Identifier => {
-                let name = self.consume(TokenType::Identifier)?.lexeme;
+                let name = self.consume(TokenType::Identifier)?;
                 Expr {
                     kind: ExprKind::Variable(Identifier {
-                        name: name.to_string(),
+                        name: name.lexeme.to_string(),
                     }),
+                    span: name.span,
                 }
             }
             _ => return Err(SyntaxError::Expect("expression")),
@@ -628,9 +652,10 @@ impl<'src> Parser<'src> {
 #[cfg(test)]
 mod tests {
     use crate::parser::Parser;
+    use crate::utils::test_utils::SPAN_FILTER;
     use loxide_testsuite::unittest;
 
-    unittest!(primary, |src| {
+    unittest!(primary, filters => vec![SPAN_FILTER], |src| {
         let asts = src
             .split('\n')
             .map(|line| Parser::new(line).primary())
@@ -638,7 +663,7 @@ mod tests {
         insta::assert_debug_snapshot!(asts);
     });
 
-    unittest!(unary, |src| {
+    unittest!(unary, filters => vec![SPAN_FILTER], |src| {
         let asts = src
             .split('\n')
             .map(|line| Parser::new(line).unary())
@@ -646,7 +671,7 @@ mod tests {
         insta::assert_debug_snapshot!(asts);
     });
 
-    unittest!(factor, |src| {
+    unittest!(factor, filters => vec![SPAN_FILTER], |src| {
         let asts = src
             .split('\n')
             .map(|line| Parser::new(line).factor())
@@ -654,7 +679,7 @@ mod tests {
         insta::assert_debug_snapshot!(asts);
     });
 
-    unittest!(term, |src| {
+    unittest!(term, filters => vec![SPAN_FILTER], |src| {
         let asts = src
             .split('\n')
             .map(|line| Parser::new(line).term())
@@ -662,7 +687,7 @@ mod tests {
         insta::assert_debug_snapshot!(asts);
     });
 
-    unittest!(comparison, |src| {
+    unittest!(comparison, filters => vec![SPAN_FILTER], |src| {
         let asts = src
             .split('\n')
             .map(|line| Parser::new(line).comparison())
@@ -670,7 +695,7 @@ mod tests {
         insta::assert_debug_snapshot!(asts);
     });
 
-    unittest!(equality, |src| {
+    unittest!(equality, filters => vec![SPAN_FILTER], |src| {
         let asts = src
             .split('\n')
             .map(|line| Parser::new(line).equality())
@@ -678,7 +703,7 @@ mod tests {
         insta::assert_debug_snapshot!(asts);
     });
 
-    unittest!(expression, |src| {
+    unittest!(expression, filters => vec![SPAN_FILTER], |src| {
         let asts = src
             .split('\n')
             .map(|line| Parser::new(line).expression())
@@ -686,7 +711,7 @@ mod tests {
         insta::assert_debug_snapshot!(asts);
     });
 
-    unittest!(single_statement, |src| {
+    unittest!(single_statement, filters => vec![SPAN_FILTER], |src| {
         let asts = src
             .split('\n')
             .map(|line| Parser::new(line).statement())
@@ -694,55 +719,55 @@ mod tests {
         insta::assert_debug_snapshot!(asts);
     });
 
-    unittest!(many_statements, |src| {
+    unittest!(many_statements, filters => vec![SPAN_FILTER], |src| {
         let mut parser = Parser::new(src);
         let results = parser.parse();
         insta::assert_debug_snapshot!(results);
     });
 
-    unittest!(declarations, |src| {
+    unittest!(declarations, filters => vec![SPAN_FILTER], |src| {
         let mut parser = Parser::new(src);
         let results = parser.parse();
         insta::assert_debug_snapshot!(results);
     });
 
-    unittest!(block_statement, |src| {
+    unittest!(block_statement, filters => vec![SPAN_FILTER], |src| {
         let mut parser = Parser::new(src);
         let results = parser.parse();
         insta::assert_debug_snapshot!(results);
     });
 
-    unittest!(if_statement, |src| {
+    unittest!(if_statement, filters => vec![SPAN_FILTER], |src| {
         let mut parser = Parser::new(src);
         let results = parser.parse();
         insta::assert_debug_snapshot!(results);
     });
 
-    unittest!(while_statement, |src| {
+    unittest!(while_statement, filters => vec![SPAN_FILTER], |src| {
         let mut parser = Parser::new(src);
         let results = parser.parse();
         insta::assert_debug_snapshot!(results);
     });
 
-    unittest!(for_statement, |src| {
+    unittest!(for_statement, filters => vec![SPAN_FILTER], |src| {
         let mut parser = Parser::new(src);
         let results = parser.parse();
         insta::assert_debug_snapshot!(results);
     });
 
-    unittest!(fn_call, |src| {
+    unittest!(fn_call, filters => vec![SPAN_FILTER], |src| {
         let mut parser = Parser::new(src);
         let results = parser.parse();
         insta::assert_debug_snapshot!(results);
     });
 
-    unittest!(fn_decl, |src| {
+    unittest!(fn_decl, filters => vec![SPAN_FILTER], |src| {
         let mut parser = Parser::new(src);
         let results = parser.parse();
         insta::assert_debug_snapshot!(results);
     });
 
-    unittest!(return_stmt, |src| {
+    unittest!(return_stmt, filters => vec![SPAN_FILTER], |src| {
         let mut parser = Parser::new(src);
         let results = parser.parse();
         insta::assert_debug_snapshot!(results);

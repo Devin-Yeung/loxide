@@ -12,6 +12,7 @@ expression: results
                             true,
                         ),
                     ),
+                    span: [Span],
                 },
                 body: Block(
                     [
@@ -23,6 +24,7 @@ expression: results
                                             false,
                                         ),
                                     ),
+                                    span: [Span],
                                 },
                                 body: Block(
                                     [
@@ -33,6 +35,7 @@ expression: results
                                                         "Hello world",
                                                     ),
                                                 ),
+                                                span: [Span],
                                             },
                                         ),
                                     ],

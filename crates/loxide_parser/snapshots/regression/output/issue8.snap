@@ -1,7 +1,6 @@
 ---
 source: crates/loxide_parser/tests/regression/issue8.rs
 expression: result
-input_file: crates/loxide_parser/snapshots/regression/snapshots-inputs/issue8.lox
 ---
 (
     [
@@ -15,6 +14,10 @@ input_file: crates/loxide_parser/snapshots/regression/snapshots-inputs/issue8.lo
                                     1.0,
                                 ),
                             ),
+                            span: Span {
+                                start: 0,
+                                end: 1,
+                            },
                         },
                         rhs: Expr {
                             kind: Literal(
@@ -22,10 +25,18 @@ input_file: crates/loxide_parser/snapshots/regression/snapshots-inputs/issue8.lo
                                     2.0,
                                 ),
                             ),
+                            span: Span {
+                                start: 4,
+                                end: 5,
+                            },
                         },
                         operator: Plus,
                     },
                 ),
+                span: Span {
+                    start: 0,
+                    end: 5,
+                },
             },
         ),
         Expression(
@@ -38,6 +49,10 @@ input_file: crates/loxide_parser/snapshots/regression/snapshots-inputs/issue8.lo
                                     3.0,
                                 ),
                             ),
+                            span: Span {
+                                start: 29,
+                                end: 30,
+                            },
                         },
                         rhs: Expr {
                             kind: Literal(
@@ -45,10 +60,18 @@ input_file: crates/loxide_parser/snapshots/regression/snapshots-inputs/issue8.lo
                                     4.0,
                                 ),
                             ),
+                            span: Span {
+                                start: 33,
+                                end: 34,
+                            },
                         },
                         operator: Plus,
                     },
                 ),
+                span: Span {
+                    start: 29,
+                    end: 34,
+                },
             },
         ),
     ],
