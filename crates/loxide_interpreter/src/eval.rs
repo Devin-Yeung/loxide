@@ -6,7 +6,6 @@ use loxide_parser::ast::{
     AssignExpr, BinaryExpr, BinaryOperator, CallExpr, ConditionStmt, Expr, ExprKind, ForStmt,
     GroupedExpr, Identifier, Literal, ReturnStmt, Stmt, UnaryExpr, UnaryOperator, WhileStmt,
 };
-use loxide_parser::token::Span;
 use loxide_testsuite::probe;
 
 pub trait Evaluable {
@@ -218,9 +217,10 @@ impl Evaluable for BinaryExpr {
                     }
                 } else {
                     Err(RuntimeError::IncompatibleBinaryOperand {
-                        span: Span::new(self.lhs.span().start, self.rhs.span().end),
-                        lhs: lhs.kind(),
-                        rhs: rhs.kind(),
+                        lhs_ty: lhs.kind(),
+                        lhs_span: self.lhs.span(),
+                        rhs_ty: rhs.kind(),
+                        rhs_span: self.rhs.span(),
                     })
                 }
             }

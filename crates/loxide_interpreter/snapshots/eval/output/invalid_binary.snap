@@ -12,6 +12,7 @@ expression: results
   × Incompatible operand, boolean is incompatible with number
    ╭────
  1 │ true != 1;
-   · ────┬────
-   ·     ╰── incompatible operand
+   · ──┬─    ┬
+   ·   │     ╰── has type `number` here
+   ·   ╰── has type `boolean` here
    ╰────

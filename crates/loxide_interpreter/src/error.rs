@@ -10,12 +10,14 @@ pub enum RuntimeError {
     InvalidUnaryOperand(#[label("expect a {1} type here")] Span, &'static str),
     #[error("Invalid binary operand, expected: {1}")]
     InvalidBinaryOperand(#[label("expect a {1} type here")] Span, &'static str),
-    #[error("Incompatible operand, {lhs} is incompatible with {rhs}")]
+    #[error("Incompatible operand, {lhs_ty} is incompatible with {rhs_ty}")]
     IncompatibleBinaryOperand {
-        #[label("incompatible operand")]
-        span: Span,
-        lhs: ValueKind,
-        rhs: ValueKind,
+        #[label("has type `{lhs_ty}` here")]
+        lhs_span: Span,
+        lhs_ty: ValueKind,
+        #[label("has type `{rhs_ty}` here")]
+        rhs_span: Span,
+        rhs_ty: ValueKind,
     },
     #[error("Undefined Variable: {0}")]
     UndefinedVariable(String),
