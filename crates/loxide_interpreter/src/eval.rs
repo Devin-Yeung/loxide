@@ -258,11 +258,19 @@ impl Evaluable for UnaryExpr {
         let value = self.expr.eval(env)?;
         match self.operator {
             UnaryOperator::Minus => {
-                let num = inner_or!(value, number, RuntimeError::InvalidUnaryOperand("number"))?;
+                let num = inner_or!(
+                    value,
+                    number,
+                    RuntimeError::InvalidUnaryOperand(self.expr.span(), "number")
+                )?;
                 Ok(Value::Number(-num))
             }
             UnaryOperator::Bang => {
-                let bool = inner_or!(value, boolean, RuntimeError::InvalidUnaryOperand("boolean"))?;
+                let bool = inner_or!(
+                    value,
+                    boolean,
+                    RuntimeError::InvalidUnaryOperand(self.expr.span(), "boolean")
+                )?;
                 Ok(Value::Boolean(!bool))
             }
         }
@@ -299,13 +307,37 @@ mod tests {
     use crate::error::RuntimeError;
     use crate::eval::Evaluable;
     use crate::value::Value;
+    use loxide_diagnostic::reporter::{Reporter, Style};
     use loxide_testsuite::{footprints, register, unittest};
+    use miette::Report;
+    use std::sync::Arc;
 
     fn eval(src: &str) -> Vec<Result<Value, RuntimeError>> {
         let mut parser = loxide_parser::parser::Parser::new(src);
         let mut env = Environment::global();
         let (stmts, _) = parser.parse();
         stmts.into_iter().map(|stmt| stmt.eval(&mut env)).collect()
+    }
+
+    fn display_eval_error(src: &str) -> String {
+        let mut parser = loxide_parser::parser::Parser::new(src);
+        let mut env = Environment::global();
+        let source = Arc::new(src.to_string());
+
+        let (stmts, _) = parser.parse();
+        stmts
+            .into_iter()
+            .map(|stmt| stmt.eval(&mut env))
+            .filter(Result::is_err)
+            .map(Result::unwrap_err)
+            .map(|err| {
+                let mut reporter = Reporter::new(Style::NoColor);
+                let report: Report = err.into();
+                reporter.push(report.with_source_code(source.clone()));
+                reporter.report_to_string()
+            })
+            .collect::<Vec<_>>()
+            .join("\n")
     }
 
     unittest!(literal, |src| {
@@ -319,8 +351,12 @@ mod tests {
     });
 
     unittest!(invalid_unary, |src| {
-        let results: Vec<_> = src.split('\n').map(eval).collect();
-        insta::assert_debug_snapshot!(results);
+        let results = src
+            .split('\n')
+            .map(display_eval_error)
+            .collect::<Vec<_>>()
+            .join("\n");
+        insta::assert_snapshot!(results);
     });
 
     unittest!(valid_binary, |src| {

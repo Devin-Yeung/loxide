@@ -1,11 +1,13 @@
 use crate::value::Value;
+use loxide_parser::token::Span;
+use miette::Diagnostic;
 use thiserror::Error;
 
-#[derive(Debug, Error)]
+#[derive(Debug, Error, Diagnostic)]
 #[non_exhaustive]
 pub enum RuntimeError {
-    #[error("Invalid unary operand, expected: {0}")]
-    InvalidUnaryOperand(&'static str),
+    #[error("Invalid unary operand, expected: {1}")]
+    InvalidUnaryOperand(#[label("expect a {1} type here")] Span, &'static str),
     #[error("Invalid binary operand, expected: {0}")]
     InvalidBinaryOperand(&'static str),
     #[error("Incompatible operand, {lhs} is incompatible with {rhs}")]

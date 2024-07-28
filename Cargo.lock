@@ -207,9 +207,11 @@ name = "loxide_interpreter"
 version = "0.1.0"
 dependencies = [
  "insta",
+ "loxide_diagnostic",
  "loxide_macros",
  "loxide_parser",
  "loxide_testsuite",
+ "miette",
  "paste",
  "thiserror",
 ]

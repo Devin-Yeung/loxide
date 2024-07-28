@@ -1,10 +1,16 @@
 use crate::token::Span;
-use std::rc::Rc;
+use std::sync::Arc;
 
 #[derive(Debug)]
 pub struct Expr {
     pub kind: ExprKind,
     pub(crate) span: Span,
+}
+
+impl Expr {
+    pub fn span(&self) -> Span {
+        self.span
+    }
 }
 
 #[derive(Debug)]
@@ -133,7 +139,7 @@ pub enum Stmt {
     PrintStmt(Expr),
     ReturnStmt(ReturnStmt),
     VarDeclaration(Identifier, Option<Expr>),
-    FunDeclaration(Rc<FunDeclaration>),
+    FunDeclaration(Arc<FunDeclaration>),
     Block(Vec<Stmt>),
     Condition(ConditionStmt),
     While(WhileStmt),
