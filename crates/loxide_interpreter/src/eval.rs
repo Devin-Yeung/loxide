@@ -62,7 +62,8 @@ impl Evaluable for Stmt {
 impl Evaluable for ConditionStmt {
     fn eval(&self, env: &mut Environment) -> Result<Value, RuntimeError> {
         let mut env = env.extend();
-        match self.condition.eval(&mut env)? {
+        let guard = self.condition.eval(&mut env)?;
+        match guard {
             Value::Boolean(b) => {
                 if b {
                     self.then_branch.eval(&mut env)
@@ -73,21 +74,30 @@ impl Evaluable for ConditionStmt {
                     }
                 }
             }
-            _ => Err(RuntimeError::ExpectedBoolean),
+            _ => Err(RuntimeError::ExpectedBoolean(
+                self.condition.span(),
+                guard.kind(),
+            )),
         }
     }
 }
 
 impl Evaluable for WhileStmt {
     fn eval(&self, env: &mut Environment) -> Result<Value, RuntimeError> {
-        while let Value::Boolean(b) = self.condition.eval(env)? {
-            if b {
-                self.body.eval(env)?;
-            } else {
-                return Ok(Value::Void);
+        let cond = &self.condition;
+        loop {
+            let guard = cond.eval(env)?;
+            match guard {
+                Value::Boolean(b) => {
+                    if b {
+                        self.body.eval(env)?;
+                    } else {
+                        return Ok(Value::Void);
+                    }
+                }
+                _ => return Err(RuntimeError::ExpectedBoolean(cond.span(), guard.kind())),
             }
         }
-        Err(RuntimeError::ExpectedBoolean)
     }
 }
 
@@ -103,18 +113,21 @@ impl Evaluable for ForStmt {
                     self.increment.eval(&mut env)?;
                 }
             }
-            Some(cond) => {
-                while let Value::Boolean(b) = cond.eval(&mut env)? {
-                    if b {
-                        self.body.eval(&mut env)?;
-                        self.increment.eval(&mut env)?;
-                    } else {
-                        return Ok(Value::Void);
+            Some(cond) => loop {
+                let guard = cond.eval(&mut env)?;
+                match guard {
+                    Value::Boolean(b) => {
+                        if b {
+                            self.body.eval(&mut env)?;
+                            self.increment.eval(&mut env)?;
+                        } else {
+                            return Ok(Value::Void);
+                        }
                     }
+                    _ => return Err(RuntimeError::ExpectedBoolean(cond.span(), guard.kind())),
                 }
-            }
+            },
         }
-        Err(RuntimeError::ExpectedBoolean)
     }
 }
 
@@ -483,8 +496,13 @@ mod tests {
     });
 
     unittest!(for_stmt_expect_bool, |src| {
-        let results: Vec<_> = eval(src);
-        insta::assert_debug_snapshot!(results);
+        let result = display_eval_error(src);
+        insta::assert_snapshot!(result);
+    });
+
+    unittest!(while_stmt_expect_bool, |src| {
+        let result = display_eval_error(src);
+        insta::assert_snapshot!(result);
     });
 
     unittest!(fn_call, |src| {

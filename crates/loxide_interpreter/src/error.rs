@@ -22,7 +22,10 @@ pub enum RuntimeError {
     #[error("Undefined Variable: {0}")]
     UndefinedVariable(String),
     #[error("Expected boolean in condition expression")]
-    ExpectedBoolean,
+    ExpectedBoolean(
+        #[label("expect a boolean type here, got `{1}`")] Span,
+        ValueKind,
+    ),
     #[error("Return value")]
     ReturnValue(Value),
     #[error("Bad arity, expected: {expected}, found: {found}")]
