@@ -11,3 +11,10 @@ expression: result
    ╰────
 
   × Bad arity, expected: 2, found: 1
+   ╭─[2:8]
+ 1 │ 1();
+ 2 │ fun foo(a, b) {}
+   ·        ───┬──
+   ·           ╰── function declare here with 2 parameters
+ 3 │ foo(1);
+   ╰────

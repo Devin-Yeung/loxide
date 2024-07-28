@@ -111,15 +111,16 @@ impl<'src> Parser<'src> {
         let name = Identifier {
             name: self.consume(TokenType::Identifier)?.lexeme.to_string(),
         };
-        self.consume(TokenType::LeftParen)?;
+        let left_paren = self.consume(TokenType::LeftParen)?.span.start;
         let params = match self.peek_type()? {
             TokenType::RightParen => Vec::new(),
             _ => self.parameters()?,
         };
-        self.consume(TokenType::RightParen)?;
+        let right_parent = self.consume(TokenType::RightParen)?.span.end;
         let body = self.block()?;
         Ok(Stmt::FunDeclaration(Arc::new(FunDeclaration {
             name,
+            paren_token: Span::new(left_paren, right_parent),
             params,
             body,
         })))

@@ -9,6 +9,7 @@ expression: results
                 name: Identifier {
                     name: "foo",
                 },
+                paren_token: [Span],
                 params: [],
                 body: [
                     ReturnStmt(
@@ -24,6 +25,7 @@ expression: results
                 name: Identifier {
                     name: "bar",
                 },
+                paren_token: [Span],
                 params: [],
                 body: [
                     ReturnStmt(

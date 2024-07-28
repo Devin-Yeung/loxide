@@ -50,6 +50,7 @@ impl LoxFunction {
 
         if self.declaration.params.len() != arguments.len() {
             return Err(RuntimeError::BadArity {
+                span: self.declaration.paren_token,
                 expected: self.declaration.params.len(),
                 found: arguments.len(),
             });

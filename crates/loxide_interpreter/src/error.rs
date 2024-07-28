@@ -29,7 +29,12 @@ pub enum RuntimeError {
     #[error("Return value")]
     ReturnValue(Value),
     #[error("Bad arity, expected: {expected}, found: {found}")]
-    BadArity { expected: usize, found: usize },
+    BadArity {
+        #[label("function declare here with {expected} parameters")]
+        span: Span,
+        expected: usize,
+        found: usize,
+    },
     #[error("Function call on a non-callable value")]
     CallOnNonCallable(
         #[label("expect a callable value here, but got type `{1}`")] Span,

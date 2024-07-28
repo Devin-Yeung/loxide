@@ -123,6 +123,8 @@ pub struct ForStmt {
 #[derive(Debug, PartialEq)]
 pub struct FunDeclaration {
     pub name: Identifier,
+    /// Parentheses token of the params
+    pub paren_token: Span,
     pub params: Vec<Identifier>,
     pub body: Vec<Stmt>,
 }
