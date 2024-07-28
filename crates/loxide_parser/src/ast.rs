@@ -86,11 +86,9 @@ pub struct CallExpr {
 }
 
 impl AssignExpr {
-    pub fn new(name: &str, value: Expr) -> Self {
+    pub fn new(name: Identifier, value: Expr) -> Self {
         AssignExpr {
-            name: Identifier {
-                name: name.to_string(),
-            },
+            name,
             value: Box::new(value),
         }
     }
@@ -99,6 +97,17 @@ impl AssignExpr {
 #[derive(Debug, Eq, PartialEq)]
 pub struct Identifier {
     pub name: String,
+    pub span: Span,
+}
+
+impl Identifier {
+    pub fn new(name: String, span: Span) -> Self {
+        Identifier { name, span }
+    }
+
+    pub fn span(&self) -> Span {
+        self.span
+    }
 }
 
 #[derive(Debug, PartialEq)]
@@ -138,7 +147,7 @@ pub struct ReturnStmt {
 
 #[derive(Debug, PartialEq)]
 #[non_exhaustive]
-pub enum Stmt {
+pub enum StmtKind {
     Expression(Expr),
     PrintStmt(Expr),
     ReturnStmt(ReturnStmt),
@@ -148,4 +157,10 @@ pub enum Stmt {
     Condition(ConditionStmt),
     While(WhileStmt),
     For(ForStmt),
+}
+#[derive(Debug, PartialEq)]
+#[non_exhaustive]
+pub struct Stmt {
+    pub kind: StmtKind,
+    pub span: Span,
 }

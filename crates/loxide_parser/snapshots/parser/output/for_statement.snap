@@ -4,113 +4,136 @@ expression: results
 ---
 (
     [
-        For(
-            ForStmt {
-                initializer: Some(
-                    VarDeclaration(
-                        Identifier {
-                            name: "a",
-                        },
-                        Some(
-                            Expr {
-                                kind: Literal(
-                                    Number(
-                                        1.0,
-                                    ),
-                                ),
-                                span: [Span],
-                            },
-                        ),
-                    ),
-                ),
-                condition: Some(
-                    Expr {
-                        kind: Binary(
-                            BinaryExpr {
-                                lhs: Expr {
-                                    kind: Variable(
-                                        Identifier {
-                                            name: "a",
-                                        },
-                                    ),
-                                    span: [Span],
-                                },
-                                rhs: Expr {
-                                    kind: Literal(
-                                        Number(
-                                            10.0,
-                                        ),
-                                    ),
-                                    span: [Span],
-                                },
-                                operator: Less,
-                            },
-                        ),
-                        span: [Span],
-                    },
-                ),
-                increment: Some(
-                    Expr {
-                        kind: Assign(
-                            AssignExpr {
-                                name: Identifier {
+        Stmt {
+            kind: For(
+                ForStmt {
+                    initializer: Some(
+                        Stmt {
+                            kind: VarDeclaration(
+                                Identifier {
                                     name: "a",
-                                },
-                                value: Expr {
-                                    kind: Binary(
-                                        BinaryExpr {
-                                            lhs: Expr {
-                                                kind: Variable(
-                                                    Identifier {
-                                                        name: "a",
-                                                    },
-                                                ),
-                                                span: [Span],
-                                            },
-                                            rhs: Expr {
-                                                kind: Literal(
-                                                    Number(
-                                                        1.0,
-                                                    ),
-                                                ),
-                                                span: [Span],
-                                            },
-                                            operator: Plus,
-                                        },
-                                    ),
                                     span: [Span],
                                 },
-                            },
-                        ),
-                        span: [Span],
-                    },
-                ),
-                body: Block(
-                    [
-                        PrintStmt(
-                            Expr {
-                                kind: Variable(
-                                    Identifier {
-                                        name: "a",
+                                Some(
+                                    Expr {
+                                        kind: Literal(
+                                            Number(
+                                                1.0,
+                                            ),
+                                        ),
+                                        span: [Span],
                                     },
                                 ),
-                                span: [Span],
-                            },
+                            ),
+                            span: [Span],
+                        },
+                    ),
+                    condition: Some(
+                        Expr {
+                            kind: Binary(
+                                BinaryExpr {
+                                    lhs: Expr {
+                                        kind: Variable(
+                                            Identifier {
+                                                name: "a",
+                                                span: [Span],
+                                            },
+                                        ),
+                                        span: [Span],
+                                    },
+                                    rhs: Expr {
+                                        kind: Literal(
+                                            Number(
+                                                10.0,
+                                            ),
+                                        ),
+                                        span: [Span],
+                                    },
+                                    operator: Less,
+                                },
+                            ),
+                            span: [Span],
+                        },
+                    ),
+                    increment: Some(
+                        Expr {
+                            kind: Assign(
+                                AssignExpr {
+                                    name: Identifier {
+                                        name: "a",
+                                        span: [Span],
+                                    },
+                                    value: Expr {
+                                        kind: Binary(
+                                            BinaryExpr {
+                                                lhs: Expr {
+                                                    kind: Variable(
+                                                        Identifier {
+                                                            name: "a",
+                                                            span: [Span],
+                                                        },
+                                                    ),
+                                                    span: [Span],
+                                                },
+                                                rhs: Expr {
+                                                    kind: Literal(
+                                                        Number(
+                                                            1.0,
+                                                        ),
+                                                    ),
+                                                    span: [Span],
+                                                },
+                                                operator: Plus,
+                                            },
+                                        ),
+                                        span: [Span],
+                                    },
+                                },
+                            ),
+                            span: [Span],
+                        },
+                    ),
+                    body: Stmt {
+                        kind: Block(
+                            [
+                                Stmt {
+                                    kind: PrintStmt(
+                                        Expr {
+                                            kind: Variable(
+                                                Identifier {
+                                                    name: "a",
+                                                    span: [Span],
+                                                },
+                                            ),
+                                            span: [Span],
+                                        },
+                                    ),
+                                    span: [Span],
+                                },
+                            ],
                         ),
-                    ],
-                ),
-            },
-        ),
-        For(
-            ForStmt {
-                initializer: None,
-                condition: None,
-                increment: None,
-                body: Block(
-                    [],
-                ),
-            },
-        ),
+                        span: [Span],
+                    },
+                },
+            ),
+            span: [Span],
+        },
+        Stmt {
+            kind: For(
+                ForStmt {
+                    initializer: None,
+                    condition: None,
+                    increment: None,
+                    body: Stmt {
+                        kind: Block(
+                            [],
+                        ),
+                        span: [Span],
+                    },
+                },
+            ),
+            span: [Span],
+        },
     ],
     [],
 )

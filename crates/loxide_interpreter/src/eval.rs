@@ -4,7 +4,8 @@ use crate::error::{PrivateRuntimeError, RuntimeError};
 use crate::value::{Value, ValueKind};
 use loxide_parser::ast::{
     AssignExpr, BinaryExpr, BinaryOperator, CallExpr, ConditionStmt, Expr, ExprKind, ForStmt,
-    GroupedExpr, Identifier, Literal, ReturnStmt, Stmt, UnaryExpr, UnaryOperator, WhileStmt,
+    GroupedExpr, Identifier, Literal, ReturnStmt, Stmt, StmtKind, UnaryExpr, UnaryOperator,
+    WhileStmt,
 };
 use loxide_testsuite::probe;
 
@@ -26,23 +27,29 @@ macro_rules! inner_or {
 
 impl Evaluable for Stmt {
     fn eval(&self, env: &mut Environment) -> Result<Value, RuntimeError> {
+        self.kind.eval(env)
+    }
+}
+
+impl Evaluable for StmtKind {
+    fn eval(&self, env: &mut Environment) -> Result<Value, RuntimeError> {
         match self {
-            Stmt::Expression(e) => e.eval(env),
-            Stmt::PrintStmt(e) => {
+            StmtKind::Expression(e) => e.eval(env),
+            StmtKind::PrintStmt(e) => {
                 probe!(e.eval(env))?;
                 Ok(Value::Void)
             }
-            Stmt::VarDeclaration(var, expr) => {
+            StmtKind::VarDeclaration(var, expr) => {
                 let val = expr.eval(env)?;
                 env.define(var.name.to_string(), val);
                 Ok(Value::Void)
             }
-            Stmt::FunDeclaration(decl) => {
+            StmtKind::FunDeclaration(decl) => {
                 let callable = Callable::function(decl.clone());
                 env.define(decl.name.name.to_string(), Value::Callable(callable));
                 Ok(Value::Void)
             }
-            Stmt::Block(stmts) => {
+            StmtKind::Block(stmts) => {
                 // TODO: find a way to test the correctness of this evaluation
                 let mut scope = env.extend();
                 for stmt in stmts {
@@ -50,10 +57,10 @@ impl Evaluable for Stmt {
                 }
                 Ok(Value::Void)
             }
-            Stmt::Condition(cond) => cond.eval(env),
-            Stmt::While(cond) => cond.eval(env),
-            Stmt::For(stmt) => stmt.eval(env),
-            Stmt::ReturnStmt(stmt) => stmt.eval(env),
+            StmtKind::Condition(cond) => cond.eval(env),
+            StmtKind::While(cond) => cond.eval(env),
+            StmtKind::For(stmt) => stmt.eval(env),
+            StmtKind::ReturnStmt(stmt) => stmt.eval(env),
             _ => unreachable!(),
         }
     }
