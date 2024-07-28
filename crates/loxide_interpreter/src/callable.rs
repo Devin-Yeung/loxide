@@ -29,7 +29,7 @@ impl Callable {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct LoxFunction {
     // we don't want to introduce any lifetime here,
     // since it will propagate to `Value`

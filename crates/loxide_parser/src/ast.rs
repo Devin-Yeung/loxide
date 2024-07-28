@@ -1,7 +1,7 @@
 use crate::token::Span;
 use std::sync::Arc;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Expr {
     pub kind: ExprKind,
     pub(crate) span: Span,
@@ -13,7 +13,7 @@ impl Expr {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 #[non_exhaustive]
 pub enum ExprKind {
     Literal(Literal),
@@ -25,7 +25,7 @@ pub enum ExprKind {
     Call(CallExpr),
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum Literal {
     String(String),
     Number(f64),
@@ -33,19 +33,19 @@ pub enum Literal {
     Nil,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Eq, PartialEq)]
 pub enum UnaryOperator {
     Minus,
     Bang,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct UnaryExpr {
     pub operator: UnaryOperator,
     pub expr: Box<Expr>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Eq, PartialEq)]
 pub enum BinaryOperator {
     EqualEqual,
     BangEq,
@@ -59,7 +59,7 @@ pub enum BinaryOperator {
     Star,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct BinaryExpr {
     pub lhs: Box<Expr>,
     pub rhs: Box<Expr>,
@@ -71,13 +71,13 @@ pub struct GroupedExpr {
     pub expr: Box<Expr>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct AssignExpr {
     pub name: Identifier,
     pub value: Box<Expr>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct CallExpr {
     pub callee: Box<Expr>,
     pub args: Vec<Expr>,
@@ -94,25 +94,25 @@ impl AssignExpr {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Eq, PartialEq)]
 pub struct Identifier {
     pub name: String,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct ConditionStmt {
     pub condition: Expr,
     pub then_branch: Box<Stmt>,
     pub else_branch: Option<Box<Stmt>>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct WhileStmt {
     pub condition: Expr,
     pub body: Box<Stmt>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct ForStmt {
     pub initializer: Option<Box<Stmt>>,
     pub condition: Option<Box<Expr>>,
@@ -120,19 +120,19 @@ pub struct ForStmt {
     pub body: Box<Stmt>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct FunDeclaration {
     pub name: Identifier,
     pub params: Vec<Identifier>,
     pub body: Vec<Stmt>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct ReturnStmt {
     pub value: Option<Expr>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 #[non_exhaustive]
 pub enum Stmt {
     Expression(Expr),
