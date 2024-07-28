@@ -23,7 +23,7 @@ pub enum RuntimeError {
     UndefinedVariable(String),
     #[error("Expected boolean in condition expression")]
     ExpectedBoolean(
-        #[label("expect a boolean type here, got `{1}`")] Span,
+        #[label("expect a boolean type here, but got type `{1}`")] Span,
         ValueKind,
     ),
     #[error("Return value")]
@@ -31,5 +31,8 @@ pub enum RuntimeError {
     #[error("Bad arity, expected: {expected}, found: {found}")]
     BadArity { expected: usize, found: usize },
     #[error("Function call on a non-callable value")]
-    CallOnNonCallable,
+    CallOnNonCallable(
+        #[label("expect a callable value here, but got type `{1}`")] Span,
+        ValueKind,
+    ),
 }

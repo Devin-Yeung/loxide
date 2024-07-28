@@ -1,18 +1,13 @@
 ---
 source: crates/loxide_interpreter/src/eval.rs
-expression: results
+expression: result
 ---
-[
-    Err(
-        CallOnNonCallable,
-    ),
-    Ok(
-        Void,
-    ),
-    Err(
-        BadArity {
-            expected: 2,
-            found: 1,
-        },
-    ),
-]
+  × Function call on a non-callable value
+   ╭─[1:1]
+ 1 │ 1();
+   · ┬
+   · ╰── expect a callable value here, but got type `number`
+ 2 │ fun foo(a, b) {}
+   ╰────
+
+  × Bad arity, expected: 2, found: 1

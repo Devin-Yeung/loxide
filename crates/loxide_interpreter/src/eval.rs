@@ -200,7 +200,10 @@ impl Evaluable for CallExpr {
             return callable.call(args, env);
         }
 
-        Err(RuntimeError::CallOnNonCallable)
+        Err(RuntimeError::CallOnNonCallable(
+            self.callee.span(),
+            callee.kind(),
+        ))
     }
 }
 
@@ -513,7 +516,7 @@ mod tests {
     });
 
     unittest!(bad_fn_call, |src| {
-        let results: Vec<_> = eval(src);
-        insta::assert_debug_snapshot!(results);
+        let result = display_eval_error(src);
+        insta::assert_snapshot!(result);
     });
 }
