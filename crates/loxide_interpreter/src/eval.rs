@@ -1,6 +1,6 @@
 use crate::callable::Callable;
 use crate::environment::Environment;
-use crate::error::RuntimeError;
+use crate::error::{PrivateRuntimeError, RuntimeError};
 use crate::value::{Value, ValueKind};
 use loxide_parser::ast::{
     AssignExpr, BinaryExpr, BinaryOperator, CallExpr, ConditionStmt, Expr, ExprKind, ForStmt,
@@ -197,7 +197,18 @@ impl Evaluable for CallExpr {
             .collect::<Result<Vec<Value>, RuntimeError>>()?;
 
         if let Value::Callable(callable) = callee {
-            return callable.call(args, env);
+            return match callable.call(args, env) {
+                Ok(v) => Ok(v),
+                Err(PrivateRuntimeError::BadArity { expected, found }) => {
+                    Err(RuntimeError::BadArity {
+                        callee_span: callable.params_span(),
+                        caller_span: self.paren_token,
+                        expected,
+                        found,
+                    })
+                }
+                Err(PrivateRuntimeError::Transparent(e)) => Err(e),
+            };
         }
 
         Err(RuntimeError::CallOnNonCallable(

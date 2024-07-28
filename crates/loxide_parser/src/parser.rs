@@ -518,21 +518,21 @@ impl<'src> Parser<'src> {
     fn call(&mut self) -> Result<Expr, SyntaxError> {
         let mut expr = self.primary()?;
         loop {
-            if self.consume_if(TokenType::LeftParen) {
-                let args = self.arguments()?;
-                let span = Span::new(
-                    expr.span.start,
-                    self.consume(TokenType::RightParen)?.span.end,
-                );
-                expr = Expr {
-                    kind: ExprKind::Call(CallExpr {
-                        callee: Box::new(expr),
-                        args,
-                    }),
-                    span,
-                };
-            } else {
-                break;
+            match self.peek_type() {
+                Ok(TokenType::LeftParen) => {
+                    let lparen = self.consume(TokenType::LeftParen)?.span.start;
+                    let args = self.arguments()?;
+                    let rparen = self.consume(TokenType::RightParen)?.span.end;
+                    expr = Expr {
+                        span: Span::new(expr.span.start, rparen),
+                        kind: ExprKind::Call(CallExpr {
+                            callee: Box::new(expr),
+                            paren_token: Span::new(lparen, rparen),
+                            args,
+                        }),
+                    }
+                }
+                _ => break,
             }
         }
         Ok(expr)

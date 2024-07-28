@@ -17,4 +17,6 @@ expression: result
    ·        ───┬──
    ·           ╰── function declare here with 2 parameters
  3 │ foo(1);
+   ·    ─┬─
+   ·     ╰── function call here with 1 parameters
    ╰────

@@ -16,6 +16,7 @@ expression: results
                             ),
                             span: [Span],
                         },
+                        paren_token: [Span],
                         args: [
                             Expr {
                                 kind: Literal(
@@ -54,6 +55,7 @@ expression: results
                                         ),
                                         span: [Span],
                                     },
+                                    paren_token: [Span],
                                     args: [
                                         Expr {
                                             kind: Literal(
@@ -68,6 +70,7 @@ expression: results
                             ),
                             span: [Span],
                         },
+                        paren_token: [Span],
                         args: [
                             Expr {
                                 kind: Literal(
@@ -98,11 +101,13 @@ expression: results
                                         ),
                                         span: [Span],
                                     },
+                                    paren_token: [Span],
                                     args: [],
                                 },
                             ),
                             span: [Span],
                         },
+                        paren_token: [Span],
                         args: [],
                     },
                 ),

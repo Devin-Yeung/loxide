@@ -80,6 +80,8 @@ pub struct AssignExpr {
 #[derive(Debug, PartialEq)]
 pub struct CallExpr {
     pub callee: Box<Expr>,
+    /// Parentheses token of the arguments
+    pub paren_token: Span,
     pub args: Vec<Expr>,
 }
 

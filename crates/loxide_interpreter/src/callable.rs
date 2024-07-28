@@ -1,8 +1,10 @@
 use crate::environment::Environment;
-use crate::error::RuntimeError;
+use crate::error::PrivateRuntimeError::Transparent;
+use crate::error::{PrivateRuntimeError, RuntimeError};
 use crate::eval::Evaluable;
 use crate::value::Value;
 use loxide_parser::ast::FunDeclaration;
+use loxide_parser::token::Span;
 use std::sync::Arc;
 
 #[derive(Debug, Clone)]
@@ -18,11 +20,11 @@ impl PartialEq for Callable {
 }
 
 impl Callable {
-    pub fn call(
+    pub(crate) fn call(
         &self,
         arguments: Vec<Value>,
         env: &mut Environment,
-    ) -> Result<Value, RuntimeError> {
+    ) -> Result<Value, PrivateRuntimeError> {
         match self {
             Callable::Function(func) => func.call(arguments, env),
         }
@@ -41,16 +43,15 @@ impl LoxFunction {
         LoxFunction { declaration }
     }
 
-    pub fn call(
+    pub(crate) fn call(
         &self,
         arguments: Vec<Value>,
         env: &mut Environment,
-    ) -> Result<Value, RuntimeError> {
+    ) -> Result<Value, PrivateRuntimeError> {
         let mut env = env.extend();
 
         if self.declaration.params.len() != arguments.len() {
-            return Err(RuntimeError::BadArity {
-                span: self.declaration.paren_token,
+            return Err(PrivateRuntimeError::BadArity {
                 expected: self.declaration.params.len(),
                 found: arguments.len(),
             });
@@ -65,7 +66,7 @@ impl LoxFunction {
             match stmt.eval(&mut env) {
                 Ok(_) => continue,
                 Err(RuntimeError::ReturnValue(ret)) => return Ok(ret),
-                Err(e) => return Err(e),
+                Err(e) => return Err(Transparent(e)),
             }
         }
 
@@ -76,5 +77,11 @@ impl LoxFunction {
 impl Callable {
     pub fn function(declaration: Arc<FunDeclaration>) -> Callable {
         Callable::Function(LoxFunction::new(declaration))
+    }
+
+    pub fn params_span(&self) -> Span {
+        match self {
+            Callable::Function(func) => func.declaration.paren_token,
+        }
     }
 }

@@ -31,7 +31,9 @@ pub enum RuntimeError {
     #[error("Bad arity, expected: {expected}, found: {found}")]
     BadArity {
         #[label("function declare here with {expected} parameters")]
-        span: Span,
+        callee_span: Span,
+        #[label("function call here with {found} parameters")]
+        caller_span: Span,
         expected: usize,
         found: usize,
     },
@@ -40,4 +42,12 @@ pub enum RuntimeError {
         #[label("expect a callable value here, but got type `{1}`")] Span,
         ValueKind,
     ),
+}
+
+#[derive(Debug)]
+pub(crate) enum PrivateRuntimeError {
+    /// Bad Arity Error without Span
+    BadArity { expected: usize, found: usize },
+    /// Transparent Error of `RuntimeError`
+    Transparent(RuntimeError),
 }
