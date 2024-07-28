@@ -313,7 +313,6 @@ dependencies = [
 name = "loxide_interpreter"
 version = "0.1.0"
 dependencies = [
- "clap",
  "insta",
  "loxide_diagnostic",
  "loxide_macros",
