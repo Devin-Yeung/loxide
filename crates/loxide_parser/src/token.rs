@@ -136,8 +136,8 @@ pub struct Token<'src> {
 /// The span of a token, indexed from 0, left inclusive, right exclusive.
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
 pub struct Span {
-    pub(crate) start: usize,
-    pub(crate) end: usize,
+    pub start: usize,
+    pub end: usize,
 }
 
 impl Span {

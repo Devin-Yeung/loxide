@@ -4,7 +4,7 @@ expression: result
 ---
   × Expected boolean in condition expression
    ╭────
- 1 │ for (var a = 0; 1; a = a + 1) {}
-   ·                 ┬
-   ·                 ╰── expect a boolean type here, but got type `number`
+ 1 │ while(1) { }
+   ·       ┬
+   ·       ╰── expect a boolean type here, but got type `number`
    ╰────

@@ -2,19 +2,16 @@
 source: crates/loxide_interpreter/src/eval.rs
 expression: results
 ---
-[
-    [
-        Err(
-            InvalidUnaryOperand(
-                "number",
-            ),
-        ),
-    ],
-    [
-        Err(
-            InvalidUnaryOperand(
-                "boolean",
-            ),
-        ),
-    ],
-]
+  × Invalid unary operand, expected: number
+   ╭────
+ 1 │ -true ; // expected number
+   ·  ──┬─
+   ·    ╰── expect a number type here
+   ╰────
+
+  × Invalid unary operand, expected: boolean
+   ╭────
+ 1 │ !1.0  ; // expected boolean
+   ·  ─┬─
+   ·   ╰── expect a boolean type here
+   ╰────

@@ -1,0 +1,18 @@
+---
+source: crates/loxide_interpreter/src/eval.rs
+expression: results
+---
+  × Invalid binary operand, expected: number
+   ╭────
+ 1 │ true + 1;
+   · ──┬─
+   ·   ╰── expect a number type here
+   ╰────
+
+  × Incompatible operand, boolean is incompatible with number
+   ╭────
+ 1 │ true != 1;
+   · ──┬─    ┬
+   ·   │     ╰── has type `number` here
+   ·   ╰── has type `boolean` here
+   ╰────

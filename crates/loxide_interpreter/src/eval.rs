@@ -1,7 +1,7 @@
 use crate::callable::Callable;
 use crate::environment::Environment;
 use crate::error::RuntimeError;
-use crate::value::Value;
+use crate::value::{Value, ValueKind};
 use loxide_parser::ast::{
     AssignExpr, BinaryExpr, BinaryOperator, CallExpr, ConditionStmt, Expr, ExprKind, ForStmt,
     GroupedExpr, Identifier, Literal, ReturnStmt, Stmt, UnaryExpr, UnaryOperator, WhileStmt,
@@ -62,7 +62,8 @@ impl Evaluable for Stmt {
 impl Evaluable for ConditionStmt {
     fn eval(&self, env: &mut Environment) -> Result<Value, RuntimeError> {
         let mut env = env.extend();
-        match self.condition.eval(&mut env)? {
+        let guard = self.condition.eval(&mut env)?;
+        match guard {
             Value::Boolean(b) => {
                 if b {
                     self.then_branch.eval(&mut env)
@@ -73,21 +74,30 @@ impl Evaluable for ConditionStmt {
                     }
                 }
             }
-            _ => Err(RuntimeError::ExpectedBoolean),
+            _ => Err(RuntimeError::ExpectedBoolean(
+                self.condition.span(),
+                guard.kind(),
+            )),
         }
     }
 }
 
 impl Evaluable for WhileStmt {
     fn eval(&self, env: &mut Environment) -> Result<Value, RuntimeError> {
-        while let Value::Boolean(b) = self.condition.eval(env)? {
-            if b {
-                self.body.eval(env)?;
-            } else {
-                return Ok(Value::Void);
+        let cond = &self.condition;
+        loop {
+            let guard = cond.eval(env)?;
+            match guard {
+                Value::Boolean(b) => {
+                    if b {
+                        self.body.eval(env)?;
+                    } else {
+                        return Ok(Value::Void);
+                    }
+                }
+                _ => return Err(RuntimeError::ExpectedBoolean(cond.span(), guard.kind())),
             }
         }
-        Err(RuntimeError::ExpectedBoolean)
     }
 }
 
@@ -103,18 +113,21 @@ impl Evaluable for ForStmt {
                     self.increment.eval(&mut env)?;
                 }
             }
-            Some(cond) => {
-                while let Value::Boolean(b) = cond.eval(&mut env)? {
-                    if b {
-                        self.body.eval(&mut env)?;
-                        self.increment.eval(&mut env)?;
-                    } else {
-                        return Ok(Value::Void);
+            Some(cond) => loop {
+                let guard = cond.eval(&mut env)?;
+                match guard {
+                    Value::Boolean(b) => {
+                        if b {
+                            self.body.eval(&mut env)?;
+                            self.increment.eval(&mut env)?;
+                        } else {
+                            return Ok(Value::Void);
+                        }
                     }
+                    _ => return Err(RuntimeError::ExpectedBoolean(cond.span(), guard.kind())),
                 }
-            }
+            },
         }
-        Err(RuntimeError::ExpectedBoolean)
     }
 }
 
@@ -187,7 +200,10 @@ impl Evaluable for CallExpr {
             return callable.call(args, env);
         }
 
-        Err(RuntimeError::CallOnNonCallable)
+        Err(RuntimeError::CallOnNonCallable(
+            self.callee.span(),
+            callee.kind(),
+        ))
     }
 }
 
@@ -204,48 +220,128 @@ impl Evaluable for BinaryExpr {
         let lhs = self.lhs.eval(env)?;
         let rhs = self.rhs.eval(env)?;
         let val = match &self.operator {
-            // TODO: design decision, if two types is incompatible, give error or false?
-            BinaryOperator::EqualEqual => Value::Boolean(lhs == rhs),
-            // TODO: design decision, if two types is incompatible, give error or false?
-            BinaryOperator::BangEq => Value::Boolean(lhs != rhs),
+            op @ (BinaryOperator::EqualEqual | BinaryOperator::BangEq) => {
+                return if lhs.kind() == rhs.kind()
+                    && (lhs.kind() == ValueKind::Number
+                        || lhs.kind() == ValueKind::Boolean
+                        || lhs.kind() == ValueKind::String)
+                {
+                    match op {
+                        BinaryOperator::EqualEqual => Ok(Value::Boolean(lhs == rhs)),
+                        BinaryOperator::BangEq => Ok(Value::Boolean(lhs != rhs)),
+                        _ => unreachable!(),
+                    }
+                } else {
+                    Err(RuntimeError::IncompatibleBinaryOperand {
+                        lhs_ty: lhs.kind(),
+                        lhs_span: self.lhs.span(),
+                        rhs_ty: rhs.kind(),
+                        rhs_span: self.rhs.span(),
+                    })
+                }
+            }
             BinaryOperator::GreaterEqual => {
-                let lhs = inner_or!(lhs, number, RuntimeError::InvalidBinaryOperand("number"))?;
-                let rhs = inner_or!(rhs, number, RuntimeError::InvalidBinaryOperand("number"))?;
+                let lhs = inner_or!(
+                    lhs,
+                    number,
+                    RuntimeError::InvalidBinaryOperand(self.lhs.span(), "number")
+                )?;
+                let rhs = inner_or!(
+                    rhs,
+                    number,
+                    RuntimeError::InvalidBinaryOperand(self.rhs.span(), "number")
+                )?;
                 Value::Boolean(lhs >= rhs)
             }
             BinaryOperator::Greater => {
-                let lhs = inner_or!(lhs, number, RuntimeError::InvalidBinaryOperand("number"))?;
-                let rhs = inner_or!(rhs, number, RuntimeError::InvalidBinaryOperand("number"))?;
+                let lhs = inner_or!(
+                    lhs,
+                    number,
+                    RuntimeError::InvalidBinaryOperand(self.lhs.span(), "number")
+                )?;
+                let rhs = inner_or!(
+                    rhs,
+                    number,
+                    RuntimeError::InvalidBinaryOperand(self.rhs.span(), "number")
+                )?;
                 Value::Boolean(lhs > rhs)
             }
             BinaryOperator::Less => {
-                let lhs = inner_or!(lhs, number, RuntimeError::InvalidBinaryOperand("number"))?;
-                let rhs = inner_or!(rhs, number, RuntimeError::InvalidBinaryOperand("number"))?;
+                let lhs = inner_or!(
+                    lhs,
+                    number,
+                    RuntimeError::InvalidBinaryOperand(self.lhs.span(), "number")
+                )?;
+                let rhs = inner_or!(
+                    rhs,
+                    number,
+                    RuntimeError::InvalidBinaryOperand(self.rhs.span(), "number")
+                )?;
                 Value::Boolean(lhs < rhs)
             }
             BinaryOperator::LessEqual => {
-                let lhs = inner_or!(lhs, number, RuntimeError::InvalidBinaryOperand("number"))?;
-                let rhs = inner_or!(rhs, number, RuntimeError::InvalidBinaryOperand("number"))?;
+                let lhs = inner_or!(
+                    lhs,
+                    number,
+                    RuntimeError::InvalidBinaryOperand(self.lhs.span(), "number")
+                )?;
+                let rhs = inner_or!(
+                    rhs,
+                    number,
+                    RuntimeError::InvalidBinaryOperand(self.rhs.span(), "number")
+                )?;
                 Value::Boolean(lhs <= rhs)
             }
             BinaryOperator::Minus => {
-                let lhs = inner_or!(lhs, number, RuntimeError::InvalidBinaryOperand("number"))?;
-                let rhs = inner_or!(rhs, number, RuntimeError::InvalidBinaryOperand("number"))?;
+                let lhs = inner_or!(
+                    lhs,
+                    number,
+                    RuntimeError::InvalidBinaryOperand(self.lhs.span(), "number")
+                )?;
+                let rhs = inner_or!(
+                    rhs,
+                    number,
+                    RuntimeError::InvalidBinaryOperand(self.rhs.span(), "number")
+                )?;
                 Value::Number(lhs - rhs)
             }
             BinaryOperator::Plus => {
-                let lhs = inner_or!(lhs, number, RuntimeError::InvalidBinaryOperand("number"))?;
-                let rhs = inner_or!(rhs, number, RuntimeError::InvalidBinaryOperand("number"))?;
+                let lhs = inner_or!(
+                    lhs,
+                    number,
+                    RuntimeError::InvalidBinaryOperand(self.lhs.span(), "number")
+                )?;
+                let rhs = inner_or!(
+                    rhs,
+                    number,
+                    RuntimeError::InvalidBinaryOperand(self.rhs.span(), "number")
+                )?;
                 Value::Number(lhs + rhs)
             }
             BinaryOperator::Slash => {
-                let lhs = inner_or!(lhs, number, RuntimeError::InvalidBinaryOperand("number"))?;
-                let rhs = inner_or!(rhs, number, RuntimeError::InvalidBinaryOperand("number"))?;
+                let lhs = inner_or!(
+                    lhs,
+                    number,
+                    RuntimeError::InvalidBinaryOperand(self.lhs.span(), "number")
+                )?;
+                let rhs = inner_or!(
+                    rhs,
+                    number,
+                    RuntimeError::InvalidBinaryOperand(self.rhs.span(), "number")
+                )?;
                 Value::Number(lhs / rhs)
             }
             BinaryOperator::Star => {
-                let lhs = inner_or!(lhs, number, RuntimeError::InvalidBinaryOperand("number"))?;
-                let rhs = inner_or!(rhs, number, RuntimeError::InvalidBinaryOperand("number"))?;
+                let lhs = inner_or!(
+                    lhs,
+                    number,
+                    RuntimeError::InvalidBinaryOperand(self.lhs.span(), "number")
+                )?;
+                let rhs = inner_or!(
+                    rhs,
+                    number,
+                    RuntimeError::InvalidBinaryOperand(self.rhs.span(), "number")
+                )?;
                 Value::Number(lhs * rhs)
             }
         };
@@ -258,11 +354,19 @@ impl Evaluable for UnaryExpr {
         let value = self.expr.eval(env)?;
         match self.operator {
             UnaryOperator::Minus => {
-                let num = inner_or!(value, number, RuntimeError::InvalidUnaryOperand("number"))?;
+                let num = inner_or!(
+                    value,
+                    number,
+                    RuntimeError::InvalidUnaryOperand(self.expr.span(), "number")
+                )?;
                 Ok(Value::Number(-num))
             }
             UnaryOperator::Bang => {
-                let bool = inner_or!(value, boolean, RuntimeError::InvalidUnaryOperand("boolean"))?;
+                let bool = inner_or!(
+                    value,
+                    boolean,
+                    RuntimeError::InvalidUnaryOperand(self.expr.span(), "boolean")
+                )?;
                 Ok(Value::Boolean(!bool))
             }
         }
@@ -298,14 +402,39 @@ mod tests {
     use crate::environment::Environment;
     use crate::error::RuntimeError;
     use crate::eval::Evaluable;
+    use crate::utils::test_utils::LINEBREAK;
     use crate::value::Value;
+    use loxide_diagnostic::reporter::{Reporter, Style};
     use loxide_testsuite::{footprints, register, unittest};
+    use miette::Report;
+    use std::sync::Arc;
 
     fn eval(src: &str) -> Vec<Result<Value, RuntimeError>> {
         let mut parser = loxide_parser::parser::Parser::new(src);
         let mut env = Environment::global();
         let (stmts, _) = parser.parse();
         stmts.into_iter().map(|stmt| stmt.eval(&mut env)).collect()
+    }
+
+    fn display_eval_error(src: &str) -> String {
+        let mut parser = loxide_parser::parser::Parser::new(src);
+        let mut env = Environment::global();
+        let source = Arc::new(src.to_string());
+
+        let (stmts, _) = parser.parse();
+        stmts
+            .into_iter()
+            .map(|stmt| stmt.eval(&mut env))
+            .filter(Result::is_err)
+            .map(Result::unwrap_err)
+            .map(|err| {
+                let mut reporter = Reporter::new(Style::NoColor);
+                let report: Report = err.into();
+                reporter.push(report.with_source_code(source.clone()));
+                reporter.report_to_string()
+            })
+            .collect::<Vec<_>>()
+            .join("\n")
     }
 
     unittest!(literal, |src| {
@@ -319,8 +448,21 @@ mod tests {
     });
 
     unittest!(invalid_unary, |src| {
-        let results: Vec<_> = src.split('\n').map(eval).collect();
-        insta::assert_debug_snapshot!(results);
+        let results = src
+            .split(LINEBREAK)
+            .map(display_eval_error)
+            .collect::<Vec<_>>()
+            .join(LINEBREAK);
+        insta::assert_snapshot!(results);
+    });
+
+    unittest!(invalid_binary, |src| {
+        let results = src
+            .split(LINEBREAK)
+            .map(display_eval_error)
+            .collect::<Vec<_>>()
+            .join(LINEBREAK);
+        insta::assert_snapshot!(results);
     });
 
     unittest!(valid_binary, |src| {
@@ -358,8 +500,13 @@ mod tests {
     });
 
     unittest!(for_stmt_expect_bool, |src| {
-        let results: Vec<_> = eval(src);
-        insta::assert_debug_snapshot!(results);
+        let result = display_eval_error(src);
+        insta::assert_snapshot!(result);
+    });
+
+    unittest!(while_stmt_expect_bool, |src| {
+        let result = display_eval_error(src);
+        insta::assert_snapshot!(result);
     });
 
     unittest!(fn_call, |src| {
@@ -369,7 +516,7 @@ mod tests {
     });
 
     unittest!(bad_fn_call, |src| {
-        let results: Vec<_> = eval(src);
-        insta::assert_debug_snapshot!(results);
+        let result = display_eval_error(src);
+        insta::assert_snapshot!(result);
     });
 }

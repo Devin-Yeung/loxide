@@ -3,7 +3,7 @@ use crate::error::RuntimeError;
 use crate::eval::Evaluable;
 use crate::value::Value;
 use loxide_parser::ast::FunDeclaration;
-use std::rc::Rc;
+use std::sync::Arc;
 
 #[derive(Debug, Clone)]
 #[non_exhaustive]
@@ -29,15 +29,15 @@ impl Callable {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct LoxFunction {
     // we don't want to introduce any lifetime here,
     // since it will propagate to `Value`
-    declaration: Rc<FunDeclaration>,
+    declaration: Arc<FunDeclaration>,
 }
 
 impl LoxFunction {
-    pub fn new(declaration: Rc<FunDeclaration>) -> LoxFunction {
+    pub fn new(declaration: Arc<FunDeclaration>) -> LoxFunction {
         LoxFunction { declaration }
     }
 
@@ -73,7 +73,7 @@ impl LoxFunction {
 }
 
 impl Callable {
-    pub fn function(declaration: Rc<FunDeclaration>) -> Callable {
+    pub fn function(declaration: Arc<FunDeclaration>) -> Callable {
         Callable::Function(LoxFunction::new(declaration))
     }
 }
