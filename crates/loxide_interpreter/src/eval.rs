@@ -399,6 +399,7 @@ mod tests {
     use crate::environment::Environment;
     use crate::error::RuntimeError;
     use crate::eval::Evaluable;
+    use crate::utils::test_utils::LINEBREAK;
     use crate::value::Value;
     use loxide_diagnostic::reporter::{Reporter, Style};
     use loxide_testsuite::{footprints, register, unittest};
@@ -445,19 +446,19 @@ mod tests {
 
     unittest!(invalid_unary, |src| {
         let results = src
-            .split('\n')
+            .split(LINEBREAK)
             .map(display_eval_error)
             .collect::<Vec<_>>()
-            .join("\n");
+            .join(LINEBREAK);
         insta::assert_snapshot!(results);
     });
 
     unittest!(invalid_binary, |src| {
         let results = src
-            .split('\n')
+            .split(LINEBREAK)
             .map(display_eval_error)
             .collect::<Vec<_>>()
-            .join("\n");
+            .join(LINEBREAK);
         insta::assert_snapshot!(results);
     });
 
