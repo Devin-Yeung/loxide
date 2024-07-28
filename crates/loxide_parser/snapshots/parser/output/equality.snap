@@ -13,6 +13,7 @@ expression: asts
                                 1.0,
                             ),
                         ),
+                        span: [Span],
                     },
                     rhs: Expr {
                         kind: Literal(
@@ -20,10 +21,12 @@ expression: asts
                                 1.0,
                             ),
                         ),
+                        span: [Span],
                     },
                     operator: EqualEqual,
                 },
             ),
+            span: [Span],
         },
     ),
     Ok(
@@ -36,6 +39,7 @@ expression: asts
                                 1.0,
                             ),
                         ),
+                        span: [Span],
                     },
                     rhs: Expr {
                         kind: Literal(
@@ -43,10 +47,12 @@ expression: asts
                                 2.0,
                             ),
                         ),
+                        span: [Span],
                     },
                     operator: BangEq,
                 },
             ),
+            span: [Span],
         },
     ),
 ]

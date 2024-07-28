@@ -13,6 +13,7 @@ expression: asts
                                 2.0,
                             ),
                         ),
+                        span: [Span],
                     },
                     rhs: Expr {
                         kind: Binary(
@@ -23,6 +24,7 @@ expression: asts
                                             6.0,
                                         ),
                                     ),
+                                    span: [Span],
                                 },
                                 rhs: Expr {
                                     kind: Unary(
@@ -34,17 +36,21 @@ expression: asts
                                                         3.0,
                                                     ),
                                                 ),
+                                                span: [Span],
                                             },
                                         },
                                     ),
+                                    span: [Span],
                                 },
                                 operator: Slash,
                             },
                         ),
+                        span: [Span],
                     },
                     operator: Minus,
                 },
             ),
+            span: [Span],
         },
     ),
     Ok(
@@ -57,6 +63,7 @@ expression: asts
                                 2.0,
                             ),
                         ),
+                        span: [Span],
                     },
                     rhs: Expr {
                         kind: Literal(
@@ -64,10 +71,12 @@ expression: asts
                                 3.0,
                             ),
                         ),
+                        span: [Span],
                     },
                     operator: Plus,
                 },
             ),
+            span: [Span],
         },
     ),
 ]

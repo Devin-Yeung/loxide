@@ -11,6 +11,7 @@ expression: result
                         name: "a",
                     },
                 ),
+                span: [Span],
             },
         ),
     ],

@@ -1,7 +1,6 @@
 ---
 source: crates/loxide_parser/tests/regression/issue6.rs
 expression: result
-input_file: crates/loxide_parser/snapshots/regression/snapshots-inputs/issue6.lox
 ---
 (
     [
@@ -15,6 +14,7 @@ input_file: crates/loxide_parser/snapshots/regression/snapshots-inputs/issue6.lo
                                     2.0,
                                 ),
                             ),
+                            span: [Span],
                         },
                         rhs: Expr {
                             kind: Literal(
@@ -22,10 +22,12 @@ input_file: crates/loxide_parser/snapshots/regression/snapshots-inputs/issue6.lo
                                     1.0,
                                 ),
                             ),
+                            span: [Span],
                         },
                         operator: GreaterEqual,
                     },
                 ),
+                span: [Span],
             },
         ),
         Expression(
@@ -38,6 +40,7 @@ input_file: crates/loxide_parser/snapshots/regression/snapshots-inputs/issue6.lo
                                     2.0,
                                 ),
                             ),
+                            span: [Span],
                         },
                         rhs: Expr {
                             kind: Literal(
@@ -45,10 +48,12 @@ input_file: crates/loxide_parser/snapshots/regression/snapshots-inputs/issue6.lo
                                     1.0,
                                 ),
                             ),
+                            span: [Span],
                         },
                         operator: Greater,
                     },
                 ),
+                span: [Span],
             },
         ),
     ],

@@ -12,6 +12,7 @@ expression: results
                             name: "first",
                         },
                     ),
+                    span: [Span],
                 },
                 then_branch: Condition(
                     ConditionStmt {
@@ -21,6 +22,7 @@ expression: results
                                     name: "second",
                                 },
                             ),
+                            span: [Span],
                         },
                         then_branch: Expression(
                             Expr {
@@ -29,6 +31,7 @@ expression: results
                                         "when true",
                                     ),
                                 ),
+                                span: [Span],
                             },
                         ),
                         else_branch: Some(
@@ -39,6 +42,7 @@ expression: results
                                             "when false",
                                         ),
                                     ),
+                                    span: [Span],
                                 },
                             ),
                         ),
@@ -54,6 +58,7 @@ expression: results
                         "not part of else branch",
                     ),
                 ),
+                span: [Span],
             },
         ),
     ],

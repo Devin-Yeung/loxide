@@ -1,8 +1,10 @@
+use crate::token::Span;
 use std::rc::Rc;
 
 #[derive(Debug)]
 pub struct Expr {
     pub kind: ExprKind,
+    pub(crate) span: Span,
 }
 
 #[derive(Debug)]

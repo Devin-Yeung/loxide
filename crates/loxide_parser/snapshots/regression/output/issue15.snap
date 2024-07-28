@@ -17,6 +17,7 @@ expression: result
                                     1.0,
                                 ),
                             ),
+                            span: [Span],
                         },
                     ),
                 ),

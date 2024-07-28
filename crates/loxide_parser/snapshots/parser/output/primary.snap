@@ -8,6 +8,7 @@ expression: asts
             kind: Literal(
                 Nil,
             ),
+            span: [Span],
         },
     ),
     Ok(
@@ -17,6 +18,7 @@ expression: asts
                     true,
                 ),
             ),
+            span: [Span],
         },
     ),
     Ok(
@@ -26,6 +28,7 @@ expression: asts
                     false,
                 ),
             ),
+            span: [Span],
         },
     ),
     Ok(
@@ -35,6 +38,7 @@ expression: asts
                     "hello world",
                 ),
             ),
+            span: [Span],
         },
     ),
     Ok(
@@ -44,6 +48,7 @@ expression: asts
                     123.0,
                 ),
             ),
+            span: [Span],
         },
     ),
     Ok(
@@ -62,9 +67,11 @@ expression: asts
                                                     123.0,
                                                 ),
                                             ),
+                                            span: [Span],
                                         },
                                     },
                                 ),
+                                span: [Span],
                             },
                             rhs: Expr {
                                 kind: Literal(
@@ -72,12 +79,15 @@ expression: asts
                                         456.0,
                                     ),
                                 ),
+                                span: [Span],
                             },
                             operator: Plus,
                         },
                     ),
+                    span: [Span],
                 },
             ),
+            span: [Span],
         },
     ),
     Ok(
@@ -87,6 +97,7 @@ expression: asts
                     name: "foo",
                 },
             ),
+            span: [Span],
         },
     ),
     Ok(
@@ -96,6 +107,7 @@ expression: asts
                     name: "bar",
                 },
             ),
+            span: [Span],
         },
     ),
 ]
