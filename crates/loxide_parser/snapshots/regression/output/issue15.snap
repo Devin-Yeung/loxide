@@ -17,10 +17,7 @@ expression: result
                                     1.0,
                                 ),
                             ),
-                            span: Span {
-                                start: 14,
-                                end: 15,
-                            },
+                            span: [Span],
                         },
                     ),
                 ),

@@ -11,10 +11,7 @@ expression: result
                         name: "a",
                     },
                 ),
-                span: Span {
-                    start: 6,
-                    end: 7,
-                },
+                span: [Span],
             },
         ),
     ],
