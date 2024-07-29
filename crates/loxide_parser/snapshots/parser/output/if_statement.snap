@@ -4,63 +4,80 @@ expression: results
 ---
 (
     [
-        Condition(
-            ConditionStmt {
-                condition: Expr {
-                    kind: Variable(
-                        Identifier {
-                            name: "first",
-                        },
-                    ),
-                    span: [Span],
-                },
-                then_branch: Condition(
-                    ConditionStmt {
-                        condition: Expr {
-                            kind: Variable(
-                                Identifier {
-                                    name: "second",
-                                },
-                            ),
-                            span: [Span],
-                        },
-                        then_branch: Expression(
-                            Expr {
-                                kind: Literal(
-                                    String(
-                                        "when true",
-                                    ),
-                                ),
+        Stmt {
+            kind: Condition(
+                ConditionStmt {
+                    condition: Expr {
+                        kind: Variable(
+                            Identifier {
+                                name: "first",
                                 span: [Span],
                             },
                         ),
-                        else_branch: Some(
-                            Expression(
-                                Expr {
-                                    kind: Literal(
-                                        String(
-                                            "when false",
-                                        ),
+                        span: [Span],
+                    },
+                    then_branch: Stmt {
+                        kind: Condition(
+                            ConditionStmt {
+                                condition: Expr {
+                                    kind: Variable(
+                                        Identifier {
+                                            name: "second",
+                                            span: [Span],
+                                        },
                                     ),
                                     span: [Span],
                                 },
-                            ),
+                                then_branch: Stmt {
+                                    kind: Expression(
+                                        Expr {
+                                            kind: Literal(
+                                                String(
+                                                    "when true",
+                                                ),
+                                            ),
+                                            span: [Span],
+                                        },
+                                    ),
+                                    span: [Span],
+                                },
+                                else_branch: Some(
+                                    Stmt {
+                                        kind: Expression(
+                                            Expr {
+                                                kind: Literal(
+                                                    String(
+                                                        "when false",
+                                                    ),
+                                                ),
+                                                span: [Span],
+                                            },
+                                        ),
+                                        span: [Span],
+                                    },
+                                ),
+                            },
                         ),
+                        span: [Span],
                     },
-                ),
-                else_branch: None,
-            },
-        ),
-        Expression(
-            Expr {
-                kind: Literal(
-                    String(
-                        "not part of else branch",
+                    else_branch: None,
+                },
+            ),
+            span: [Span],
+        },
+        Stmt {
+            kind: Expression(
+                Expr {
+                    kind: Literal(
+                        String(
+                            "not part of else branch",
+                        ),
                     ),
-                ),
-                span: [Span],
-            },
-        ),
+                    span: [Span],
+                },
+            ),
+            span: [Span],
+        },
     ],
     [],
 )

@@ -4,16 +4,20 @@ expression: result
 ---
 (
     [
-        PrintStmt(
-            Expr {
-                kind: Variable(
-                    Identifier {
-                        name: "a",
-                    },
-                ),
-                span: [Span],
-            },
-        ),
+        Stmt {
+            kind: PrintStmt(
+                Expr {
+                    kind: Variable(
+                        Identifier {
+                            name: "a",
+                            span: [Span],
+                        },
+                    ),
+                    span: [Span],
+                },
+            ),
+            span: [Span],
+        },
     ],
     [],
 )

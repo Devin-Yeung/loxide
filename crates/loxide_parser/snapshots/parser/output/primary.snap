@@ -95,6 +95,7 @@ expression: asts
             kind: Variable(
                 Identifier {
                     name: "foo",
+                    span: [Span],
                 },
             ),
             span: [Span],
@@ -105,6 +106,7 @@ expression: asts
             kind: Variable(
                 Identifier {
                     name: "bar",
+                    span: [Span],
                 },
             ),
             span: [Span],

@@ -2,7 +2,7 @@ use crate::ast::ExprKind::Binary;
 use crate::ast::Literal::{Boolean, Nil};
 use crate::ast::{
     AssignExpr, BinaryExpr, CallExpr, ConditionStmt, Expr, ExprKind, ForStmt, FunDeclaration,
-    Identifier, ReturnStmt, Stmt, UnaryExpr, UnaryOperator, WhileStmt,
+    Identifier, ReturnStmt, Stmt, StmtKind, UnaryExpr, UnaryOperator, WhileStmt,
 };
 use crate::error::SyntaxError;
 use crate::scanner::Scanner;
@@ -52,6 +52,19 @@ impl<'src> Parser<'src> {
                 expected: ty.name(),
                 found: found.name(),
             }),
+        }
+    }
+
+    fn consume_identifier(&mut self) -> Result<Identifier, SyntaxError> {
+        match self.peek_type()? {
+            TokenType::Identifier => {
+                let token = self.advance()?;
+                Ok(Identifier {
+                    span: token.span,
+                    name: token.lexeme.to_string(),
+                })
+            }
+            _ => Err(SyntaxError::Expect("identifier")),
         }
     }
 
@@ -108,22 +121,24 @@ impl<'src> Parser<'src> {
     /// function  → IDENTIFIER "(" parameters? ")" block ;
     /// ```
     fn function(&mut self) -> Result<Stmt, SyntaxError> {
-        let name = Identifier {
-            name: self.consume(TokenType::Identifier)?.lexeme.to_string(),
-        };
-        let left_paren = self.consume(TokenType::LeftParen)?.span.start;
+        let name = self.consume_identifier()?;
+        let left_paren = self.consume(TokenType::LeftParen)?.span;
         let params = match self.peek_type()? {
             TokenType::RightParen => Vec::new(),
             _ => self.parameters()?,
         };
-        let right_parent = self.consume(TokenType::RightParen)?.span.end;
-        let body = self.block()?;
-        Ok(Stmt::FunDeclaration(Arc::new(FunDeclaration {
-            name,
-            paren_token: Span::new(left_paren, right_parent),
-            params,
-            body,
-        })))
+        let right_parent = self.consume(TokenType::RightParen)?.span;
+        let (body, body_span) = self.spanned_block()?;
+
+        Ok(Stmt {
+            span: Span::new(name.span().start, body_span.end),
+            kind: StmtKind::FunDeclaration(Arc::new(FunDeclaration {
+                name,
+                paren_token: Span::new(left_paren.start, right_parent.end),
+                params,
+                body,
+            })),
+        })
     }
 
     /// parse parameters according to following rules:
@@ -135,14 +150,10 @@ impl<'src> Parser<'src> {
     fn parameters(&mut self) -> Result<Vec<Identifier>, SyntaxError> {
         let mut idents = Vec::<Identifier>::new();
 
-        idents.push(Identifier {
-            name: self.consume(TokenType::Identifier)?.lexeme.to_string(),
-        });
+        idents.push(self.consume_identifier()?);
 
         while self.consume_if(TokenType::Comma) {
-            idents.push(Identifier {
-                name: self.consume(TokenType::Identifier)?.lexeme.to_string(),
-            });
+            idents.push(self.consume_identifier()?);
         }
 
         Ok(idents)
@@ -154,15 +165,18 @@ impl<'src> Parser<'src> {
     /// varDecl  → "var" IDENTIFIER ( "=" expression )? ";" ;
     /// ```
     fn var_declaration(&mut self) -> Result<Stmt, SyntaxError> {
-        self.consume(TokenType::Keyword(Keyword::Var))?;
-        let name = self.consume(TokenType::Identifier)?.lexeme.to_string();
+        let var = self.consume(TokenType::Keyword(Keyword::Var))?.span;
+        let name = self.consume_identifier()?;
         let mut expr: Option<Expr> = None;
         if self.peek_type() == Ok(TokenType::Equal) {
             self.consume(TokenType::Equal)?;
             expr = Some(self.expression()?);
         }
-        self.consume(TokenType::Semicolon)?;
-        Ok(Stmt::VarDeclaration(Identifier { name }, expr))
+        let semi = self.consume(TokenType::Semicolon)?.span;
+
+        let span = Span::new(var.start, semi.end);
+        let kind = StmtKind::VarDeclaration(name, expr);
+        Ok(Stmt { kind, span })
     }
 
     /// parse statement according to following rules:
@@ -212,7 +226,7 @@ impl<'src> Parser<'src> {
     ///         when_false();
     /// ```
     fn if_stmt(&mut self) -> Result<Stmt, SyntaxError> {
-        self.consume(TokenType::Keyword(Keyword::If))?;
+        let kw = self.consume(TokenType::Keyword(Keyword::If))?.span;
         self.consume(TokenType::LeftParen)?;
         let condition = self.expression()?;
         self.consume(TokenType::RightParen)?;
@@ -224,11 +238,19 @@ impl<'src> Parser<'src> {
         } else {
             None
         };
-        Ok(Stmt::Condition(ConditionStmt {
+        // track the span
+        let span = Span::new(
+            kw.start,
+            else_branch
+                .as_ref()
+                .map_or_else(|| then_branch.span.end, |stmt| stmt.span.end),
+        );
+        let kind = StmtKind::Condition(ConditionStmt {
             condition,
             then_branch,
             else_branch,
-        }))
+        });
+        Ok(Stmt { kind, span })
     }
 
     /// parse while statement according to following rules:
@@ -236,12 +258,15 @@ impl<'src> Parser<'src> {
     /// whileStmt  → "while" "(" expression ")" statement ;
     /// ```
     fn while_stmt(&mut self) -> Result<Stmt, SyntaxError> {
-        self.consume(TokenType::Keyword(Keyword::While))?;
+        let kw = self.consume(TokenType::Keyword(Keyword::While))?.span;
         self.consume(TokenType::LeftParen)?;
         let condition = self.expression()?;
         self.consume(TokenType::RightParen)?;
         let body = Box::new(self.statement()?);
-        Ok(Stmt::While(WhileStmt { condition, body }))
+
+        let span = Span::new(kw.start, body.span.end);
+        let kind = StmtKind::While(WhileStmt { condition, body });
+        Ok(Stmt { kind, span })
     }
 
     /// parse for statement according to following rules:
@@ -255,7 +280,7 @@ impl<'src> Parser<'src> {
     ///          statement ;
     /// ```
     fn for_stmt(&mut self) -> Result<Stmt, SyntaxError> {
-        self.consume(TokenType::Keyword(Keyword::For))?;
+        let kw = self.consume(TokenType::Keyword(Keyword::For))?.span;
         self.consume(TokenType::LeftParen)?;
         let initializer = match self.peek_type()? {
             TokenType::Semicolon => {
@@ -275,12 +300,16 @@ impl<'src> Parser<'src> {
         };
         self.consume(TokenType::RightParen)?;
         let body = Box::new(self.statement()?);
-        Ok(Stmt::For(ForStmt {
+        // track the span
+        let span = Span::new(kw.start, body.span.end);
+        let kind = StmtKind::For(ForStmt {
             initializer,
             condition,
             increment,
             body,
-        }))
+        });
+
+        Ok(Stmt { kind, span })
     }
 
     /// parse block statement according to following rules:
@@ -288,15 +317,24 @@ impl<'src> Parser<'src> {
     /// block  → "{" declaration* "}" ;
     /// ```
     fn block_stmt(&mut self) -> Result<Stmt, SyntaxError> {
-        Ok(Stmt::Block(self.block()?))
+        let (stmts, span) = self.spanned_block()?;
+        Ok(Stmt {
+            kind: StmtKind::Block(stmts),
+            span,
+        })
+    }
+
+    fn block(&mut self) -> Result<Vec<Stmt>, SyntaxError> {
+        let (stmts, _) = self.spanned_block()?;
+        Ok(stmts)
     }
 
     /// helper method for parsing  a block statement
     /// ```text
     /// block  → "{" declaration* "}" ;
     /// ```
-    fn block(&mut self) -> Result<Vec<Stmt>, SyntaxError> {
-        self.consume(TokenType::LeftBrace)?;
+    fn spanned_block(&mut self) -> Result<(Vec<Stmt>, Span), SyntaxError> {
+        let lbrace = self.consume(TokenType::LeftBrace)?.span;
         let mut stmts: Vec<Stmt> = Vec::new();
         loop {
             match self.peek_type()? {
@@ -309,8 +347,9 @@ impl<'src> Parser<'src> {
                 }
             }
         }
-        self.consume(TokenType::RightBrace)?;
-        Ok(stmts)
+        let rbrace = self.consume(TokenType::RightBrace)?.span;
+        let span = Span::new(lbrace.start, rbrace.end);
+        Ok((stmts, span))
     }
 
     /// parse print statement according to following rules:
@@ -321,8 +360,11 @@ impl<'src> Parser<'src> {
     fn print_stmt(&mut self) -> Result<Stmt, SyntaxError> {
         self.consume(TokenType::Keyword(Keyword::Print))?;
         let expr = self.expression()?;
-        self.consume(TokenType::Semicolon)?;
-        Ok(Stmt::PrintStmt(expr))
+        let semi = self.consume(TokenType::Semicolon)?.span;
+        Ok(Stmt {
+            span: Span::new(expr.span.start, semi.end),
+            kind: StmtKind::PrintStmt(expr),
+        })
     }
 
     /// parse expression statement according to following rules:
@@ -332,8 +374,11 @@ impl<'src> Parser<'src> {
     /// ```
     fn expression_stmt(&mut self) -> Result<Stmt, SyntaxError> {
         let expr = self.expression()?;
-        self.consume(TokenType::Semicolon)?;
-        Ok(Stmt::Expression(expr))
+        let semi = self.consume(TokenType::Semicolon)?.span;
+        Ok(Stmt {
+            span: Span::new(expr.span.start, semi.end),
+            kind: StmtKind::Expression(expr),
+        })
     }
 
     /// parse return statement according to following rules:
@@ -342,13 +387,17 @@ impl<'src> Parser<'src> {
     /// returnStmt  → "return" expression? ";" ;
     /// ```
     fn return_stmt(&mut self) -> Result<Stmt, SyntaxError> {
-        self.consume(TokenType::Keyword(Keyword::Return))?;
+        let kw = self.consume(TokenType::Keyword(Keyword::Return))?.span;
         let value = match self.peek_type()? {
             TokenType::Semicolon => None,
             _ => Some(self.expression()?),
         };
-        self.consume(TokenType::Semicolon)?;
-        Ok(Stmt::ReturnStmt(ReturnStmt { value }))
+        let semi = self.consume(TokenType::Semicolon)?.span;
+
+        Ok(Stmt {
+            span: Span::new(kw.start, semi.end),
+            kind: StmtKind::ReturnStmt(ReturnStmt { value }),
+        })
     }
 
     /// parse expression according to following rules:
@@ -370,7 +419,7 @@ impl<'src> Parser<'src> {
             let span = Span::new(expr.span.start, value.span.end);
             return match expr.kind {
                 ExprKind::Variable(v) => Ok(Expr {
-                    kind: ExprKind::Assign(AssignExpr::new(&v.name, value)),
+                    kind: ExprKind::Assign(AssignExpr::new(v, value)),
                     span,
                 }),
                 _ => Err(SyntaxError::InvalidAssignmentTarget),
@@ -605,12 +654,10 @@ impl<'src> Parser<'src> {
                 }
             }
             TokenType::Identifier => {
-                let name = self.consume(TokenType::Identifier)?;
+                let name = self.consume_identifier()?;
                 Expr {
-                    kind: ExprKind::Variable(Identifier {
-                        name: name.lexeme.to_string(),
-                    }),
-                    span: name.span,
+                    span: name.span(),
+                    kind: ExprKind::Variable(name),
                 }
             }
             _ => return Err(SyntaxError::Expect("expression")),

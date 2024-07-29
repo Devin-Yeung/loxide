@@ -4,27 +4,35 @@ expression: results
 ---
 (
     [
-        VarDeclaration(
-            Identifier {
-                name: "a",
-            },
-            Some(
-                Expr {
-                    kind: Literal(
-                        Number(
-                            1.0,
-                        ),
-                    ),
+        Stmt {
+            kind: VarDeclaration(
+                Identifier {
+                    name: "a",
                     span: [Span],
                 },
+                Some(
+                    Expr {
+                        kind: Literal(
+                            Number(
+                                1.0,
+                            ),
+                        ),
+                        span: [Span],
+                    },
+                ),
             ),
-        ),
-        VarDeclaration(
-            Identifier {
-                name: "b",
-            },
-            None,
-        ),
+            span: [Span],
+        },
+        Stmt {
+            kind: VarDeclaration(
+                Identifier {
+                    name: "b",
+                    span: [Span],
+                },
+                None,
+            ),
+            span: [Span],
+        },
     ],
     [],
 )

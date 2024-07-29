@@ -4,116 +4,128 @@ expression: results
 ---
 (
     [
-        Expression(
-            Expr {
-                kind: Call(
-                    CallExpr {
-                        callee: Expr {
-                            kind: Variable(
-                                Identifier {
-                                    name: "foo",
-                                },
-                            ),
-                            span: [Span],
-                        },
-                        paren_token: [Span],
-                        args: [
-                            Expr {
-                                kind: Literal(
-                                    String(
-                                        "abc",
-                                    ),
-                                ),
-                                span: [Span],
-                            },
-                            Expr {
-                                kind: Literal(
-                                    String(
-                                        "def",
-                                    ),
-                                ),
-                                span: [Span],
-                            },
-                        ],
-                    },
-                ),
-                span: [Span],
-            },
-        ),
-        Expression(
-            Expr {
-                kind: Call(
-                    CallExpr {
-                        callee: Expr {
-                            kind: Call(
-                                CallExpr {
-                                    callee: Expr {
-                                        kind: Variable(
-                                            Identifier {
-                                                name: "nested",
-                                            },
-                                        ),
+        Stmt {
+            kind: Expression(
+                Expr {
+                    kind: Call(
+                        CallExpr {
+                            callee: Expr {
+                                kind: Variable(
+                                    Identifier {
+                                        name: "foo",
                                         span: [Span],
                                     },
-                                    paren_token: [Span],
-                                    args: [
-                                        Expr {
-                                            kind: Literal(
-                                                String(
-                                                    "foo",
-                                                ),
+                                ),
+                                span: [Span],
+                            },
+                            paren_token: [Span],
+                            args: [
+                                Expr {
+                                    kind: Literal(
+                                        String(
+                                            "abc",
+                                        ),
+                                    ),
+                                    span: [Span],
+                                },
+                                Expr {
+                                    kind: Literal(
+                                        String(
+                                            "def",
+                                        ),
+                                    ),
+                                    span: [Span],
+                                },
+                            ],
+                        },
+                    ),
+                    span: [Span],
+                },
+            ),
+            span: [Span],
+        },
+        Stmt {
+            kind: Expression(
+                Expr {
+                    kind: Call(
+                        CallExpr {
+                            callee: Expr {
+                                kind: Call(
+                                    CallExpr {
+                                        callee: Expr {
+                                            kind: Variable(
+                                                Identifier {
+                                                    name: "nested",
+                                                    span: [Span],
+                                                },
                                             ),
                                             span: [Span],
                                         },
-                                    ],
-                                },
-                            ),
-                            span: [Span],
-                        },
-                        paren_token: [Span],
-                        args: [
-                            Expr {
-                                kind: Literal(
-                                    String(
-                                        "bar",
-                                    ),
+                                        paren_token: [Span],
+                                        args: [
+                                            Expr {
+                                                kind: Literal(
+                                                    String(
+                                                        "foo",
+                                                    ),
+                                                ),
+                                                span: [Span],
+                                            },
+                                        ],
+                                    },
                                 ),
                                 span: [Span],
                             },
-                        ],
-                    },
-                ),
-                span: [Span],
-            },
-        ),
-        Expression(
-            Expr {
-                kind: Call(
-                    CallExpr {
-                        callee: Expr {
-                            kind: Call(
-                                CallExpr {
-                                    callee: Expr {
-                                        kind: Variable(
-                                            Identifier {
-                                                name: "foo",
-                                            },
+                            paren_token: [Span],
+                            args: [
+                                Expr {
+                                    kind: Literal(
+                                        String(
+                                            "bar",
                                         ),
-                                        span: [Span],
-                                    },
-                                    paren_token: [Span],
-                                    args: [],
+                                    ),
+                                    span: [Span],
                                 },
-                            ),
-                            span: [Span],
+                            ],
                         },
-                        paren_token: [Span],
-                        args: [],
-                    },
-                ),
-                span: [Span],
-            },
-        ),
+                    ),
+                    span: [Span],
+                },
+            ),
+            span: [Span],
+        },
+        Stmt {
+            kind: Expression(
+                Expr {
+                    kind: Call(
+                        CallExpr {
+                            callee: Expr {
+                                kind: Call(
+                                    CallExpr {
+                                        callee: Expr {
+                                            kind: Variable(
+                                                Identifier {
+                                                    name: "foo",
+                                                    span: [Span],
+                                                },
+                                            ),
+                                            span: [Span],
+                                        },
+                                        paren_token: [Span],
+                                        args: [],
+                                    },
+                                ),
+                                span: [Span],
+                            },
+                            paren_token: [Span],
+                            args: [],
+                        },
+                    ),
+                    span: [Span],
+                },
+            ),
+            span: [Span],
+        },
     ],
     [],
 )

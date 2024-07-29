@@ -24,11 +24,13 @@ expression: asts
                 AssignExpr {
                     name: Identifier {
                         name: "a",
+                        span: [Span],
                     },
                     value: Expr {
                         kind: Variable(
                             Identifier {
                                 name: "b",
+                                span: [Span],
                             },
                         ),
                         span: [Span],
@@ -44,17 +46,20 @@ expression: asts
                 AssignExpr {
                     name: Identifier {
                         name: "a",
+                        span: [Span],
                     },
                     value: Expr {
                         kind: Assign(
                             AssignExpr {
                                 name: Identifier {
                                     name: "b",
+                                    span: [Span],
                                 },
                                 value: Expr {
                                     kind: Variable(
                                         Identifier {
                                             name: "c",
+                                            span: [Span],
                                         },
                                     ),
                                     span: [Span],

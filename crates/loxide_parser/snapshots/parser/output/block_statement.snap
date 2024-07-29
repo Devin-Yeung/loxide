@@ -4,83 +4,108 @@ expression: results
 ---
 (
     [
-        Block(
-            [
-                VarDeclaration(
-                    Identifier {
-                        name: "a",
-                    },
-                    Some(
-                        Expr {
-                            kind: Literal(
-                                Number(
-                                    1.0,
-                                ),
-                            ),
-                            span: [Span],
-                        },
-                    ),
-                ),
-                Expression(
-                    Expr {
-                        kind: Assign(
-                            AssignExpr {
-                                name: Identifier {
-                                    name: "a",
-                                },
-                                value: Expr {
-                                    kind: Literal(
-                                        Number(
-                                            2.0,
-                                        ),
-                                    ),
-                                    span: [Span],
-                                },
-                            },
-                        ),
-                        span: [Span],
-                    },
-                ),
-            ],
-        ),
-        Block(
-            [
-                VarDeclaration(
-                    Identifier {
-                        name: "a",
-                    },
-                    Some(
-                        Expr {
-                            kind: Literal(
-                                Number(
-                                    1.0,
-                                ),
-                            ),
-                            span: [Span],
-                        },
-                    ),
-                ),
-                Block(
-                    [
-                        VarDeclaration(
+        Stmt {
+            kind: Block(
+                [
+                    Stmt {
+                        kind: VarDeclaration(
                             Identifier {
                                 name: "a",
+                                span: [Span],
                             },
                             Some(
                                 Expr {
                                     kind: Literal(
                                         Number(
-                                            2.0,
+                                            1.0,
                                         ),
                                     ),
                                     span: [Span],
                                 },
                             ),
                         ),
-                    ],
-                ),
-            ],
-        ),
+                        span: [Span],
+                    },
+                    Stmt {
+                        kind: Expression(
+                            Expr {
+                                kind: Assign(
+                                    AssignExpr {
+                                        name: Identifier {
+                                            name: "a",
+                                            span: [Span],
+                                        },
+                                        value: Expr {
+                                            kind: Literal(
+                                                Number(
+                                                    2.0,
+                                                ),
+                                            ),
+                                            span: [Span],
+                                        },
+                                    },
+                                ),
+                                span: [Span],
+                            },
+                        ),
+                        span: [Span],
+                    },
+                ],
+            ),
+            span: [Span],
+        },
+        Stmt {
+            kind: Block(
+                [
+                    Stmt {
+                        kind: VarDeclaration(
+                            Identifier {
+                                name: "a",
+                                span: [Span],
+                            },
+                            Some(
+                                Expr {
+                                    kind: Literal(
+                                        Number(
+                                            1.0,
+                                        ),
+                                    ),
+                                    span: [Span],
+                                },
+                            ),
+                        ),
+                        span: [Span],
+                    },
+                    Stmt {
+                        kind: Block(
+                            [
+                                Stmt {
+                                    kind: VarDeclaration(
+                                        Identifier {
+                                            name: "a",
+                                            span: [Span],
+                                        },
+                                        Some(
+                                            Expr {
+                                                kind: Literal(
+                                                    Number(
+                                                        2.0,
+                                                    ),
+                                                ),
+                                                span: [Span],
+                                            },
+                                        ),
+                                    ),
+                                    span: [Span],
+                                },
+                            ],
+                        ),
+                        span: [Span],
+                    },
+                ],
+            ),
+            span: [Span],
+        },
     ],
     [],
 )
