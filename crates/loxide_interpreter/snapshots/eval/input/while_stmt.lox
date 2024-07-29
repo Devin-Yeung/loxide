@@ -4,4 +4,4 @@ while (a > 0) {
     a = a - 1;
     var b = 10; // this declaration should not leak
 }
-// print b; // expected undefined
+print b; // expected undefined

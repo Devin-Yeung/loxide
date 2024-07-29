@@ -59,7 +59,7 @@ impl LoxFunction {
 
         // binding args to the environment
         for (value, arg) in arguments.into_iter().zip(&self.declaration.params) {
-            env.define(arg.name.to_string(), value);
+            env.define(&arg, value);
         }
 
         for stmt in &self.declaration.body {

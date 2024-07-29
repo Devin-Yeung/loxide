@@ -8,4 +8,13 @@ for (var a = 0; a < 3; a = a + 1) {
 // => Number(1.0)
 // => Number(2.0)
 }
-// print a; // a should not leak
+print a; // a should not leak
+
+=== Error Section ===
+  × Undefined Variable: a
+   ╭─[4:7]
+ 3 │ }
+ 4 │ print a; // a should not leak
+   ·       ┬
+   ·       ╰── variable `a` is not defined
+   ╰────

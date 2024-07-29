@@ -41,12 +41,12 @@ impl Evaluable for StmtKind {
             }
             StmtKind::VarDeclaration(var, expr) => {
                 let val = expr.eval(env)?;
-                env.define(var.name.to_string(), val);
+                env.define(&var, val);
                 Ok(Value::Void)
             }
             StmtKind::FunDeclaration(decl) => {
                 let callable = Callable::function(decl.clone());
-                env.define(decl.name.name.to_string(), Value::Callable(callable));
+                env.define(&decl.name, Value::Callable(callable));
                 Ok(Value::Void)
             }
             StmtKind::Block(stmts) => {
@@ -228,7 +228,7 @@ impl Evaluable for CallExpr {
 impl Evaluable for AssignExpr {
     fn eval(&self, env: &mut Environment) -> Result<Value, RuntimeError> {
         let val = self.value.eval(env)?;
-        env.mutate(&self.name.name, val.clone())?;
+        env.mutate(&self.name, val.clone())?;
         Ok(val)
     }
 }
@@ -399,7 +399,7 @@ impl Evaluable for GroupedExpr {
 
 impl Evaluable for Identifier {
     fn eval(&self, env: &mut Environment) -> Result<Value, RuntimeError> {
-        env.get(&self.name)
+        env.get(&self)
     }
 }
 
@@ -436,6 +436,8 @@ mod tests {
 
     macro_rules! annotated_eval_test {
         ($src:expr) => {{
+            let source = Arc::new($src.to_string());
+            let mut reporter = Reporter::new(Style::NoColor);
             // linebreaks[0] means very char before index linebreaks[0] is in line 0
             let linebreaks = $src
                 .char_indices()
@@ -449,9 +451,15 @@ mod tests {
             // setup env and start eval
             let mut env = Environment::global();
             register!();
-            stmts.into_iter().for_each(|stmt| {
-                stmt.eval(&mut env).expect("eval should not fail");
-            });
+            stmts
+                .into_iter()
+                .for_each(|stmt| match stmt.eval(&mut env) {
+                    Ok(_) => {}
+                    Err(err) => {
+                        let report: Report = err.into();
+                        reporter.push(report.with_source_code(source.clone()));
+                    }
+                });
             let mut insertion = footprints!()
                 .into_iter()
                 .map(|footprint| {
@@ -470,6 +478,13 @@ mod tests {
             // insert in reverse order to avoid shifting line numbers
             for (_, line, content) in insertion.into_iter().rev() {
                 src.insert(line + 1, format!("// => {}", content));
+            }
+            let msg = reporter.report_to_string();
+            if !msg.is_empty() {
+                src.push(format!(
+                    "\n=== Error Section ===\n{}",
+                    reporter.report_to_string()
+                ));
             }
             src.join(LINEBREAK)
         }};
