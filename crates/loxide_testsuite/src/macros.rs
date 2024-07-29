@@ -15,6 +15,18 @@ macro_rules! _function_name {
 }
 
 #[macro_export]
+/// caveat: `register!` highly depend on the function name
+/// ```
+/// # use loxide_testsuite::{footprints, register};
+/// fn share() {
+///     register!();
+///     footprints!();
+/// }
+///
+/// fn test01() { share(); }
+/// fn test02() { share(); }
+/// // they will share the same footprints
+/// ```
 macro_rules! register {
     () => {
         $crate::_macro_support::Probe::register($crate::_function_name!());
