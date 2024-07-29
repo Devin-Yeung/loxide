@@ -1,16 +1,28 @@
 ---
 source: crates/loxide_interpreter/src/eval.rs
-expression: annotated_eval_test(src)
+expression: annotated_eval_test!(src)
 ---
-2 >= 1; // true
-2 > 1 ; // true
-1 < 2 ; // true
-1 <= 2; // true
-2 - 1 ; // 1
-0 + 1 ; // 1
-2 / 1 ; // 2
-0 * 2 ; // 0
-1 == 1; // true
-1 != 2; // true
-"abc" == "abc" ; // true
-"abc" != "abcd"; // true
+print(2 >= 1); // true
+// => Boolean(true)
+print(2 > 1 ); // true
+// => Boolean(true)
+print(1 < 2 ); // true
+// => Boolean(true)
+print(1 <= 2); // true
+// => Boolean(true)
+print(2 - 1 ); // 1
+// => Number(1.0)
+print(0 + 1 ); // 1
+// => Number(1.0)
+print(2 / 1 ); // 2
+// => Number(2.0)
+print(0 * 2 ); // 0
+// => Number(0.0)
+print(1 == 1); // true
+// => Boolean(true)
+print(1 != 2); // true
+// => Boolean(true)
+print("abc" == "abc" ); // true
+// => Boolean(true)
+print("abc" != "abcd"); // true
+// => Boolean(true)
