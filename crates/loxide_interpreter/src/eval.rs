@@ -29,7 +29,7 @@ impl Evaluable for Stmt {
         match self {
             Stmt::Expression(e) => e.eval(env),
             Stmt::PrintStmt(e) => {
-                probe!(e.eval(env))?;
+                probe!(e.eval(env), span => e.span().into())?;
                 Ok(Value::Void)
             }
             Stmt::VarDeclaration(var, expr) => {

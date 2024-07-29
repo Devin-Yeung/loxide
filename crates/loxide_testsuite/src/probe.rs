@@ -5,29 +5,36 @@ use std::fmt::{Debug, Formatter};
 use std::sync::Mutex;
 
 static PROBE: Lazy<Mutex<Probe>> = Lazy::new(|| Mutex::new(Probe::new()));
+static PROBE_COUNT: Lazy<Mutex<u64>> = Lazy::new(|| Mutex::new(0));
 #[derive(Debug)]
 pub struct Probe {
     mapping: HashMap<String, Vec<FootPrint>>,
 }
 
 #[derive(Clone, PartialEq)]
-pub struct FootPrint(String);
+pub struct FootPrint {
+    /// the span of the call expression
+    span: Option<(usize, usize)>,
+    content: String,
+    /// id in non-descending order
+    id: u64,
+}
 
 impl PartialEq<FootPrint> for &str {
     fn eq(&self, other: &FootPrint) -> bool {
-        self.eq(&other.0)
+        self.eq(&other.content)
     }
 }
 
 impl PartialEq<&str> for FootPrint {
     fn eq(&self, other: &&str) -> bool {
-        self.0.eq(other)
+        self.content.eq(other)
     }
 }
 
 impl Debug for FootPrint {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        f.write_str(&self.0)
+        f.write_str(&self.content)
     }
 }
 
@@ -46,13 +53,16 @@ impl Probe {
             .insert(test_name.to_string(), Vec::new());
     }
 
-    pub fn probe(content: String) {
+    pub fn probe(content: String, span: Option<(usize, usize)>) {
         let raw = Backtrace::capture().to_string();
         let backtrace = Self::backtrace(&raw);
         let mut guard = PROBE.lock().unwrap();
         for (k, v) in guard.mapping.iter_mut() {
             if backtrace.iter().any(|func| func == k) {
-                v.push(FootPrint(content));
+                let mut guard = PROBE_COUNT.lock().expect("lock poisoned");
+                let id = *guard;
+                *guard += 1;
+                v.push(FootPrint { content, span, id });
                 break;
             }
         }
