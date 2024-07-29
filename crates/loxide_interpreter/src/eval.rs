@@ -41,7 +41,7 @@ impl Evaluable for StmtKind {
             }
             StmtKind::VarDeclaration(var, expr) => {
                 let val = expr.eval(env)?;
-                env.define(&var, val);
+                env.define(var, val);
                 Ok(Value::Void)
             }
             StmtKind::FunDeclaration(decl) => {
@@ -399,7 +399,7 @@ impl Evaluable for GroupedExpr {
 
 impl Evaluable for Identifier {
     fn eval(&self, env: &mut Environment) -> Result<Value, RuntimeError> {
-        env.get(&self)
+        env.get(self)
     }
 }
 
