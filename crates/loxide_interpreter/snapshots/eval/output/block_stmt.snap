@@ -3,7 +3,6 @@ source: crates/loxide_interpreter/src/eval.rs
 expression: annotated_eval_test!(src)
 ---
 var a = "global a";
-// => String("global c")
 var b = "global b";
 var c = "global c";
 {
@@ -30,3 +29,4 @@ print a;
 print b;
 // => String("global b")
 print c;
+// => String("global c")

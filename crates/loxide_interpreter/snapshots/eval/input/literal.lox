@@ -1,5 +1,5 @@
-123  ;
-"abc";
-true ;
-false;
-nil  ;
+print(123  );
+print("abc");
+print(true );
+print(false);
+print(nil  );

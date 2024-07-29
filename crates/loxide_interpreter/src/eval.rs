@@ -456,7 +456,10 @@ mod tests {
                 .into_iter()
                 .map(|footprint| {
                     let end = footprint.span.expect("span info is missing").1;
-                    let line = linebreaks.iter().position(|&l| l > end).unwrap_or(0);
+                    let line = linebreaks
+                        .iter()
+                        .position(|&l| l > end)
+                        .unwrap_or(linebreaks.len());
                     (footprint.id, line, footprint.content)
                 })
                 .collect::<Vec<_>>();
