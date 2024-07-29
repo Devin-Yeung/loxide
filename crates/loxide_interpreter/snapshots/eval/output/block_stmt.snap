@@ -1,51 +1,32 @@
 ---
 source: crates/loxide_interpreter/src/eval.rs
-expression: footprints!()
+expression: annotated_eval_test!(src)
 ---
-[
-    Ok(
-        String(
-            "inner a",
-        ),
-    ),
-    Ok(
-        String(
-            "outer b",
-        ),
-    ),
-    Ok(
-        String(
-            "global c",
-        ),
-    ),
-    Ok(
-        String(
-            "outer a",
-        ),
-    ),
-    Ok(
-        String(
-            "outer b",
-        ),
-    ),
-    Ok(
-        String(
-            "global c",
-        ),
-    ),
-    Ok(
-        String(
-            "global a",
-        ),
-    ),
-    Ok(
-        String(
-            "global b",
-        ),
-    ),
-    Ok(
-        String(
-            "global c",
-        ),
-    ),
-]
+var a = "global a";
+// => String("global c")
+var b = "global b";
+var c = "global c";
+{
+  var a = "outer a";
+  var b = "outer b";
+  {
+    var a = "inner a";
+    print a;
+// => String("inner a")
+    print b;
+// => String("outer b")
+    print c;
+// => String("global c")
+  }
+  print a;
+// => String("outer a")
+  print b;
+// => String("outer b")
+  print c;
+// => String("global c")
+}
+print a;
+// => String("global a")
+print b;
+// => String("global b")
+print c;

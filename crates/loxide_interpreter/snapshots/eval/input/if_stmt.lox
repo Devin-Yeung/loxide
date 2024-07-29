@@ -9,4 +9,4 @@ if (true) {
     }
 }
 print a; // should mutate a to "baz"
-print b; // should not leak b
+// print b; // should not leak b

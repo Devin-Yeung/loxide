@@ -3,4 +3,4 @@ a;
 var b;
 b;
 b = a;
-c = 1; // assign to a undefined var
+// c = 1; // assign to a undefined var

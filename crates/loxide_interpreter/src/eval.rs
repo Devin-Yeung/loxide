@@ -29,7 +29,7 @@ impl Evaluable for Stmt {
         match self {
             Stmt::Expression(e) => e.eval(env),
             Stmt::PrintStmt(e) => {
-                probe!(e.eval(env), span => e.span().into())?;
+                probe!(e.eval(env)?, span => e.span().into());
                 Ok(Value::Void)
             }
             Stmt::VarDeclaration(var, expr) => {
@@ -427,6 +427,44 @@ mod tests {
         stmts.into_iter().map(|stmt| stmt.eval(&mut env)).collect()
     }
 
+    macro_rules! annotated_eval_test {
+        ($src:expr) => {{
+            // linebreaks[0] means very char before index linebreaks[0] is in line 0
+            let linebreaks = $src
+                .char_indices()
+                .map(|(i, c)| if c == '\n' { Some(i) } else { None })
+                .filter(Option::is_some)
+                .map(Option::unwrap)
+                .collect::<Vec<_>>();
+
+            let mut parser = loxide_parser::parser::Parser::new($src);
+            let (stmts, _) = parser.parse();
+            // setup env and start eval
+            let mut env = Environment::global();
+            register!();
+            stmts.into_iter().for_each(|stmt| {
+                stmt.eval(&mut env).expect("eval should not fail");
+            });
+            let mut insertion = footprints!()
+                .into_iter()
+                .map(|footprint| {
+                    let end = footprint.span.expect("span info is missing").1;
+                    let line = linebreaks.iter().position(|&l| l > end).unwrap_or(0);
+                    (footprint.id, line, footprint.content)
+                })
+                .collect::<Vec<_>>();
+            // sort the insertion by line number first and then by id
+            insertion.sort_by_key(|(id, line, _)| (*line, *id));
+
+            let mut src = $src.lines().map(String::from).collect::<Vec<_>>();
+            // insert in reverse order to avoid shifting line numbers
+            for (_, line, content) in insertion.into_iter().rev() {
+                src.insert(line + 1, format!("// => {}", content));
+            }
+            src.join(LINEBREAK)
+        }};
+    }
+
     fn display_eval_error(src: &str) -> String {
         let mut parser = loxide_parser::parser::Parser::new(src);
         let mut env = Environment::global();
@@ -449,13 +487,11 @@ mod tests {
     }
 
     unittest!(literal, |src| {
-        let results = eval(src);
-        insta::assert_debug_snapshot!(results);
+        insta::assert_snapshot!(annotated_eval_test!(src));
     });
 
     unittest!(valid_unary, |src| {
-        let results = eval(src);
-        insta::assert_debug_snapshot!(results);
+        insta::assert_snapshot!(annotated_eval_test!(src));
     });
 
     unittest!(invalid_unary, |src| {
@@ -477,37 +513,27 @@ mod tests {
     });
 
     unittest!(valid_binary, |src| {
-        let results = eval(src);
-        insta::assert_debug_snapshot!(results);
+        insta::assert_snapshot!(annotated_eval_test!(src));
     });
 
     unittest!(variable, |src| {
-        let results: Vec<_> = eval(src);
-        insta::assert_debug_snapshot!(results);
+        insta::assert_snapshot!(annotated_eval_test!(src));
     });
 
     unittest!(block_stmt, |src| {
-        register!();
-        eval(src);
-        insta::assert_debug_snapshot!(footprints!());
+        insta::assert_snapshot!(annotated_eval_test!(src));
     });
 
     unittest!(if_stmt, |src| {
-        register!();
-        eval(src);
-        insta::assert_debug_snapshot!(footprints!());
+        insta::assert_snapshot!(annotated_eval_test!(src));
     });
 
     unittest!(while_stmt, |src| {
-        register!();
-        eval(src);
-        insta::assert_debug_snapshot!(footprints!());
+        insta::assert_snapshot!(annotated_eval_test!(src));
     });
 
     unittest!(for_stmt, |src| {
-        register!();
-        eval(src);
-        insta::assert_debug_snapshot!(footprints!());
+        insta::assert_snapshot!(annotated_eval_test!(src));
     });
 
     unittest!(for_stmt_expect_bool, |src| {
@@ -521,9 +547,7 @@ mod tests {
     });
 
     unittest!(fn_call, |src| {
-        register!();
-        eval(src);
-        insta::assert_debug_snapshot!(footprints!());
+        insta::assert_snapshot!(annotated_eval_test!(src));
     });
 
     unittest!(bad_fn_call, |src| {

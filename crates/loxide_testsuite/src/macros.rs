@@ -24,12 +24,12 @@ macro_rules! register {
 #[macro_export]
 macro_rules! probe {
     ($target:expr) => {{
-        $crate::_macro_support::Probe::probe(::std::format!("{:#?}", $target), None);
+        $crate::_macro_support::Probe::probe(::std::format!("{:?}", $target), None);
         $target
     }};
 
     ($target:expr, span => $span:expr) => {{
-        $crate::_macro_support::Probe::probe(::std::format!("{:#?}", $target), Some($span));
+        $crate::_macro_support::Probe::probe(::std::format!("{:?}", $target), Some($span));
         $target
     }};
 }

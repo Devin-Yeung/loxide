@@ -1,106 +1,32 @@
 ---
 source: crates/loxide_interpreter/src/eval.rs
-expression: footprints!()
+expression: annotated_eval_test!(src)
 ---
-[
-    Ok(
-        Number(
-            0.0,
-        ),
-    ),
-    Ok(
-        Number(
-            1.0,
-        ),
-    ),
-    Ok(
-        Number(
-            1.0,
-        ),
-    ),
-    Ok(
-        Number(
-            2.0,
-        ),
-    ),
-    Ok(
-        Number(
-            3.0,
-        ),
-    ),
-    Ok(
-        Number(
-            5.0,
-        ),
-    ),
-    Ok(
-        Number(
-            8.0,
-        ),
-    ),
-    Ok(
-        Number(
-            13.0,
-        ),
-    ),
-    Ok(
-        Number(
-            21.0,
-        ),
-    ),
-    Ok(
-        Number(
-            34.0,
-        ),
-    ),
-    Ok(
-        Number(
-            55.0,
-        ),
-    ),
-    Ok(
-        Number(
-            89.0,
-        ),
-    ),
-    Ok(
-        Number(
-            144.0,
-        ),
-    ),
-    Ok(
-        Number(
-            233.0,
-        ),
-    ),
-    Ok(
-        Number(
-            377.0,
-        ),
-    ),
-    Ok(
-        Number(
-            610.0,
-        ),
-    ),
-    Ok(
-        Number(
-            987.0,
-        ),
-    ),
-    Ok(
-        Number(
-            1597.0,
-        ),
-    ),
-    Ok(
-        Number(
-            2584.0,
-        ),
-    ),
-    Ok(
-        Number(
-            4181.0,
-        ),
-    ),
-]
+fun fib(n) {
+  if (n <= 1) return n;
+  return fib(n - 2) + fib(n - 1);
+}
+
+for (var i = 0; i < 20; i = i + 1) {
+  print fib(i);
+// => Number(0.0)
+// => Number(1.0)
+// => Number(1.0)
+// => Number(2.0)
+// => Number(3.0)
+// => Number(5.0)
+// => Number(8.0)
+// => Number(13.0)
+// => Number(21.0)
+// => Number(34.0)
+// => Number(55.0)
+// => Number(89.0)
+// => Number(144.0)
+// => Number(233.0)
+// => Number(377.0)
+// => Number(610.0)
+// => Number(987.0)
+// => Number(1597.0)
+// => Number(2584.0)
+// => Number(4181.0)
+}

@@ -14,10 +14,10 @@ pub struct Probe {
 #[derive(Clone, PartialEq)]
 pub struct FootPrint {
     /// the span of the call expression
-    span: Option<(usize, usize)>,
-    content: String,
+    pub span: Option<(usize, usize)>,
+    pub content: String,
     /// id in non-descending order
-    id: u64,
+    pub id: u64,
 }
 
 impl PartialEq<FootPrint> for &str {

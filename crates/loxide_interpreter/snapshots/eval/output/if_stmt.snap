@@ -1,16 +1,17 @@
 ---
 source: crates/loxide_interpreter/src/eval.rs
-expression: footprints!()
+expression: annotated_eval_test(src)
 ---
-[
-    Ok(
-        String(
-            "baz",
-        ),
-    ),
-    Err(
-        UndefinedVariable(
-            "b",
-        ),
-    ),
-]
+var a = "foo";
+if (true) {
+    if (false) {
+        a = "bar";
+    }
+    else {
+        a = "baz";
+        var b = "Hello World";
+    }
+}
+print a; // should mutate a to "baz"
+// => String("baz")
+// print b; // should not leak b

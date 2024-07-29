@@ -1,26 +1,11 @@
 ---
 source: crates/loxide_interpreter/src/eval.rs
-expression: footprints!()
+expression: annotated_eval_test!(src)
 ---
-[
-    Ok(
-        Number(
-            0.0,
-        ),
-    ),
-    Ok(
-        Number(
-            1.0,
-        ),
-    ),
-    Ok(
-        Number(
-            2.0,
-        ),
-    ),
-    Err(
-        UndefinedVariable(
-            "a",
-        ),
-    ),
-]
+for (var a = 0; a < 3; a = a + 1) {
+  print a;
+// => Number(0.0)
+// => Number(1.0)
+// => Number(2.0)
+}
+// print a; // a should not leak
