@@ -4,64 +4,80 @@ expression: results
 ---
 (
     [
-        FunDeclaration(
-            FunDeclaration {
-                name: Identifier {
-                    name: "foo",
+        Stmt {
+            kind: FunDeclaration(
+                FunDeclaration {
+                    name: Identifier {
+                        name: "foo",
+                        span: [Span],
+                    },
+                    paren_token: [Span],
+                    params: [
+                        Identifier {
+                            name: "bar",
+                            span: [Span],
+                        },
+                        Identifier {
+                            name: "baz",
+                            span: [Span],
+                        },
+                    ],
+                    body: [
+                        Stmt {
+                            kind: PrintStmt(
+                                Expr {
+                                    kind: Grouped(
+                                        Expr {
+                                            kind: Literal(
+                                                String(
+                                                    "a",
+                                                ),
+                                            ),
+                                            span: [Span],
+                                        },
+                                    ),
+                                    span: [Span],
+                                },
+                            ),
+                            span: [Span],
+                        },
+                        Stmt {
+                            kind: PrintStmt(
+                                Expr {
+                                    kind: Grouped(
+                                        Expr {
+                                            kind: Literal(
+                                                String(
+                                                    "b",
+                                                ),
+                                            ),
+                                            span: [Span],
+                                        },
+                                    ),
+                                    span: [Span],
+                                },
+                            ),
+                            span: [Span],
+                        },
+                    ],
                 },
-                paren_token: [Span],
-                params: [
-                    Identifier {
+            ),
+            span: [Span],
+        },
+        Stmt {
+            kind: FunDeclaration(
+                FunDeclaration {
+                    name: Identifier {
                         name: "bar",
+                        span: [Span],
                     },
-                    Identifier {
-                        name: "baz",
-                    },
-                ],
-                body: [
-                    PrintStmt(
-                        Expr {
-                            kind: Grouped(
-                                Expr {
-                                    kind: Literal(
-                                        String(
-                                            "a",
-                                        ),
-                                    ),
-                                    span: [Span],
-                                },
-                            ),
-                            span: [Span],
-                        },
-                    ),
-                    PrintStmt(
-                        Expr {
-                            kind: Grouped(
-                                Expr {
-                                    kind: Literal(
-                                        String(
-                                            "b",
-                                        ),
-                                    ),
-                                    span: [Span],
-                                },
-                            ),
-                            span: [Span],
-                        },
-                    ),
-                ],
-            },
-        ),
-        FunDeclaration(
-            FunDeclaration {
-                name: Identifier {
-                    name: "bar",
+                    paren_token: [Span],
+                    params: [],
+                    body: [],
                 },
-                paren_token: [Span],
-                params: [],
-                body: [],
-            },
-        ),
+            ),
+            span: [Span],
+        },
     ],
     [],
 )

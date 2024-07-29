@@ -4,58 +4,64 @@ expression: result
 ---
 (
     [
-        Expression(
-            Expr {
-                kind: Binary(
-                    BinaryExpr {
-                        lhs: Expr {
-                            kind: Literal(
-                                Number(
-                                    1.0,
+        Stmt {
+            kind: Expression(
+                Expr {
+                    kind: Binary(
+                        BinaryExpr {
+                            lhs: Expr {
+                                kind: Literal(
+                                    Number(
+                                        1.0,
+                                    ),
                                 ),
-                            ),
-                            span: [Span],
-                        },
-                        rhs: Expr {
-                            kind: Literal(
-                                Number(
-                                    2.0,
+                                span: [Span],
+                            },
+                            rhs: Expr {
+                                kind: Literal(
+                                    Number(
+                                        2.0,
+                                    ),
                                 ),
-                            ),
-                            span: [Span],
+                                span: [Span],
+                            },
+                            operator: Plus,
                         },
-                        operator: Plus,
-                    },
-                ),
-                span: [Span],
-            },
-        ),
-        Expression(
-            Expr {
-                kind: Binary(
-                    BinaryExpr {
-                        lhs: Expr {
-                            kind: Literal(
-                                Number(
-                                    3.0,
+                    ),
+                    span: [Span],
+                },
+            ),
+            span: [Span],
+        },
+        Stmt {
+            kind: Expression(
+                Expr {
+                    kind: Binary(
+                        BinaryExpr {
+                            lhs: Expr {
+                                kind: Literal(
+                                    Number(
+                                        3.0,
+                                    ),
                                 ),
-                            ),
-                            span: [Span],
-                        },
-                        rhs: Expr {
-                            kind: Literal(
-                                Number(
-                                    4.0,
+                                span: [Span],
+                            },
+                            rhs: Expr {
+                                kind: Literal(
+                                    Number(
+                                        4.0,
+                                    ),
                                 ),
-                            ),
-                            span: [Span],
+                                span: [Span],
+                            },
+                            operator: Plus,
                         },
-                        operator: Plus,
-                    },
-                ),
-                span: [Span],
-            },
-        ),
+                    ),
+                    span: [Span],
+                },
+            ),
+            span: [Span],
+        },
     ],
     [],
 )

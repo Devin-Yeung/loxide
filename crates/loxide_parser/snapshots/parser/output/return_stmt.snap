@@ -4,47 +4,62 @@ expression: results
 ---
 (
     [
-        FunDeclaration(
-            FunDeclaration {
-                name: Identifier {
-                    name: "foo",
-                },
-                paren_token: [Span],
-                params: [],
-                body: [
-                    ReturnStmt(
-                        ReturnStmt {
-                            value: None,
-                        },
-                    ),
-                ],
-            },
-        ),
-        FunDeclaration(
-            FunDeclaration {
-                name: Identifier {
-                    name: "bar",
-                },
-                paren_token: [Span],
-                params: [],
-                body: [
-                    ReturnStmt(
-                        ReturnStmt {
-                            value: Some(
-                                Expr {
-                                    kind: Variable(
-                                        Identifier {
-                                            name: "bar",
-                                        },
-                                    ),
-                                    span: [Span],
+        Stmt {
+            kind: FunDeclaration(
+                FunDeclaration {
+                    name: Identifier {
+                        name: "foo",
+                        span: [Span],
+                    },
+                    paren_token: [Span],
+                    params: [],
+                    body: [
+                        Stmt {
+                            kind: ReturnStmt(
+                                ReturnStmt {
+                                    value: None,
                                 },
                             ),
+                            span: [Span],
                         },
-                    ),
-                ],
-            },
-        ),
+                    ],
+                },
+            ),
+            span: [Span],
+        },
+        Stmt {
+            kind: FunDeclaration(
+                FunDeclaration {
+                    name: Identifier {
+                        name: "bar",
+                        span: [Span],
+                    },
+                    paren_token: [Span],
+                    params: [],
+                    body: [
+                        Stmt {
+                            kind: ReturnStmt(
+                                ReturnStmt {
+                                    value: Some(
+                                        Expr {
+                                            kind: Variable(
+                                                Identifier {
+                                                    name: "bar",
+                                                    span: [Span],
+                                                },
+                                            ),
+                                            span: [Span],
+                                        },
+                                    ),
+                                },
+                            ),
+                            span: [Span],
+                        },
+                    ],
+                },
+            ),
+            span: [Span],
+        },
     ],
     [],
 )

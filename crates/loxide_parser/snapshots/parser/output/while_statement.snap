@@ -4,48 +4,63 @@ expression: results
 ---
 (
     [
-        While(
-            WhileStmt {
-                condition: Expr {
-                    kind: Literal(
-                        Boolean(
-                            true,
+        Stmt {
+            kind: While(
+                WhileStmt {
+                    condition: Expr {
+                        kind: Literal(
+                            Boolean(
+                                true,
+                            ),
                         ),
-                    ),
-                    span: [Span],
-                },
-                body: Block(
-                    [
-                        While(
-                            WhileStmt {
-                                condition: Expr {
-                                    kind: Literal(
-                                        Boolean(
-                                            false,
-                                        ),
-                                    ),
-                                    span: [Span],
-                                },
-                                body: Block(
-                                    [
-                                        Expression(
-                                            Expr {
+                        span: [Span],
+                    },
+                    body: Stmt {
+                        kind: Block(
+                            [
+                                Stmt {
+                                    kind: While(
+                                        WhileStmt {
+                                            condition: Expr {
                                                 kind: Literal(
-                                                    String(
-                                                        "Hello world",
+                                                    Boolean(
+                                                        false,
                                                     ),
                                                 ),
                                                 span: [Span],
                                             },
-                                        ),
-                                    ],
-                                ),
-                            },
+                                            body: Stmt {
+                                                kind: Block(
+                                                    [
+                                                        Stmt {
+                                                            kind: Expression(
+                                                                Expr {
+                                                                    kind: Literal(
+                                                                        String(
+                                                                            "Hello world",
+                                                                        ),
+                                                                    ),
+                                                                    span: [Span],
+                                                                },
+                                                            ),
+                                                            span: [Span],
+                                                        },
+                                                    ],
+                                                ),
+                                                span: [Span],
+                                            },
+                                        },
+                                    ),
+                                    span: [Span],
+                                },
+                            ],
                         ),
-                    ],
-                ),
-            },
-        ),
+                        span: [Span],
+                    },
+                },
+            ),
+            span: [Span],
+        },
     ],
     [],
 )
