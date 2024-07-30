@@ -164,3 +164,9 @@ pub struct Stmt {
     pub kind: StmtKind,
     pub span: Span,
 }
+
+impl Stmt {
+    pub fn span(&self) -> Span {
+        self.span
+    }
+}
