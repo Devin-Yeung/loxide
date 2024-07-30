@@ -53,6 +53,10 @@ impl Reporter {
         self.report(&mut buffer).unwrap();
         buffer
     }
+
+    pub fn has_diagnostics(&self) -> bool {
+        !self.diagnostics.is_empty()
+    }
 }
 
 #[cfg(test)]

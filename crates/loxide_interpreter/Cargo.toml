@@ -16,3 +16,4 @@ paste = "1.0.15"
 insta = { workspace = true }
 loxide_macros = { workspace = true }
 loxide_diagnostic = { workspace = true }
+walkdir = "2.5.0"
