@@ -75,6 +75,7 @@ impl<'src> Parser<'src> {
     }
 
     fn peek_type(&mut self) -> Result<TokenType, SyntaxError> {
+        self.skip_comments();
         match self.tokens.peek() {
             None => Ok(TokenType::EOF),
             Some(Ok(token)) => Ok(token.ty.clone()),
@@ -82,10 +83,21 @@ impl<'src> Parser<'src> {
         }
     }
 
-    fn peek_token(&mut self) -> Result<&Token, SyntaxError> {
+    fn skip_comments(&mut self) {
+        match self.tokens.peek() {
+            Some(Ok(token)) if token.ty == TokenType::Comment => {
+                let _ = self.advance(); // drop it
+                self.skip_comments();
+            }
+            _ => { /* Do nothing */ }
+        }
+    }
+
+    fn peek_token<'a>(&'a mut self) -> Result<&'a Token, SyntaxError> {
+        self.skip_comments();
         match self.tokens.peek() {
             None => Err(SyntaxError::UnexpectedEOF),
-            Some(Ok(token)) => Ok(token),
+            Some(Ok(token)) => Ok(token), // never be a comment
             Some(Err(err)) => Err(*err),
         }
     }

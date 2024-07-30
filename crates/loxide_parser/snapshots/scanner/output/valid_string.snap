@@ -47,4 +47,11 @@ expression: tokens
             span: [Span],
         },
     ),
+    Ok(
+        Token {
+            ty: EOF,
+            lexeme: "",
+            span: [Span],
+        },
+    ),
 ]

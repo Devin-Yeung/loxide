@@ -7,21 +7,21 @@ expression: asts
         UnexpectedToken {
             span: [Span],
             expected: "primary expression",
-            found: "comment",
+            found: "eof",
         },
     ),
     Err(
         UnexpectedToken {
             span: [Span],
             expected: "primary expression",
-            found: "comment",
+            found: "eof",
         },
     ),
     Err(
         UnexpectedToken {
             span: [Span],
             expected: "primary expression",
-            found: "comment",
+            found: "eof",
         },
     ),
     Ok(
