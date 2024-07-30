@@ -4,19 +4,25 @@ expression: asts
 ---
 [
     Err(
-        Expect(
-            "expression",
-        ),
+        UnexpectedToken {
+            span: [Span],
+            expected: "primary expression",
+            found: "comment",
+        },
     ),
     Err(
-        Expect(
-            "expression",
-        ),
+        UnexpectedToken {
+            span: [Span],
+            expected: "primary expression",
+            found: "comment",
+        },
     ),
     Err(
-        Expect(
-            "expression",
-        ),
+        UnexpectedToken {
+            span: [Span],
+            expected: "primary expression",
+            found: "comment",
+        },
     ),
     Ok(
         Expr {
