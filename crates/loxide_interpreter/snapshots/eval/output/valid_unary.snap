@@ -1,21 +1,10 @@
 ---
 source: crates/loxide_interpreter/src/eval.rs
-expression: results
+expression: annotated_eval_test!(src)
 ---
-[
-    Ok(
-        Number(
-            -1.0,
-        ),
-    ),
-    Ok(
-        Boolean(
-            false,
-        ),
-    ),
-    Ok(
-        Boolean(
-            true,
-        ),
-    ),
-]
+print(-1.0  );
+// => Number(-1.0)
+print(!true );
+// => Boolean(false)
+print(!false);
+// => Boolean(true)

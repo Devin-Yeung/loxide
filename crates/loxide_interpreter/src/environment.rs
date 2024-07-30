@@ -1,5 +1,6 @@
 use crate::error::RuntimeError;
 use crate::value::Value;
+use loxide_parser::ast::Identifier;
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
@@ -10,31 +11,37 @@ struct Inner {
 }
 
 impl Inner {
-    fn get(&self, name: &str) -> Result<Value, RuntimeError> {
-        self.values.get(name).map_or_else(
+    fn get(&self, ident: &Identifier) -> Result<Value, RuntimeError> {
+        self.values.get(&ident.name).map_or_else(
             || {
                 self.parent
                     .as_ref()
-                    .map(|parent| parent.borrow().get(name))
-                    .unwrap_or(Err(RuntimeError::UndefinedVariable(name.to_string())))
+                    .map(|parent| parent.borrow().get(ident))
+                    .unwrap_or(Err(RuntimeError::UndefinedVariable(
+                        ident.span,
+                        ident.name.to_string(),
+                    )))
             },
             |v| Ok(v.clone()),
         )
     }
 
-    fn define(&mut self, name: String, value: Value) {
-        self.values.insert(name, value);
+    fn define(&mut self, ident: &Identifier, value: Value) {
+        self.values.insert(ident.name.to_string(), value);
     }
 
-    fn mutate(&mut self, name: &str, value: Value) -> Result<(), RuntimeError> {
-        match self.values.get_mut(name) {
+    fn mutate(&mut self, ident: &Identifier, value: Value) -> Result<(), RuntimeError> {
+        match self.values.get_mut(&ident.name) {
             Some(existed) => {
                 *existed = value;
                 Ok(())
             }
             None => match &self.parent {
-                None => Err(RuntimeError::UndefinedVariable(name.to_string())),
-                Some(env) => env.borrow_mut().mutate(name, value),
+                None => Err(RuntimeError::UndefinedVariable(
+                    ident.span,
+                    ident.name.to_string(),
+                )),
+                Some(env) => env.borrow_mut().mutate(ident, value),
             },
         }
     }
@@ -59,15 +66,15 @@ impl Environment {
     /// if current does not define this variable, search
     /// in the ancestor scope, if nothing found,
     /// return an UndefinedVariable runtime error
-    pub fn get(&self, name: &str) -> Result<Value, RuntimeError> {
-        self.inner.borrow().get(name)
+    pub fn get(&self, ident: &Identifier) -> Result<Value, RuntimeError> {
+        self.inner.borrow().get(ident)
     }
 
     /// define variable in current scope,
     /// if variable already defined in current scope,
     /// the previous value will be overwritten
-    pub fn define(&mut self, name: String, value: Value) {
-        self.inner.borrow_mut().define(name, value);
+    pub fn define(&mut self, ident: &Identifier, value: Value) {
+        self.inner.borrow_mut().define(ident, value);
     }
 
     /// mutate variable in current scope,
@@ -75,8 +82,8 @@ impl Environment {
     /// mutate the variable in the ancestor scope,
     /// if nothing found in ancestor scope,
     /// return an UndefinedVariable runtime error
-    pub fn mutate(&mut self, name: &str, value: Value) -> Result<(), RuntimeError> {
-        self.inner.borrow_mut().mutate(name, value)
+    pub fn mutate(&mut self, ident: &Identifier, value: Value) -> Result<(), RuntimeError> {
+        self.inner.borrow_mut().mutate(ident, value)
     }
 
     /// create a descendant scope
@@ -94,22 +101,30 @@ impl Environment {
 mod test {
     use crate::environment::Environment;
     use crate::value::Value;
+    use loxide_parser::ast::Identifier;
+    use loxide_parser::token::Span;
 
+    fn ident<S: AsRef<str>>(s: S) -> Identifier {
+        Identifier {
+            name: s.as_ref().to_string(),
+            span: Span::new(0, 1),
+        }
+    }
     macro_rules! define {
         ($scope:expr, {$($name:expr => $val:expr),*$(,)?}) => {{
-            $($scope.define($name.to_string(), $val));*
+            $($scope.define(&ident($name), $val));*
         }};
     }
 
     macro_rules! check_scope {
         ($scope:expr, {$($name:expr => $val:expr),*$(,)?}) => {{
-            $(assert_eq!($scope.get($name).unwrap().as_number().unwrap(), $val);)*
+            $(assert_eq!($scope.get(&ident($name)).unwrap().as_number().unwrap(), $val);)*
         }};
     }
 
     macro_rules! mutate {
         ($scope:expr, {$($name:expr => $val:expr),*$(,)?}) => {{
-            $($scope.mutate($name, $val).unwrap());*
+            $($scope.mutate(&ident($name), $val).unwrap());*
         }};
     }
 

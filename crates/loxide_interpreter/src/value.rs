@@ -22,6 +22,19 @@ pub enum ValueKind {
     Callable,
 }
 
+impl Display for Value {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Value::Number(v) => write!(f, "num({})", v),
+            Value::String(v) => write!(f, "str({})", v),
+            Value::Boolean(v) => write!(f, "bool({})", v),
+            Value::Nil => write!(f, "nil"),
+            Value::Void => write!(f, "void"),
+            Value::Callable(_) => write!(f, "<callable>"),
+        }
+    }
+}
+
 impl Display for ValueKind {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {

@@ -140,6 +140,12 @@ pub struct Span {
     pub end: usize,
 }
 
+impl From<Span> for (usize, usize) {
+    fn from(val: Span) -> Self {
+        (val.start, val.end)
+    }
+}
+
 impl Span {
     pub fn new(start: usize, end: usize) -> Self {
         Span { start, end }

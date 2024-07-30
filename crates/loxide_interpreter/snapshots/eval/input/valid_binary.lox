@@ -1,12 +1,12 @@
-2 >= 1; // true
-2 > 1 ; // true
-1 < 2 ; // true
-1 <= 2; // true
-2 - 1 ; // 1
-0 + 1 ; // 1
-2 / 1 ; // 2
-0 * 2 ; // 0
-1 == 1; // true
-1 != 2; // true
-"abc" == "abc" ; // true
-"abc" != "abcd"; // true
+print(2 >= 1); // true
+print(2 > 1 ); // true
+print(1 < 2 ); // true
+print(1 <= 2); // true
+print(2 - 1 ); // 1
+print(0 + 1 ); // 1
+print(2 / 1 ); // 2
+print(0 * 2 ); // 0
+print(1 == 1); // true
+print(1 != 2); // true
+print("abc" == "abc" ); // true
+print("abc" != "abcd"); // true

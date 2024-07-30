@@ -7,11 +7,17 @@ pub enum OpCode {
     Return,
 }
 
-impl Into<u8> for OpCode {
-    fn into(self) -> u8 {
-        match self {
+impl From<OpCode> for u8 {
+    fn from(val: OpCode) -> Self {
+        match val {
             OpCode::Return => 0,
         }
+    }
+}
+
+impl Default for Chunk {
+    fn default() -> Self {
+        Self::new()
     }
 }
 

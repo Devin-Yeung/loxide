@@ -19,8 +19,8 @@ pub enum RuntimeError {
         rhs_span: Span,
         rhs_ty: ValueKind,
     },
-    #[error("Undefined Variable: {0}")]
-    UndefinedVariable(String),
+    #[error("Undefined Variable: {1}")]
+    UndefinedVariable(#[label("variable `{1}` is not defined")] Span, String),
     #[error("Expected boolean in condition expression")]
     ExpectedBoolean(
         #[label("expect a boolean type here, but got type `{1}`")] Span,
