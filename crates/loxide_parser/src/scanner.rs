@@ -181,7 +181,7 @@ impl<'src> Scanner<'src> {
 
     fn identifier(&mut self) -> TokenType<'src> {
         while let Some(c) = self.peek() {
-            if c.is_ascii_alphanumeric() {
+            if c.is_ascii_alphanumeric() || c == '_' {
                 self.advance();
             } else {
                 break;
