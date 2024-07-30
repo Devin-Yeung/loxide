@@ -447,7 +447,11 @@ mod tests {
                 .collect::<Vec<_>>();
 
             let mut parser = loxide_parser::parser::Parser::new($src);
-            let (stmts, _) = parser.parse();
+            let (stmts, syntax_error) = parser.parse();
+            syntax_error.into_iter().for_each(|err| {
+                let report: Report = err.into();
+                reporter.push(report.with_source_code(source.clone()));
+            });
             // setup env and start eval
             let mut env = Environment::global();
             register!();
