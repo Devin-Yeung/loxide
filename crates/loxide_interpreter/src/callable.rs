@@ -5,6 +5,7 @@ use crate::eval::Evaluable;
 use crate::value::Value;
 use loxide_parser::ast::FunDeclaration;
 use loxide_parser::token::Span;
+use std::io::Write;
 use std::sync::Arc;
 
 #[derive(Debug, Clone)]
@@ -24,9 +25,10 @@ impl Callable {
         &self,
         arguments: Vec<Value>,
         env: &mut Environment,
+        stdout: &mut impl Write,
     ) -> Result<Value, PrivateRuntimeError> {
         match self {
-            Callable::Function(func) => func.call(arguments, env),
+            Callable::Function(func) => func.call(arguments, env, stdout),
         }
     }
 }
@@ -47,6 +49,7 @@ impl LoxFunction {
         &self,
         arguments: Vec<Value>,
         env: &mut Environment,
+        stdout: &mut impl Write,
     ) -> Result<Value, PrivateRuntimeError> {
         let mut env = env.extend();
 
@@ -63,7 +66,7 @@ impl LoxFunction {
         }
 
         for stmt in &self.declaration.body {
-            match stmt.eval(&mut env) {
+            match stmt.eval(&mut env, stdout) {
                 Ok(_) => continue,
                 Err(RuntimeError::ReturnValue(ret)) => return Ok(ret),
                 Err(e) => return Err(Transparent(e)),
