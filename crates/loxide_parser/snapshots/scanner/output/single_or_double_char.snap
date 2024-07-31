@@ -53,4 +53,9 @@ expression: tokens
         lexeme: "//",
         span: [Span],
     },
+    Token {
+        ty: EOF,
+        lexeme: "",
+        span: [Span],
+    },
 ]

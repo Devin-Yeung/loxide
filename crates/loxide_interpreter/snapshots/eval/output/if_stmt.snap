@@ -13,7 +13,7 @@ if (true) {
     }
 }
 print a; // should mutate a to "baz"
-// => String("baz")
+// => str(baz)
 print b; // should not leak b
 
 === Error Section ===

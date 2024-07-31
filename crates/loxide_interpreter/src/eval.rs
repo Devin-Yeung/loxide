@@ -8,9 +8,10 @@ use loxide_parser::ast::{
     WhileStmt,
 };
 use loxide_testsuite::probe;
+use std::io::Write;
 
 pub trait Evaluable {
-    fn eval(&self, env: &mut Environment) -> Result<Value, RuntimeError>;
+    fn eval(&self, env: &mut Environment, stdout: &mut impl Write) -> Result<Value, RuntimeError>;
 }
 
 macro_rules! inner_or {
@@ -26,26 +27,28 @@ macro_rules! inner_or {
 }
 
 impl Evaluable for Stmt {
-    fn eval(&self, env: &mut Environment) -> Result<Value, RuntimeError> {
-        self.kind.eval(env)
+    fn eval(&self, env: &mut Environment, stdout: &mut impl Write) -> Result<Value, RuntimeError> {
+        self.kind.eval(env, stdout)
     }
 }
 
 impl Evaluable for StmtKind {
-    fn eval(&self, env: &mut Environment) -> Result<Value, RuntimeError> {
+    fn eval(&self, env: &mut Environment, stdout: &mut impl Write) -> Result<Value, RuntimeError> {
         match self {
-            StmtKind::Expression(e) => e.eval(env),
+            StmtKind::Expression(e) => e.eval(env, stdout),
             StmtKind::PrintStmt(e) => {
-                probe!(e.eval(env)?, span => e.span().into());
+                let v = e.eval(env, stdout)?;
+                let _ = probe!(&v, span => e.span().into());
+                writeln!(stdout, "{v}").expect("Failed to write to stdout");
                 Ok(Value::Void)
             }
             StmtKind::VarDeclaration(var, expr) => {
-                let val = expr.eval(env)?;
+                let val = expr.eval(env, stdout)?;
                 env.define(var, val);
                 Ok(Value::Void)
             }
             StmtKind::FunDeclaration(decl) => {
-                let callable = Callable::function(decl.clone());
+                let callable = Callable::function(decl.clone(), env.extend());
                 env.define(&decl.name, Value::Callable(callable));
                 Ok(Value::Void)
             }
@@ -53,31 +56,31 @@ impl Evaluable for StmtKind {
                 // TODO: find a way to test the correctness of this evaluation
                 let mut scope = env.extend();
                 for stmt in stmts {
-                    stmt.eval(&mut scope)?;
+                    stmt.eval(&mut scope, stdout)?;
                 }
                 Ok(Value::Void)
             }
-            StmtKind::Condition(cond) => cond.eval(env),
-            StmtKind::While(cond) => cond.eval(env),
-            StmtKind::For(stmt) => stmt.eval(env),
-            StmtKind::ReturnStmt(stmt) => stmt.eval(env),
+            StmtKind::Condition(cond) => cond.eval(env, stdout),
+            StmtKind::While(cond) => cond.eval(env, stdout),
+            StmtKind::For(stmt) => stmt.eval(env, stdout),
+            StmtKind::ReturnStmt(stmt) => stmt.eval(env, stdout),
             _ => unreachable!(),
         }
     }
 }
 
 impl Evaluable for ConditionStmt {
-    fn eval(&self, env: &mut Environment) -> Result<Value, RuntimeError> {
+    fn eval(&self, env: &mut Environment, stdout: &mut impl Write) -> Result<Value, RuntimeError> {
         let mut env = env.extend();
-        let guard = self.condition.eval(&mut env)?;
+        let guard = self.condition.eval(&mut env, stdout)?;
         match guard {
             Value::Boolean(b) => {
                 if b {
-                    self.then_branch.eval(&mut env)
+                    self.then_branch.eval(&mut env, stdout)
                 } else {
                     match &self.else_branch {
                         None => Ok(Value::Void),
-                        Some(stmt) => stmt.eval(&mut env),
+                        Some(stmt) => stmt.eval(&mut env, stdout),
                     }
                 }
             }
@@ -90,14 +93,14 @@ impl Evaluable for ConditionStmt {
 }
 
 impl Evaluable for WhileStmt {
-    fn eval(&self, env: &mut Environment) -> Result<Value, RuntimeError> {
+    fn eval(&self, env: &mut Environment, stdout: &mut impl Write) -> Result<Value, RuntimeError> {
         let cond = &self.condition;
         loop {
-            let guard = cond.eval(env)?;
+            let guard = cond.eval(env, stdout)?;
             match guard {
                 Value::Boolean(b) => {
                     if b {
-                        self.body.eval(env)?;
+                        self.body.eval(env, stdout)?;
                     } else {
                         return Ok(Value::Void);
                     }
@@ -109,24 +112,24 @@ impl Evaluable for WhileStmt {
 }
 
 impl Evaluable for ForStmt {
-    fn eval(&self, env: &mut Environment) -> Result<Value, RuntimeError> {
+    fn eval(&self, env: &mut Environment, stdout: &mut impl Write) -> Result<Value, RuntimeError> {
         let mut env = env.extend();
-        let _ = &self.initializer.eval(&mut env)?;
+        let _ = &self.initializer.eval(&mut env, stdout)?;
         match &self.condition {
             None => {
                 // infinite loop
                 loop {
-                    self.body.eval(&mut env)?;
-                    self.increment.eval(&mut env)?;
+                    self.body.eval(&mut env, stdout)?;
+                    self.increment.eval(&mut env, stdout)?;
                 }
             }
             Some(cond) => loop {
-                let guard = cond.eval(&mut env)?;
+                let guard = cond.eval(&mut env, stdout)?;
                 match guard {
                     Value::Boolean(b) => {
                         if b {
-                            self.body.eval(&mut env)?;
-                            self.increment.eval(&mut env)?;
+                            self.body.eval(&mut env, stdout)?;
+                            self.increment.eval(&mut env, stdout)?;
                         } else {
                             return Ok(Value::Void);
                         }
@@ -139,20 +142,20 @@ impl Evaluable for ForStmt {
 }
 
 impl Evaluable for ReturnStmt {
-    fn eval(&self, env: &mut Environment) -> Result<Value, RuntimeError> {
+    fn eval(&self, env: &mut Environment, stdout: &mut impl Write) -> Result<Value, RuntimeError> {
         self.value
             .as_ref()
             .map_or(Err(RuntimeError::ReturnValue(Value::Void)), |expr| {
-                let value = expr.eval(env)?;
+                let value = expr.eval(env, stdout)?;
                 Err(RuntimeError::ReturnValue(value))
             })
     }
 }
 
 impl Evaluable for Option<Box<Stmt>> {
-    fn eval(&self, env: &mut Environment) -> Result<Value, RuntimeError> {
+    fn eval(&self, env: &mut Environment, stdout: &mut impl Write) -> Result<Value, RuntimeError> {
         if let Some(stmt) = self {
-            stmt.eval(env)
+            stmt.eval(env, stdout)
         } else {
             Ok(Value::Void)
         }
@@ -160,51 +163,51 @@ impl Evaluable for Option<Box<Stmt>> {
 }
 
 impl Evaluable for Option<Box<Expr>> {
-    fn eval(&self, env: &mut Environment) -> Result<Value, RuntimeError> {
+    fn eval(&self, env: &mut Environment, stdout: &mut impl Write) -> Result<Value, RuntimeError> {
         let val = match self {
             None => Value::Nil,
-            Some(e) => e.eval(env)?,
+            Some(e) => e.eval(env, stdout)?,
         };
         Ok(val)
     }
 }
 
 impl Evaluable for Option<Expr> {
-    fn eval(&self, env: &mut Environment) -> Result<Value, RuntimeError> {
+    fn eval(&self, env: &mut Environment, stdout: &mut impl Write) -> Result<Value, RuntimeError> {
         let val = match self {
             None => Value::Nil,
-            Some(e) => e.eval(env)?,
+            Some(e) => e.eval(env, stdout)?,
         };
         Ok(val)
     }
 }
 
 impl Evaluable for Expr {
-    fn eval(&self, env: &mut Environment) -> Result<Value, RuntimeError> {
+    fn eval(&self, env: &mut Environment, stdout: &mut impl Write) -> Result<Value, RuntimeError> {
         match &self.kind {
-            ExprKind::Literal(l) => l.eval(env),
-            ExprKind::Unary(u) => u.eval(env),
-            ExprKind::Binary(b) => b.eval(env),
-            ExprKind::Grouped(g) => g.eval(env),
-            ExprKind::Variable(v) => v.eval(env),
-            ExprKind::Assign(a) => a.eval(env),
-            ExprKind::Call(c) => c.eval(env),
+            ExprKind::Literal(l) => l.eval(env, stdout),
+            ExprKind::Unary(u) => u.eval(env, stdout),
+            ExprKind::Binary(b) => b.eval(env, stdout),
+            ExprKind::Grouped(g) => g.eval(env, stdout),
+            ExprKind::Variable(v) => v.eval(env, stdout),
+            ExprKind::Assign(a) => a.eval(env, stdout),
+            ExprKind::Call(c) => c.eval(env, stdout),
             _ => unreachable!(),
         }
     }
 }
 
 impl Evaluable for CallExpr {
-    fn eval(&self, env: &mut Environment) -> Result<Value, RuntimeError> {
-        let callee = self.callee.eval(env)?;
+    fn eval(&self, env: &mut Environment, stdout: &mut impl Write) -> Result<Value, RuntimeError> {
+        let callee = self.callee.eval(env, stdout)?;
         let args = self
             .args
             .iter()
-            .map(|expr| expr.eval(env))
+            .map(|expr| expr.eval(env, stdout))
             .collect::<Result<Vec<Value>, RuntimeError>>()?;
 
         if let Value::Callable(callable) = callee {
-            return match callable.call(args, env) {
+            return match callable.call(args, env, stdout) {
                 Ok(v) => Ok(v),
                 Err(PrivateRuntimeError::BadArity { expected, found }) => {
                     Err(RuntimeError::BadArity {
@@ -226,17 +229,17 @@ impl Evaluable for CallExpr {
 }
 
 impl Evaluable for AssignExpr {
-    fn eval(&self, env: &mut Environment) -> Result<Value, RuntimeError> {
-        let val = self.value.eval(env)?;
+    fn eval(&self, env: &mut Environment, stdout: &mut impl Write) -> Result<Value, RuntimeError> {
+        let val = self.value.eval(env, stdout)?;
         env.mutate(&self.name, val.clone())?;
         Ok(val)
     }
 }
 
 impl Evaluable for BinaryExpr {
-    fn eval(&self, env: &mut Environment) -> Result<Value, RuntimeError> {
-        let lhs = self.lhs.eval(env)?;
-        let rhs = self.rhs.eval(env)?;
+    fn eval(&self, env: &mut Environment, stdout: &mut impl Write) -> Result<Value, RuntimeError> {
+        let lhs = self.lhs.eval(env, stdout)?;
+        let rhs = self.rhs.eval(env, stdout)?;
         let val = match &self.operator {
             op @ (BinaryOperator::EqualEqual | BinaryOperator::BangEq) => {
                 return if lhs.kind() == rhs.kind()
@@ -368,8 +371,8 @@ impl Evaluable for BinaryExpr {
 }
 
 impl Evaluable for UnaryExpr {
-    fn eval(&self, env: &mut Environment) -> Result<Value, RuntimeError> {
-        let value = self.expr.eval(env)?;
+    fn eval(&self, env: &mut Environment, stdout: &mut impl Write) -> Result<Value, RuntimeError> {
+        let value = self.expr.eval(env, stdout)?;
         match self.operator {
             UnaryOperator::Minus => {
                 let num = inner_or!(
@@ -392,19 +395,23 @@ impl Evaluable for UnaryExpr {
 }
 
 impl Evaluable for GroupedExpr {
-    fn eval(&self, env: &mut Environment) -> Result<Value, RuntimeError> {
-        self.expr.eval(env)
+    fn eval(&self, env: &mut Environment, stdout: &mut impl Write) -> Result<Value, RuntimeError> {
+        self.expr.eval(env, stdout)
     }
 }
 
 impl Evaluable for Identifier {
-    fn eval(&self, env: &mut Environment) -> Result<Value, RuntimeError> {
+    fn eval(&self, env: &mut Environment, _stdout: &mut impl Write) -> Result<Value, RuntimeError> {
         env.get(self)
     }
 }
 
 impl Evaluable for Literal {
-    fn eval(&self, _env: &mut Environment) -> Result<Value, RuntimeError> {
+    fn eval(
+        &self,
+        _env: &mut Environment,
+        _stdout: &mut impl Write,
+    ) -> Result<Value, RuntimeError> {
         let value = match *self {
             Literal::String(ref v) => Value::String(v.to_string()),
             Literal::Number(v) => Value::Number(v),
@@ -418,21 +425,13 @@ impl Evaluable for Literal {
 #[cfg(test)]
 mod tests {
     use crate::environment::Environment;
-    use crate::error::RuntimeError;
     use crate::eval::Evaluable;
     use crate::utils::test_utils::LINEBREAK;
-    use crate::value::Value;
     use loxide_diagnostic::reporter::{Reporter, Style};
     use loxide_testsuite::{footprints, register, unittest};
     use miette::Report;
+    use std::string::String;
     use std::sync::Arc;
-
-    fn eval(src: &str) -> Vec<Result<Value, RuntimeError>> {
-        let mut parser = loxide_parser::parser::Parser::new(src);
-        let mut env = Environment::global();
-        let (stmts, _) = parser.parse();
-        stmts.into_iter().map(|stmt| stmt.eval(&mut env)).collect()
-    }
 
     macro_rules! annotated_eval_test {
         ($src:expr) => {{
@@ -454,10 +453,11 @@ mod tests {
             });
             // setup env and start eval
             let mut env = Environment::global();
+            let mut stdout = Vec::<u8>::new();
             register!();
             stmts
                 .into_iter()
-                .for_each(|stmt| match stmt.eval(&mut env) {
+                .for_each(|stmt| match stmt.eval(&mut env, &mut stdout) {
                     Ok(_) => {}
                     Err(err) => {
                         let report: Report = err.into();
@@ -497,12 +497,13 @@ mod tests {
     fn display_eval_error(src: &str) -> String {
         let mut parser = loxide_parser::parser::Parser::new(src);
         let mut env = Environment::global();
+        let mut stdout = Vec::<u8>::new();
         let source = Arc::new(src.to_string());
 
         let (stmts, _) = parser.parse();
         stmts
             .into_iter()
-            .map(|stmt| stmt.eval(&mut env))
+            .map(|stmt| stmt.eval(&mut env, &mut stdout))
             .filter(Result::is_err)
             .map(Result::unwrap_err)
             .map(|err| {

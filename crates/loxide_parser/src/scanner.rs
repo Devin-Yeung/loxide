@@ -11,6 +11,7 @@ pub struct Scanner<'src> {
     /// Number of chars already have been consumed
     /// this field increased only when we yield a token
     consumed: usize,
+    reach_eof: bool,
 }
 
 impl<'src> Scanner<'src> {
@@ -20,6 +21,7 @@ impl<'src> Scanner<'src> {
             prophet: Prophet::new(src.chars()),
             current: Span { start: 0, end: 0 },
             consumed: 0,
+            reach_eof: false,
         }
     }
 
@@ -111,7 +113,10 @@ impl<'src> Scanner<'src> {
             Some('\"') => self.string()?,
             Some(c) if c.is_ascii_digit() => self.number()?,
             Some(c) if c.is_ascii_alphabetic() || c == '_' => self.identifier(),
-            None => TokenType::EOF,
+            None => {
+                self.reach_eof = true;
+                TokenType::EOF
+            }
             _ => return Err(SyntaxError::UnexpectedChar(self.current)),
         };
         Ok(self.yield_token(ty))
@@ -176,7 +181,7 @@ impl<'src> Scanner<'src> {
 
     fn identifier(&mut self) -> TokenType<'src> {
         while let Some(c) = self.peek() {
-            if c.is_ascii_alphanumeric() {
+            if c.is_ascii_alphanumeric() || c == '_' {
                 self.advance();
             } else {
                 break;
@@ -195,8 +200,10 @@ impl<'src> Iterator for Scanner<'src> {
     type Item = Result<Token<'src>, SyntaxError>;
 
     fn next(&mut self) -> Option<Self::Item> {
+        if self.reach_eof {
+            return None;
+        }
         match self.scan_token() {
-            Ok(x) if x.ty == TokenType::EOF => None,
             Ok(x) => Some(Ok(x)),
             Err(e) => Some(Err(e)),
         }
@@ -210,6 +217,7 @@ impl<'src> From<&'src str> for Scanner<'src> {
             prophet: Prophet::new(value.chars()),
             current: Span { start: 0, end: 0 },
             consumed: 0,
+            reach_eof: false,
         }
     }
 }
@@ -221,6 +229,7 @@ impl<'src> From<&'src String> for Scanner<'src> {
             prophet: Prophet::new(value.chars()),
             current: Span { start: 0, end: 0 },
             consumed: 0,
+            reach_eof: false,
         }
     }
 }

@@ -11,22 +11,22 @@ var c = "global c";
   {
     var a = "inner a";
     print a;
-// => String("inner a")
+// => str(inner a)
     print b;
-// => String("outer b")
+// => str(outer b)
     print c;
-// => String("global c")
+// => str(global c)
   }
   print a;
-// => String("outer a")
+// => str(outer a)
   print b;
-// => String("outer b")
+// => str(outer b)
   print c;
-// => String("global c")
+// => str(global c)
 }
 print a;
-// => String("global a")
+// => str(global a)
 print b;
-// => String("global b")
+// => str(global b)
 print c;
-// => String("global c")
+// => str(global c)

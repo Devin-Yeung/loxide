@@ -9,13 +9,15 @@ pub enum SyntaxError {
     UnexpectedChar(#[label("this character is unexpected")] Span),
     #[error("Unexpected EOF")]
     UnexpectedEOF,
-    #[error("Expected token {expected}, found {found}")]
+    #[error("Expected token `{expected}`, found {found}")]
     UnexpectedToken {
+        #[label("expected `{expected}`, found {found}")]
+        span: Span,
         expected: &'static str,
         found: &'static str,
     },
-    #[error("Expected")]
-    Expect(&'static str),
+    #[error("Expected a {1} here")]
+    Expect(#[label("expect a {1} here")] Span, &'static str),
     #[error("Invalid Conversion")]
     InvalidConversion,
     #[error("Invalid Number")]
@@ -25,5 +27,5 @@ pub enum SyntaxError {
     #[error("Invalid keyword")]
     InvalidKeywords,
     #[error("Invalid assignment target.")]
-    InvalidAssignmentTarget,
+    InvalidAssignmentTarget(#[label("this assignment target is invalid")] Span),
 }

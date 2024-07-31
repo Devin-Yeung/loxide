@@ -46,26 +46,24 @@ impl<'src> Parser<'src> {
     }
 
     fn consume(&mut self, ty: TokenType) -> Result<Token, SyntaxError> {
-        match self.peek_type()? {
-            found if found == ty => Ok(self.advance()?),
-            found => Err(SyntaxError::UnexpectedToken {
+        let token = self.peek_token()?;
+        if token.ty == ty {
+            Ok(self.advance()?)
+        } else {
+            Err(SyntaxError::UnexpectedToken {
+                span: token.span,
                 expected: ty.name(),
-                found: found.name(),
-            }),
+                found: token.ty.name(),
+            })
         }
     }
 
     fn consume_identifier(&mut self) -> Result<Identifier, SyntaxError> {
-        match self.peek_type()? {
-            TokenType::Identifier => {
-                let token = self.advance()?;
-                Ok(Identifier {
-                    span: token.span,
-                    name: token.lexeme.to_string(),
-                })
-            }
-            _ => Err(SyntaxError::Expect("identifier")),
-        }
+        let token = self.consume(TokenType::Identifier)?;
+        Ok(Identifier {
+            name: token.lexeme.to_string(),
+            span: token.span,
+        })
     }
 
     fn consume_if(&mut self, ty: TokenType) -> bool {
@@ -77,9 +75,29 @@ impl<'src> Parser<'src> {
     }
 
     fn peek_type(&mut self) -> Result<TokenType, SyntaxError> {
+        self.skip_comments();
         match self.tokens.peek() {
             None => Ok(TokenType::EOF),
             Some(Ok(token)) => Ok(token.ty.clone()),
+            Some(Err(err)) => Err(*err),
+        }
+    }
+
+    fn skip_comments(&mut self) {
+        match self.tokens.peek() {
+            Some(Ok(token)) if token.ty == TokenType::Comment => {
+                let _ = self.advance(); // drop it
+                self.skip_comments();
+            }
+            _ => { /* Do nothing */ }
+        }
+    }
+
+    fn peek_token(&mut self) -> Result<&Token, SyntaxError> {
+        self.skip_comments();
+        match self.tokens.peek() {
+            None => Err(SyntaxError::UnexpectedEOF),
+            Some(Ok(token)) => Ok(token), // never be a comment
             Some(Err(err)) => Err(*err),
         }
     }
@@ -422,7 +440,7 @@ impl<'src> Parser<'src> {
                     kind: ExprKind::Assign(AssignExpr::new(v, value)),
                     span,
                 }),
-                _ => Err(SyntaxError::InvalidAssignmentTarget),
+                _ => Err(SyntaxError::InvalidAssignmentTarget(expr.span())),
             };
         }
         Ok(expr)
@@ -614,7 +632,8 @@ impl<'src> Parser<'src> {
     ///          | IDENTIFIER ;
     /// ```
     fn primary(&mut self) -> Result<Expr, SyntaxError> {
-        let expr = match self.peek_type()? {
+        let token = self.peek_token()?;
+        let expr = match &token.ty {
             TokenType::Keyword(Keyword::True) => {
                 let span = self.advance()?.span;
                 Expr {
@@ -660,7 +679,13 @@ impl<'src> Parser<'src> {
                     kind: ExprKind::Variable(name),
                 }
             }
-            _ => return Err(SyntaxError::Expect("expression")),
+            ty => {
+                return Err(SyntaxError::UnexpectedToken {
+                    span: token.span,
+                    expected: "primary expression",
+                    found: ty.name(),
+                })
+            }
         };
         Ok(expr)
     }

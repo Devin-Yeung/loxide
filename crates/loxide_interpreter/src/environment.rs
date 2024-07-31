@@ -1,13 +1,26 @@
 use crate::error::RuntimeError;
 use crate::value::Value;
 use loxide_parser::ast::Identifier;
-use std::cell::RefCell;
 use std::collections::HashMap;
-use std::rc::Rc;
+use std::fmt::Debug;
+use std::sync::{Arc, RwLock};
 
+#[derive(Debug, Clone)]
 struct Inner {
     values: HashMap<String, Value>,
-    parent: Option<Rc<RefCell<Inner>>>,
+    parent: Option<Arc<RwLock<Inner>>>,
+}
+
+impl PartialEq for Inner {
+    fn eq(&self, other: &Self) -> bool {
+        // check both values and parents
+        self.values == other.values
+            && match (&self.parent, &other.parent) {
+                (Some(p1), Some(p2)) => p1.read().unwrap().eq(&p2.read().unwrap()),
+                (None, None) => true,
+                _ => false,
+            }
+    }
 }
 
 impl Inner {
@@ -16,7 +29,7 @@ impl Inner {
             || {
                 self.parent
                     .as_ref()
-                    .map(|parent| parent.borrow().get(ident))
+                    .map(|parent| parent.read().unwrap().get(ident))
                     .unwrap_or(Err(RuntimeError::UndefinedVariable(
                         ident.span,
                         ident.name.to_string(),
@@ -41,21 +54,28 @@ impl Inner {
                     ident.span,
                     ident.name.to_string(),
                 )),
-                Some(env) => env.borrow_mut().mutate(ident, value),
+                Some(env) => env.write().unwrap().mutate(ident, value),
             },
         }
     }
 }
 
+#[derive(Debug, Clone)]
 pub struct Environment {
-    inner: Rc<RefCell<Inner>>,
+    inner: Arc<RwLock<Inner>>,
+}
+
+impl PartialEq for Environment {
+    fn eq(&self, other: &Self) -> bool {
+        self.inner.read().unwrap().eq(&other.inner.read().unwrap())
+    }
 }
 
 impl Environment {
     /// create a global scope
     pub fn global() -> Environment {
         Environment {
-            inner: Rc::new(RefCell::new(Inner {
+            inner: Arc::new(RwLock::new(Inner {
                 values: HashMap::new(),
                 parent: None,
             })),
@@ -67,14 +87,14 @@ impl Environment {
     /// in the ancestor scope, if nothing found,
     /// return an UndefinedVariable runtime error
     pub fn get(&self, ident: &Identifier) -> Result<Value, RuntimeError> {
-        self.inner.borrow().get(ident)
+        self.inner.read().unwrap().get(ident)
     }
 
     /// define variable in current scope,
     /// if variable already defined in current scope,
     /// the previous value will be overwritten
     pub fn define(&mut self, ident: &Identifier, value: Value) {
-        self.inner.borrow_mut().define(ident, value);
+        self.inner.write().unwrap().define(ident, value);
     }
 
     /// mutate variable in current scope,
@@ -83,13 +103,13 @@ impl Environment {
     /// if nothing found in ancestor scope,
     /// return an UndefinedVariable runtime error
     pub fn mutate(&mut self, ident: &Identifier, value: Value) -> Result<(), RuntimeError> {
-        self.inner.borrow_mut().mutate(ident, value)
+        self.inner.write().unwrap().mutate(ident, value)
     }
 
     /// create a descendant scope
     pub fn extend(&self) -> Environment {
         Environment {
-            inner: Rc::new(RefCell::new(Inner {
+            inner: Arc::new(RwLock::new(Inner {
                 values: HashMap::new(),
                 parent: Some(self.inner.clone()),
             })),

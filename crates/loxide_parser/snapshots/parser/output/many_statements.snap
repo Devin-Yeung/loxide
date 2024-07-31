@@ -101,14 +101,20 @@ expression: results
         },
     ],
     [
-        Expect(
-            "expression",
-        ),
-        Expect(
-            "expression",
-        ),
-        Expect(
-            "expression",
-        ),
+        UnexpectedToken {
+            span: [Span],
+            expected: "primary expression",
+            found: ";",
+        },
+        UnexpectedToken {
+            span: [Span],
+            expected: "primary expression",
+            found: ";",
+        },
+        UnexpectedToken {
+            span: [Span],
+            expected: "primary expression",
+            found: ";",
+        },
     ],
 )
