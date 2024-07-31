@@ -2,7 +2,7 @@ use crate::common::annotate::annotated_eval;
 
 mod common;
 
-// #[test]
+#[test]
 fn integration() {
     use walkdir::WalkDir;
 
@@ -42,6 +42,37 @@ fn integration() {
             "for/fun_in_body",
             "string/literals",
             "unicode",
+            // disable all tests
+            "assignment",
+            "block",
+            "call",
+            "closure",
+            "constructor",
+            "expressions",
+            "for",
+            "if",
+            "limit",
+            "method",
+            "number",
+            "regression",
+            "scanning",
+            "super",
+            "while",
+            "benchmark",
+            "bool",
+            "class",
+            "comments",
+            "field",
+            "function",
+            "inheritance",
+            "logical_operator",
+            "nil",
+            "operator",
+            "print",
+            "return",
+            "string",
+            "this",
+            "variable",
         ];
         if skip.into_iter().any(|s| test_name.contains(s)) {
             continue;
