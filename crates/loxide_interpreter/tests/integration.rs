@@ -16,8 +16,7 @@ impl LineSpan {
         let linebreaks = src
             .as_ref()
             .char_indices()
-            .map(|(i, c)| if c == '\n' { Some(i) } else { None })
-            .flatten()
+            .filter_map(|(i, c)| if c == '\n' { Some(i) } else { None })
             .collect::<Vec<_>>();
         LineSpan { linebreaks }
     }
