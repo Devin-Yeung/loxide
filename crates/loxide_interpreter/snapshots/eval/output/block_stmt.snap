@@ -1,29 +1,32 @@
 ---
-source: crates/loxide_interpreter/src/eval.rs
-expression: annotated_eval_test!(src)
+source: crates/loxide_interpreter/tests/unittest.rs
+expression: annotated_eval(src)
 ---
 var a = "global a";
+
 var b = "global b";
+
 var c = "global c";
+
 {
   var a = "outer a";
   var b = "outer b";
   {
     var a = "inner a";
     print a;
-// => str(inner a)
     print b;
-// => str(outer b)
     print c;
-// => str(global c)
   }
   print a;
-// => str(outer a)
   print b;
-// => str(outer b)
   print c;
-// => str(global c)
 }
+// => str(inner a)
+// => str(outer b)
+// => str(global c)
+// => str(outer a)
+// => str(outer b)
+// => str(global c)
 print a;
 // => str(global a)
 print b;

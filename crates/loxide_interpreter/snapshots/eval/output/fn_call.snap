@@ -1,14 +1,16 @@
 ---
-source: crates/loxide_interpreter/src/eval.rs
-expression: annotated_eval_test!(src)
+source: crates/loxide_interpreter/tests/unittest.rs
+expression: annotated_eval(src)
 ---
 fun fib(n) {
   if (n <= 1) return n;
   return fib(n - 2) + fib(n - 1);
 }
 
+
 for (var i = 0; i < 20; i = i + 1) {
   print fib(i);
+}
 // => num(0)
 // => num(1)
 // => num(1)
@@ -29,4 +31,3 @@ for (var i = 0; i < 20; i = i + 1) {
 // => num(1597)
 // => num(2584)
 // => num(4181)
-}

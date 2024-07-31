@@ -138,7 +138,7 @@ fn test_line_span() {
     assert_eq!(line_span.get_line_span(&Span::new(4, 7)), 0..2);
 }
 
-fn annotated_eval<S: AsRef<str>>(src: S) -> String {
+pub fn annotated_eval<S: AsRef<str>>(src: S) -> String {
     let mut builder = AnnotationBuilder::new(&src);
     let mut parser = loxide_parser::parser::Parser::new(src.as_ref());
     let mut env = Environment::global();
