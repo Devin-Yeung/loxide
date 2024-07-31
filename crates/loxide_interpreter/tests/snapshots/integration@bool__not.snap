@@ -1,0 +1,10 @@
+---
+source: crates/loxide_interpreter/tests/integration.rs
+expression: result
+---
+print !true;    // expect: false
+// => bool(false)
+print !false;   // expect: true
+// => bool(true)
+print !!true;   // expect: true
+// => bool(true)

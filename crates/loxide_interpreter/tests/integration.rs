@@ -16,12 +16,6 @@ fn integration() {
         let content = std::fs::read_to_string(file.path())
             .unwrap_or_else(|_| panic!("Invalid file: {}", file.path().display()));
 
-        // We don't support class yet
-        let skip = vec!["class"];
-        if skip.into_iter().any(|s| content.contains(s)) {
-            continue;
-        }
-
         let test_name = file.path().display().to_string().replace("\\", "/"); // I hate windows
 
         let skip = vec![
@@ -32,6 +26,7 @@ fn integration() {
             "unexpected_character",
             // oop
             "field",
+            "call/object",
             // dead loop
             "number/decimal_point_at_eof",
             "number/trailing_dot",
@@ -43,7 +38,6 @@ fn integration() {
             "string/literals",
             "unicode",
             // disable all tests
-            "call",
             "closure",
             "constructor",
             "expressions",
@@ -55,7 +49,6 @@ fn integration() {
             "super",
             "while",
             "benchmark",
-            "bool",
             "class",
             "comments",
             "field",
