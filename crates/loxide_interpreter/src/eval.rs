@@ -37,7 +37,8 @@ impl Evaluable for StmtKind {
         match self {
             StmtKind::Expression(e) => e.eval(env, stdout),
             StmtKind::PrintStmt(e) => {
-                let v = probe!(e.eval(env, stdout)?, span => e.span().into());
+                let v = e.eval(env, stdout)?;
+                let _ = probe!(&v, span => e.span().into());
                 writeln!(stdout, "{v}").expect("Failed to write to stdout");
                 Ok(Value::Void)
             }

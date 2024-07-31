@@ -11,13 +11,20 @@ while (a > 0) {
     a = a - 1;
     var b = 10; // this declaration should not leak
 }
+
+var c = 0;
+while (c < 3) print c = c + 1;
+// => num(1)
+// => num(2)
+// => num(3)
+
 print b; // expected undefined
 
 === Error Section ===
   × Undefined Variable: b
-   ╭─[7:7]
- 6 │ }
- 7 │ print b; // expected undefined
-   ·       ┬
-   ·       ╰── variable `b` is not defined
-   ╰────
+    ╭─[11:7]
+ 10 │ 
+ 11 │ print b; // expected undefined
+    ·       ┬
+    ·       ╰── variable `b` is not defined
+    ╰────
