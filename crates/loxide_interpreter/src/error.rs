@@ -42,6 +42,8 @@ pub enum RuntimeError {
         #[label("expect a callable value here, but got type `{1}`")] Span,
         ValueKind,
     ),
+    #[error("Return in top level")]
+    ReturnInTopLevel(#[label("return statement is not allowed in top level")] Span),
 }
 
 #[derive(Debug)]

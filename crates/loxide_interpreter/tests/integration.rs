@@ -34,6 +34,7 @@ fn integration() {
             "operator/equals_method",
             "operator/equals_class",
             "operator/not_class",
+            "return/in_method",
             // dead loop
             "number/decimal_point_at_eof",
             "number/trailing_dot",
@@ -62,8 +63,6 @@ fn integration() {
             "function",
             "inheritance",
             "logical_operator",
-            "print",
-            "return",
             "string",
             "this",
             "variable",
