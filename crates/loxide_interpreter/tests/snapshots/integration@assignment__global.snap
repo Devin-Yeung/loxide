@@ -1,0 +1,18 @@
+---
+source: crates/loxide_interpreter/tests/integration.rs
+expression: result
+---
+var a = "before";
+
+print a; // expect: before
+// => str(before)
+
+a = "after";
+
+print a; // expect: after
+// => str(after)
+
+print a = "arg"; // expect: arg
+// => str(arg)
+print a; // expect: arg
+// => str(arg)
