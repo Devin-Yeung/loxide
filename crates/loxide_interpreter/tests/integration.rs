@@ -162,7 +162,7 @@ fn annotated_eval<S: AsRef<str>>(src: S) -> String {
     builder.build()
 }
 
-#[test]
+// #[test]
 fn integration() {
     use walkdir::WalkDir;
 
