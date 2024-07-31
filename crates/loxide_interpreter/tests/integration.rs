@@ -119,9 +119,13 @@ impl AnnotationBuilder {
             ));
         }
         #[cfg(target_os = "windows")]
-        source.join("\r\n");
+        {
+            source.join("\r\n")
+        }
         #[cfg(not(target_os = "windows"))]
-        source.join("\n")
+        {
+            source.join("\n")
+        }
     }
 }
 
