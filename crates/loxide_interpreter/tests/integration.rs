@@ -43,13 +43,10 @@ fn integration() {
             "string/literals",
             "unicode",
             // disable all tests
-            "block",
             "call",
             "closure",
             "constructor",
             "expressions",
-            "for",
-            "if",
             "limit",
             "method",
             "number",

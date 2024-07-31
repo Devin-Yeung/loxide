@@ -1,0 +1,41 @@
+---
+source: crates/loxide_interpreter/tests/integration.rs
+expression: result
+---
+if (false) print "bad"; else print "false"; // expect: false
+// => str(false)
+if (true) print true; // expect: true
+// => bool(true)
+
+// type checking!
+if (nil) print "bad"; else print "nil"; // error: type mismatch
+
+if (0) print 0; // error: type mismatch
+
+if ("") print "empty"; // error: type mismatch
+
+
+>>>>> Error Section <<<<<
+  × Expected boolean in condition expression
+   ╭─[5:5]
+ 4 │ // type checking!
+ 5 │ if (nil) print "bad"; else print "nil"; // error: type mismatch
+   ·     ─┬─
+   ·      ╰── expect a boolean type here, but got type `nil`
+ 6 │ if (0) print 0; // error: type mismatch
+   ╰────
+  × Expected boolean in condition expression
+   ╭─[6:5]
+ 5 │ if (nil) print "bad"; else print "nil"; // error: type mismatch
+ 6 │ if (0) print 0; // error: type mismatch
+   ·     ┬
+   ·     ╰── expect a boolean type here, but got type `number`
+ 7 │ if ("") print "empty"; // error: type mismatch
+   ╰────
+  × Expected boolean in condition expression
+   ╭─[7:5]
+ 6 │ if (0) print 0; // error: type mismatch
+ 7 │ if ("") print "empty"; // error: type mismatch
+   ·     ─┬
+   ·      ╰── expect a boolean type here, but got type `string`
+   ╰────
