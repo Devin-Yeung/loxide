@@ -1,16 +1,17 @@
 ---
-source: crates/loxide_interpreter/src/eval.rs
-expression: annotated_eval_test!(src)
+source: crates/loxide_interpreter/tests/unittest.rs
+expression: annotated_eval(src)
 ---
 for (var a = 0; a < 3; a = a + 1) {
   print a;
+}
 // => num(0)
 // => num(1)
 // => num(2)
-}
 print a; // a should not leak
 
-=== Error Section ===
+
+>>>>> Error Section <<<<<
   × Undefined Variable: a
    ╭─[4:7]
  3 │ }

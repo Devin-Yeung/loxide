@@ -1,18 +1,20 @@
 ---
-source: crates/loxide_interpreter/src/eval.rs
-expression: annotated_eval_test!(src)
+source: crates/loxide_interpreter/tests/unittest.rs
+expression: annotated_eval(src)
 ---
 var a = 3;
+
 while (a > 0) {
     print a;
-// => num(3)
-// => num(2)
-// => num(1)
     a = a - 1;
     var b = 10; // this declaration should not leak
 }
+// => num(3)
+// => num(2)
+// => num(1)
 
 var c = 0;
+
 while (c < 3) print c = c + 1;
 // => num(1)
 // => num(2)
@@ -20,7 +22,8 @@ while (c < 3) print c = c + 1;
 
 print b; // expected undefined
 
-=== Error Section ===
+
+>>>>> Error Section <<<<<
   × Undefined Variable: b
     ╭─[11:7]
  10 │ 

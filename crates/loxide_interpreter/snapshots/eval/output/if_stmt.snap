@@ -1,8 +1,9 @@
 ---
-source: crates/loxide_interpreter/src/eval.rs
-expression: annotated_eval_test!(src)
+source: crates/loxide_interpreter/tests/unittest.rs
+expression: annotated_eval(src)
 ---
 var a = "foo";
+
 if (true) {
     if (false) {
         a = "bar";
@@ -12,11 +13,13 @@ if (true) {
         var b = "Hello World";
     }
 }
+
 print a; // should mutate a to "baz"
 // => str(baz)
 print b; // should not leak b
 
-=== Error Section ===
+
+>>>>> Error Section <<<<<
   × Undefined Variable: b
     ╭─[12:7]
  11 │ print a; // should mutate a to "baz"

@@ -1,15 +1,21 @@
 ---
-source: crates/loxide_interpreter/src/eval.rs
-expression: annotated_eval_test!(src)
+source: crates/loxide_interpreter/tests/unittest.rs
+expression: annotated_eval(src)
 ---
 var a = 1;
+
 a;
+
 var b;
+
 b;
+
 b = a;
+
 c = 1; // assign to a undefined var
 
-=== Error Section ===
+
+>>>>> Error Section <<<<<
   × Undefined Variable: c
    ╭─[6:1]
  5 │ b = a;
