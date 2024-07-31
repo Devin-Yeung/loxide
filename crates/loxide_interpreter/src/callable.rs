@@ -38,20 +38,21 @@ pub struct LoxFunction {
     // we don't want to introduce any lifetime here,
     // since it will propagate to `Value`
     declaration: Arc<FunDeclaration>,
+    env: Environment,
 }
 
 impl LoxFunction {
-    pub fn new(declaration: Arc<FunDeclaration>) -> LoxFunction {
-        LoxFunction { declaration }
+    pub fn new(declaration: Arc<FunDeclaration>, env: Environment) -> LoxFunction {
+        LoxFunction { declaration, env }
     }
 
     pub(crate) fn call(
         &self,
         arguments: Vec<Value>,
-        env: &mut Environment,
+        _env: &mut Environment,
         stdout: &mut impl Write,
     ) -> Result<Value, PrivateRuntimeError> {
-        let mut env = env.extend();
+        let mut env = self.env.extend();
 
         if self.declaration.params.len() != arguments.len() {
             return Err(PrivateRuntimeError::BadArity {
@@ -78,8 +79,8 @@ impl LoxFunction {
 }
 
 impl Callable {
-    pub fn function(declaration: Arc<FunDeclaration>) -> Callable {
-        Callable::Function(LoxFunction::new(declaration))
+    pub fn function(declaration: Arc<FunDeclaration>, env: Environment) -> Callable {
+        Callable::Function(LoxFunction::new(declaration, env))
     }
 
     pub fn params_span(&self) -> Span {

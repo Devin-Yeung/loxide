@@ -38,7 +38,7 @@ impl Evaluable for StmtKind {
             StmtKind::Expression(e) => e.eval(env, stdout),
             StmtKind::PrintStmt(e) => {
                 let v = probe!(e.eval(env, stdout)?, span => e.span().into());
-                writeln!(stdout, "{v}",).expect("Failed to write to stdout");
+                writeln!(stdout, "{v}").expect("Failed to write to stdout");
                 Ok(Value::Void)
             }
             StmtKind::VarDeclaration(var, expr) => {
@@ -47,7 +47,7 @@ impl Evaluable for StmtKind {
                 Ok(Value::Void)
             }
             StmtKind::FunDeclaration(decl) => {
-                let callable = Callable::function(decl.clone());
+                let callable = Callable::function(decl.clone(), env.extend());
                 env.define(&decl.name, Value::Callable(callable));
                 Ok(Value::Void)
             }
