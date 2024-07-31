@@ -3,8 +3,8 @@ source: crates/loxide_interpreter/src/eval.rs
 expression: annotated_eval_test!(src)
 ---
 print(-1.0  );
-// => Number(-1.0)
+// => num(-1)
 print(!true );
-// => Boolean(false)
+// => bool(false)
 print(!false);
-// => Boolean(true)
+// => bool(true)

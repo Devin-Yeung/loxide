@@ -4,9 +4,9 @@ expression: annotated_eval_test!(src)
 ---
 for (var a = 0; a < 3; a = a + 1) {
   print a;
-// => Number(0.0)
-// => Number(1.0)
-// => Number(2.0)
+// => num(0)
+// => num(1)
+// => num(2)
 }
 print a; // a should not leak
 

@@ -5,9 +5,9 @@ expression: annotated_eval_test!(src)
 var a = 3;
 while (a > 0) {
     print a;
-// => Number(3.0)
-// => Number(2.0)
-// => Number(1.0)
+// => num(3)
+// => num(2)
+// => num(1)
     a = a - 1;
     var b = 10; // this declaration should not leak
 }
