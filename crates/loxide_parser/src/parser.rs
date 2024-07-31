@@ -93,7 +93,7 @@ impl<'src> Parser<'src> {
         }
     }
 
-    fn peek_token<'a>(&'a mut self) -> Result<&'a Token, SyntaxError> {
+    fn peek_token(&mut self) -> Result<&Token, SyntaxError> {
         self.skip_comments();
         match self.tokens.peek() {
             None => Err(SyntaxError::UnexpectedEOF),
@@ -679,7 +679,7 @@ impl<'src> Parser<'src> {
                     kind: ExprKind::Variable(name),
                 }
             }
-            ty @ _ => {
+            ty => {
                 return Err(SyntaxError::UnexpectedToken {
                     span: token.span,
                     expected: "primary expression",

@@ -17,8 +17,7 @@ impl LineSpan {
             .as_ref()
             .char_indices()
             .map(|(i, c)| if c == '\n' { Some(i) } else { None })
-            .filter(Option::is_some)
-            .map(Option::unwrap)
+            .flatten()
             .collect::<Vec<_>>();
         LineSpan { linebreaks }
     }
@@ -174,7 +173,7 @@ fn integration() {
 
     for file in files {
         let content = std::fs::read_to_string(file.path())
-            .expect(&format!("Invalid file: {}", file.path().display()));
+            .unwrap_or_else(|_| panic!("Invalid file: {}", file.path().display()));
 
         // We don't support class yet
         let skip = vec!["class"];
