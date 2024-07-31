@@ -245,7 +245,8 @@ impl Evaluable for BinaryExpr {
                 return if lhs.kind() == rhs.kind()
                     && (lhs.kind() == ValueKind::Number
                         || lhs.kind() == ValueKind::Boolean
-                        || lhs.kind() == ValueKind::String)
+                        || lhs.kind() == ValueKind::String
+                        || lhs.kind() == ValueKind::Nil)
                 {
                     match op {
                         BinaryOperator::EqualEqual => Ok(Value::Boolean(lhs == rhs)),

@@ -2,12 +2,12 @@ print !true;     // expect: false
 print !false;    // expect: true
 print !!true;    // expect: true
 
-print !123;      // expect: false
-print !0;        // expect: false
+print !123;      // error: type mismatch
+print !0;        // error: type mismatch
 
-print !nil;     // expect: true
+print !nil;     //error: type mismatch
 
-print !"";       // expect: false
+print !"";       // error: type mismatch
 
 fun foo() {}
-print !foo;      // expect: false
+print !foo;      // error: type mismatch

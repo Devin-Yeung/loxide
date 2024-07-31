@@ -62,8 +62,6 @@ fn integration() {
             "function",
             "inheritance",
             "logical_operator",
-            "nil",
-            "operator",
             "print",
             "return",
             "string",
