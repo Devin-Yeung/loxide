@@ -27,6 +27,13 @@ fn integration() {
             // oop
             "field",
             "call/object",
+            "if/class_in_else",
+            "if/class_in_then",
+            "assignment/to_this",
+            "for/class_in_body",
+            "operator/equals_method",
+            "operator/equals_class",
+            "operator/not_class",
             // dead loop
             "number/decimal_point_at_eof",
             "number/trailing_dot",
@@ -61,15 +68,16 @@ fn integration() {
             "this",
             "variable",
         ];
-        if skip.into_iter().any(|s| test_name.contains(s)) {
-            continue;
-        }
 
         let test_name = test_name
             .strip_prefix("fixture/")
             .expect("fail to strip prefix")
             .strip_suffix(".lox")
             .expect("fail to strip suffix");
+
+        if skip.into_iter().any(|s| test_name.starts_with(s)) {
+            continue;
+        }
         println!("Running test: {}", test_name);
 
         let result = annotated_eval(&content);
