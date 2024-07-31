@@ -1,10 +1,10 @@
-mod integration;
-mod utils;
+mod common;
 
+#[cfg(test)]
 mod eval {
     mod test {
-        use crate::integration::annotated_eval;
-        use crate::utils::LINEBREAK;
+        use crate::common::annotate::annotated_eval;
+        use crate::common::utils::LINEBREAK;
         use loxide_diagnostic::reporter::{Reporter, Style};
         use loxide_interpreter::environment::Environment;
         use loxide_interpreter::eval::Evaluable;
@@ -32,7 +32,7 @@ mod eval {
                     reporter.report_to_string()
                 })
                 .collect::<Vec<_>>()
-                .join("\n")
+                .join(LINEBREAK)
         }
 
         unittest!(literal, |src| {
