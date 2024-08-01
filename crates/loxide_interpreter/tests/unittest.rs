@@ -103,5 +103,9 @@ mod eval {
             let result = display_eval_error(src);
             insta::assert_snapshot!(result);
         });
+
+        unittest!(closure, |src| {
+            insta::assert_snapshot!(annotated_eval(src));
+        });
     }
 }

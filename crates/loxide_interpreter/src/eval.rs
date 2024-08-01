@@ -48,12 +48,11 @@ impl Evaluable for StmtKind {
                 Ok(Value::Void)
             }
             StmtKind::FunDeclaration(decl) => {
-                let callable = Callable::function(decl.clone(), env.extend());
+                let callable = Callable::function(decl.clone(), env.freeze());
                 env.define(&decl.name, Value::Callable(callable));
                 Ok(Value::Void)
             }
             StmtKind::Block(stmts) => {
-                // TODO: find a way to test the correctness of this evaluation
                 let mut scope = env.extend();
                 for stmt in stmts {
                     stmt.eval(&mut scope, stdout)?;
