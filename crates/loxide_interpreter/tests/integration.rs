@@ -60,12 +60,14 @@ fn integration() {
             "class",
             "comments",
             "field",
-            "function",
             "inheritance",
             "logical_operator",
             "string",
             "this",
             "variable",
+            // bug
+            "function/mutual_recursion", // need to investigate the semantic
+            "function/print",            // don't support native function yet
         ];
 
         let test_name = test_name

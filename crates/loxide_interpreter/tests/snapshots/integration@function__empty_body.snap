@@ -1,0 +1,8 @@
+---
+source: crates/loxide_interpreter/tests/integration.rs
+expression: result
+---
+fun f() {}
+
+print f(); // expect: void
+// => void

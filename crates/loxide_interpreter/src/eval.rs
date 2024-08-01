@@ -48,6 +48,12 @@ impl Evaluable for StmtKind {
                 Ok(Value::Void)
             }
             StmtKind::FunDeclaration(decl) => {
+                if decl.params.len() > 255 {
+                    return Err(RuntimeError::TooManyParameters(
+                        decl.paren_token,
+                        decl.params.len(),
+                    ));
+                }
                 let callable = Callable::function(decl.clone(), env.freeze());
                 env.define(&decl.name, Value::Callable(callable));
                 Ok(Value::Void)
@@ -198,6 +204,13 @@ impl Evaluable for Expr {
 
 impl Evaluable for CallExpr {
     fn eval(&self, env: &mut Environment, stdout: &mut impl Write) -> Result<Value, RuntimeError> {
+        if self.args.len() > 255 {
+            return Err(RuntimeError::TooManyArguments(
+                self.paren_token,
+                self.args.len(),
+            ));
+        }
+
         let callee = self.callee.eval(env, stdout)?;
         let args = self
             .args
