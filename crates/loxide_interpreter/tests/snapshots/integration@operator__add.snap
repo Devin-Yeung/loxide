@@ -1,0 +1,17 @@
+---
+source: crates/loxide_interpreter/tests/integration.rs
+expression: result
+---
+print 123 + 456; // expect: 579
+// => num(579)
+print "str" + "ing"; // TODO: design decision
+
+
+>>>>> Error Section <<<<<
+  × Invalid binary operand, expected: number
+   ╭─[2:7]
+ 1 │ print 123 + 456; // expect: 579
+ 2 │ print "str" + "ing"; // TODO: design decision
+   ·       ──┬──
+   ·         ╰── expect a number type here
+   ╰────

@@ -1,0 +1,15 @@
+---
+source: crates/loxide_interpreter/tests/integration.rs
+expression: result
+---
+fun f() {
+  for (;;) {
+    var i = "i";
+    return i;
+  }
+}
+
+
+print f();
+// => str(i)
+// expect: i

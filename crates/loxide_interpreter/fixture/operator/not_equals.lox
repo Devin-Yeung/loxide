@@ -9,6 +9,6 @@ print 1 != 2; // expect: true
 print "str" != "str"; // expect: false
 print "str" != "ing"; // expect: true
 
-print nil != false; // expect: true
-print false != 0; // expect: true
-print 0 != "0"; // expect: true
+print nil != false; // error: type mismatch
+print false != 0; // error: type mismatch
+print 0 != "0"; // error: type mismatch

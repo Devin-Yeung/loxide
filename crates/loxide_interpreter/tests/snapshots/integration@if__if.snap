@@ -1,0 +1,19 @@
+---
+source: crates/loxide_interpreter/tests/integration.rs
+expression: result
+---
+// Evaluate the 'then' expression if the condition is true.
+if (true) print "good"; // expect: good
+// => str(good)
+if (false) print "bad";
+
+
+// Allow block body.
+if (true) { print "block"; } // expect: block
+// => str(block)
+
+// Assignment in if condition.
+var a = false;
+
+if (a = true) print a; // expect: true
+// => bool(true)

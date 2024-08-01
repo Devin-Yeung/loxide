@@ -1,0 +1,67 @@
+---
+source: crates/loxide_interpreter/tests/integration.rs
+expression: result
+---
+print !true;     // expect: false
+// => bool(false)
+print !false;    // expect: true
+// => bool(true)
+print !!true;    // expect: true
+// => bool(true)
+
+print !123;      // error: type mismatch
+
+print !0;        // error: type mismatch
+
+
+print !nil;     //error: type mismatch
+
+
+print !"";       // error: type mismatch
+
+
+fun foo() {}
+
+print !foo;      // error: type mismatch
+
+
+>>>>> Error Section <<<<<
+  × Invalid unary operand, expected: boolean
+   ╭─[5:8]
+ 4 │ 
+ 5 │ print !123;      // error: type mismatch
+   ·        ─┬─
+   ·         ╰── expect a boolean type here
+ 6 │ print !0;        // error: type mismatch
+   ╰────
+  × Invalid unary operand, expected: boolean
+   ╭─[6:8]
+ 5 │ print !123;      // error: type mismatch
+ 6 │ print !0;        // error: type mismatch
+   ·        ┬
+   ·        ╰── expect a boolean type here
+ 7 │ 
+   ╰────
+  × Invalid unary operand, expected: boolean
+   ╭─[8:8]
+ 7 │ 
+ 8 │ print !nil;     //error: type mismatch
+   ·        ─┬─
+   ·         ╰── expect a boolean type here
+ 9 │ 
+   ╰────
+  × Invalid unary operand, expected: boolean
+    ╭─[10:8]
+  9 │ 
+ 10 │ print !"";       // error: type mismatch
+    ·        ─┬
+    ·         ╰── expect a boolean type here
+ 11 │ 
+    ╰────
+  × Invalid unary operand, expected: boolean
+    ╭─[13:8]
+ 12 │ fun foo() {}
+ 13 │ print !foo;      // error: type mismatch
+    ·        ─┬─
+    ·         ╰── expect a boolean type here
+    ╰────

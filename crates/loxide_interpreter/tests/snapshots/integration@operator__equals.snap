@@ -1,0 +1,56 @@
+---
+source: crates/loxide_interpreter/tests/integration.rs
+expression: result
+---
+print nil == nil; // expect: true
+// => bool(true)
+
+print true == true; // expect: true
+// => bool(true)
+print true == false; // expect: false
+// => bool(false)
+
+print 1 == 1; // expect: true
+// => bool(true)
+print 1 == 2; // expect: false
+// => bool(false)
+
+print "str" == "str"; // expect: true
+// => bool(true)
+print "str" == "ing"; // expect: false
+// => bool(false)
+
+print nil == false; // error: type mismatch
+
+print false == 0; // error: type mismatch
+
+print 0 == "0"; // error: type mismatch
+
+
+>>>>> Error Section <<<<<
+  × Incompatible operand, nil is incompatible with boolean
+    ╭─[12:7]
+ 11 │ 
+ 12 │ print nil == false; // error: type mismatch
+    ·       ─┬─    ──┬──
+    ·        │       ╰── has type `boolean` here
+    ·        ╰── has type `nil` here
+ 13 │ print false == 0; // error: type mismatch
+    ╰────
+  × Incompatible operand, boolean is incompatible with number
+    ╭─[13:7]
+ 12 │ print nil == false; // error: type mismatch
+ 13 │ print false == 0; // error: type mismatch
+    ·       ──┬──    ┬
+    ·         │      ╰── has type `number` here
+    ·         ╰── has type `boolean` here
+ 14 │ print 0 == "0"; // error: type mismatch
+    ╰────
+  × Incompatible operand, number is incompatible with string
+    ╭─[14:7]
+ 13 │ print false == 0; // error: type mismatch
+ 14 │ print 0 == "0"; // error: type mismatch
+    ·       ┬    ─┬─
+    ·       │     ╰── has type `string` here
+    ·       ╰── has type `number` here
+    ╰────
