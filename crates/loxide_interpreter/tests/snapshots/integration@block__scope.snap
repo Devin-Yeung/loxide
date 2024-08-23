@@ -1,0 +1,15 @@
+---
+source: crates/loxide_interpreter/tests/integration.rs
+expression: result
+---
+var a = "outer";
+
+
+{
+  var a = "inner";
+  print a; // expect: inner
+}
+// => str(inner)
+
+print a; // expect: outer
+// => str(outer)
