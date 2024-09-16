@@ -7,5 +7,5 @@ edition = "2021"
 
 [dependencies]
 insta = { workspace = true, features = ["glob", "filters"] }
-once_cell = "1.19.0"
+once_cell = "1.20.0"
 loxide_testsuite_macros = { workspace = true }
