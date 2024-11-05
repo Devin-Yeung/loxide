@@ -1,0 +1,28 @@
+---
+source: crates/loxide_interpreter/tests/integration.rs
+expression: result
+---
+{
+  fun isEven(n) {
+    if (n == 0) return true;
+    return isOdd(n - 1); // expect runtime error: Undefined variable 'isOdd'.
+  }
+
+  fun isOdd(n) {
+    if (n == 0) return false;
+    return isEven(n - 1);
+  }
+
+  isEven(4);
+}
+
+
+>>>>> Error Section <<<<<
+  × Undefined Variable: isOdd
+   ╭─[4:12]
+ 3 │     if (n == 0) return true;
+ 4 │     return isOdd(n - 1); // expect runtime error: Undefined variable 'isOdd'.
+   ·            ──┬──
+   ·              ╰── variable `isOdd` is not defined
+ 5 │   }
+   ╰────

@@ -48,12 +48,17 @@ impl Evaluable for StmtKind {
                 Ok(Value::Void)
             }
             StmtKind::FunDeclaration(decl) => {
-                let callable = Callable::function(decl.clone(), env.extend());
+                if decl.params.len() > 255 {
+                    return Err(RuntimeError::TooManyParameters(
+                        decl.paren_token,
+                        decl.params.len(),
+                    ));
+                }
+                let callable = Callable::function(decl.clone(), env.freeze());
                 env.define(&decl.name, Value::Callable(callable));
                 Ok(Value::Void)
             }
             StmtKind::Block(stmts) => {
-                // TODO: find a way to test the correctness of this evaluation
                 let mut scope = env.extend();
                 for stmt in stmts {
                     stmt.eval(&mut scope, stdout)?;
@@ -199,6 +204,13 @@ impl Evaluable for Expr {
 
 impl Evaluable for CallExpr {
     fn eval(&self, env: &mut Environment, stdout: &mut impl Write) -> Result<Value, RuntimeError> {
+        if self.args.len() > 255 {
+            return Err(RuntimeError::TooManyArguments(
+                self.paren_token,
+                self.args.len(),
+            ));
+        }
+
         let callee = self.callee.eval(env, stdout)?;
         let args = self
             .args
@@ -245,7 +257,8 @@ impl Evaluable for BinaryExpr {
                 return if lhs.kind() == rhs.kind()
                     && (lhs.kind() == ValueKind::Number
                         || lhs.kind() == ValueKind::Boolean
-                        || lhs.kind() == ValueKind::String)
+                        || lhs.kind() == ValueKind::String
+                        || lhs.kind() == ValueKind::Nil)
                 {
                     match op {
                         BinaryOperator::EqualEqual => Ok(Value::Boolean(lhs == rhs)),

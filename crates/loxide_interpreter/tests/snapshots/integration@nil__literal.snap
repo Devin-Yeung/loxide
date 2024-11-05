@@ -1,0 +1,6 @@
+---
+source: crates/loxide_interpreter/tests/integration.rs
+expression: result
+---
+print nil; // expect: nil
+// => nil

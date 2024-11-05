@@ -2,7 +2,7 @@ use crate::common::annotate::annotated_eval;
 
 mod common;
 
-// #[test]
+#[test]
 fn integration() {
     use walkdir::WalkDir;
 
@@ -16,12 +16,6 @@ fn integration() {
         let content = std::fs::read_to_string(file.path())
             .unwrap_or_else(|_| panic!("Invalid file: {}", file.path().display()));
 
-        // We don't support class yet
-        let skip = vec!["class"];
-        if skip.into_iter().any(|s| content.contains(s)) {
-            continue;
-        }
-
         let test_name = file.path().display().to_string().replace("\\", "/"); // I hate windows
 
         let skip = vec![
@@ -32,6 +26,15 @@ fn integration() {
             "unexpected_character",
             // oop
             "field",
+            "call/object",
+            "if/class_in_else",
+            "if/class_in_then",
+            "assignment/to_this",
+            "for/class_in_body",
+            "operator/equals_method",
+            "operator/equals_class",
+            "operator/not_class",
+            "return/in_method",
             // dead loop
             "number/decimal_point_at_eof",
             "number/trailing_dot",
@@ -42,16 +45,40 @@ fn integration() {
             "for/fun_in_body",
             "string/literals",
             "unicode",
+            // disable all tests
+            "closure",
+            "constructor",
+            "expressions",
+            "limit",
+            "method",
+            "number",
+            "regression",
+            "scanning",
+            "super",
+            "while",
+            "benchmark",
+            "class",
+            "comments",
+            "field",
+            "inheritance",
+            "logical_operator",
+            "string",
+            "this",
+            "variable",
+            // bug
+            "function/mutual_recursion", // need to investigate the semantic
+            "function/print",            // don't support native function yet
         ];
-        if skip.into_iter().any(|s| test_name.contains(s)) {
-            continue;
-        }
 
         let test_name = test_name
             .strip_prefix("fixture/")
             .expect("fail to strip prefix")
             .strip_suffix(".lox")
             .expect("fail to strip suffix");
+
+        if skip.into_iter().any(|s| test_name.starts_with(s)) {
+            continue;
+        }
         println!("Running test: {}", test_name);
 
         let result = annotated_eval(&content);
