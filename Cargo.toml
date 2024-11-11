@@ -12,5 +12,5 @@ loxide_testsuite = { version = "0.1.0", path = "crates/loxide_testsuite" }
 loxide_testsuite_macros = { version = "0.1.0", path = "crates/loxide_testsuite_macros" }
 loxide_diagnostic = { version = "0.1.0", path = "crates/loxide_diagnostic" }
 insta = { version = "1.41.1", features = ["glob"] }
-thiserror = { version = "1.0.67" }
+thiserror = { version = "1.0.69" }
 miette = { version = "7.2.0", features = ["fancy"] }
