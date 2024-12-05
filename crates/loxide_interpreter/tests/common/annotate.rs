@@ -1,6 +1,7 @@
 use crate::common::utils::LINEBREAK;
 use loxide_diagnostic::reporter::{Reporter, Style};
 use loxide_interpreter::environment::Environment;
+use loxide_interpreter::error::RuntimeError;
 use loxide_interpreter::eval::Evaluable;
 use loxide_parser::token::Span;
 use miette::Report;
@@ -143,9 +144,13 @@ pub fn annotated_eval<S: AsRef<str>>(src: S) -> String {
     for stmt in stmts {
         let mut stdout = Vec::<u8>::new();
         let span = stmt.span();
-        let _ = stmt
-            .eval(&mut env, &mut stdout)
-            .map_err(|e| builder.report_err(e));
+        let _ = stmt.eval(&mut env, &mut stdout).map_err(|e| match e {
+            RuntimeError::ReturnValue(_) => {
+                let error = RuntimeError::ReturnInTopLevel(span);
+                builder.report_err(error)
+            }
+            e => builder.report_err(e),
+        });
         let content = String::from_utf8(stdout)
             .expect("Invalid utf8")
             .lines()

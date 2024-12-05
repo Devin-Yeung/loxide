@@ -1,0 +1,15 @@
+---
+source: crates/loxide_interpreter/tests/integration.rs
+expression: result
+---
+// [line 2] Error at ';': Expect expression.
+print;
+
+>>>>> Error Section <<<<<
+  × Expected token `primary expression`, found ;
+   ╭─[2:6]
+ 1 │ // [line 2] Error at ';': Expect expression.
+ 2 │ print;
+   ·      ┬
+   ·      ╰── expected `primary expression`, found ;
+   ╰────

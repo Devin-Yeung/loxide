@@ -1,0 +1,8 @@
+---
+source: crates/loxide_interpreter/tests/integration.rs
+expression: result
+---
+print 4 - 3; // expect: 1
+// => num(1)
+print 1.2 - 1.2; // expect: 0
+// => num(0)
