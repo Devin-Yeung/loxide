@@ -1,6 +1,7 @@
 ---
-source: crates/loxide_interpreter/src/eval.rs
+source: crates/loxide_interpreter/tests/unittest.rs
 expression: result
+snapshot_kind: text
 ---
   × Function call on a non-callable value
    ╭─[1:1]
@@ -9,6 +10,7 @@ expression: result
    · ╰── expect a callable value here, but got type `number`
  2 │ fun foo(a, b) {}
    ╰────
+
 
   × Bad arity, expected: 2, found: 1
    ╭─[2:8]
