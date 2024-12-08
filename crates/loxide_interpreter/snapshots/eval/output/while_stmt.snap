@@ -1,6 +1,7 @@
 ---
 source: crates/loxide_interpreter/tests/unittest.rs
 expression: annotated_eval(src)
+snapshot_kind: text
 ---
 var a = 3;
 
@@ -24,6 +25,7 @@ print b; // expected undefined
 
 
 >>>>> Error Section <<<<<
+
   × Undefined Variable: b
     ╭─[11:7]
  10 │ 
