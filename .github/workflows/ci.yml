@@ -115,7 +115,8 @@ jobs:
         if: hashFiles('Cargo.lock') == ''
         run: cargo generate-lockfile
       - name: cargo tarpaulin
-        run: cargo tarpaulin --verbose --all-features --workspace --timeout 120 -o xml
+        # see: https://github.com/xd009642/tarpaulin/issues/1642
+        run: LD_LIBRARY_PATH="$(rustc --print=target-libdir)" cargo tarpaulin --verbose --all-features --workspace --timeout 120 -o xml
       - name: upload to coveralls
         uses: coverallsapp/github-action@main
         with:
