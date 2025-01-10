@@ -1,6 +1,7 @@
 ---
 source: crates/loxide_parser/src/scanner.rs
 expression: output
+snapshot_kind: text
 ---
   × Invalid Number
    ╭────
@@ -9,12 +10,14 @@ expression: output
    ·   ╰── this number is invalid
    ╰────
 
+
   × Invalid string literal
    ╭────
  1 │ "
    · ┬
    · ╰── this string literal is invalid
    ╰────
+
 
   × Invalid string literal
    ╭────

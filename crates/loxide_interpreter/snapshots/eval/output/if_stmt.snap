@@ -1,6 +1,7 @@
 ---
 source: crates/loxide_interpreter/tests/unittest.rs
 expression: annotated_eval(src)
+snapshot_kind: text
 ---
 var a = "foo";
 
@@ -20,6 +21,7 @@ print b; // should not leak b
 
 
 >>>>> Error Section <<<<<
+
   × Undefined Variable: b
     ╭─[12:7]
  11 │ print a; // should mutate a to "baz"
