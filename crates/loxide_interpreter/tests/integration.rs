@@ -1,9 +1,12 @@
 use crate::common::annotate::annotated_eval;
+use std::cmp::Ordering;
 use std::collections::HashMap;
+use std::fmt::Display;
 use std::path::PathBuf;
 use std::sync::mpsc;
 use std::thread;
 use std::time::Duration;
+use tabled::{Table, Tabled};
 use walkdir::WalkDir;
 
 mod common;
@@ -12,6 +15,44 @@ mod common;
 pub struct TestEntry {
     pub name: String,
     pub path: PathBuf,
+}
+
+#[derive(Debug, PartialEq, Eq, Ord)]
+pub enum Status {
+    Passed,
+    Failed,
+    Skipped,
+}
+
+impl PartialOrd for Status {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        // pass > skip > fail
+        Some(match (self, other) {
+            (Status::Passed, Status::Passed) => Ordering::Equal,
+            (Status::Passed, _) => Ordering::Greater,
+            (_, Status::Passed) => Ordering::Less,
+            (Status::Skipped, Status::Skipped) => Ordering::Equal,
+            (Status::Skipped, _) => Ordering::Greater,
+            (_, Status::Skipped) => Ordering::Less,
+            (Status::Failed, Status::Failed) => Ordering::Equal,
+        })
+    }
+}
+
+impl Display for Status {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Status::Passed => write!(f, "Passed"),
+            Status::Failed => write!(f, "Failed"),
+            Status::Skipped => write!(f, "Skipped"),
+        }
+    }
+}
+
+#[derive(Tabled)]
+pub struct TestResult {
+    pub name: String,
+    pub status: Status,
 }
 
 #[test]
@@ -85,17 +126,30 @@ fn integration() {
                 path,
             }
         })
+        .collect::<Vec<_>>();
+
+    let skipped = test_cases
+        .iter()
+        .filter(|entry| skip.iter().any(|s| entry.name.starts_with(s)))
+        .map(|entry| TestResult {
+            name: entry.name.clone(),
+            status: Status::Skipped,
+        })
+        .collect::<Vec<_>>();
+
+    let filtered = test_cases
+        .into_iter()
         .filter(|entry| skip.iter().all(|s| !entry.name.starts_with(s)))
         .collect::<Vec<_>>();
 
-    let mut summary: HashMap<String, bool> = test_cases
+    let mut summary: HashMap<String, bool> = filtered
         .iter()
         .map(|entry| (entry.name.clone(), false))
         .collect();
 
     let (tx, rx) = mpsc::channel();
 
-    let handles = test_cases
+    let handles = filtered
         .into_iter()
         .map(|case| {
             let tx = tx.clone();
@@ -125,13 +179,25 @@ fn integration() {
     }
 
     // sort the test cases by name, all passed test cases will be at the top
-    let mut sorted = summary.into_iter().collect::<Vec<_>>();
-    sorted.sort_by(|(name1, pass1), (name2, pass2)| pass2.cmp(pass1).then(name1.cmp(name2)));
+    let mut summary = summary
+        .into_iter()
+        .map(|(name, pass)| {
+            let status = if pass { Status::Passed } else { Status::Failed };
+            TestResult { name, status }
+        })
+        .chain(skipped.into_iter())
+        .collect::<Vec<_>>();
+    summary.sort_by(|a, b| a.status.cmp(&b.status).then(a.name.cmp(&b.name)));
+
+    let count = summary.len();
+    let table = Table::new(summary);
+    let mut output = String::from(table.to_string());
+    output.push_str(&format!("\n\nTest cases in total: {}", count));
 
     insta::with_settings!({
         snapshot_suffix => "summary",
         prepend_module_to_snapshot => false,
     }, {
-        insta::assert_debug_snapshot!(sorted)
+        insta::assert_snapshot!(output)
     });
 }

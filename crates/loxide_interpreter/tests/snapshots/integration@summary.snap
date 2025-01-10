@@ -1,371 +1,540 @@
 ---
 source: crates/loxide_interpreter/tests/integration.rs
-expression: sorted
+expression: output
 snapshot_kind: text
 ---
-[
-    (
-        "assignment/associativity",
-        true,
-    ),
-    (
-        "assignment/global",
-        true,
-    ),
-    (
-        "assignment/grouping",
-        true,
-    ),
-    (
-        "assignment/infix_operator",
-        true,
-    ),
-    (
-        "assignment/local",
-        true,
-    ),
-    (
-        "assignment/prefix_operator",
-        true,
-    ),
-    (
-        "assignment/syntax",
-        true,
-    ),
-    (
-        "assignment/undefined",
-        true,
-    ),
-    (
-        "block/empty",
-        true,
-    ),
-    (
-        "block/scope",
-        true,
-    ),
-    (
-        "bool/equality",
-        true,
-    ),
-    (
-        "bool/not",
-        true,
-    ),
-    (
-        "call/bool",
-        true,
-    ),
-    (
-        "call/nil",
-        true,
-    ),
-    (
-        "call/num",
-        true,
-    ),
-    (
-        "call/string",
-        true,
-    ),
-    (
-        "empty_file",
-        true,
-    ),
-    (
-        "for/closure_in_body",
-        true,
-    ),
-    (
-        "for/return_closure",
-        true,
-    ),
-    (
-        "for/return_inside",
-        true,
-    ),
-    (
-        "for/scope",
-        true,
-    ),
-    (
-        "for/statement_condition",
-        true,
-    ),
-    (
-        "for/statement_increment",
-        true,
-    ),
-    (
-        "for/statement_initializer",
-        true,
-    ),
-    (
-        "for/syntax",
-        true,
-    ),
-    (
-        "for/var_in_body",
-        true,
-    ),
-    (
-        "function/body_must_be_block",
-        true,
-    ),
-    (
-        "function/empty_body",
-        true,
-    ),
-    (
-        "function/extra_arguments",
-        true,
-    ),
-    (
-        "function/local_mutual_recursion",
-        true,
-    ),
-    (
-        "function/local_recursion",
-        true,
-    ),
-    (
-        "function/missing_arguments",
-        true,
-    ),
-    (
-        "function/missing_comma_in_parameters",
-        true,
-    ),
-    (
-        "function/nested_call_with_arguments",
-        true,
-    ),
-    (
-        "function/parameters",
-        true,
-    ),
-    (
-        "function/recursion",
-        true,
-    ),
-    (
-        "function/too_many_arguments",
-        true,
-    ),
-    (
-        "function/too_many_parameters",
-        true,
-    ),
-    (
-        "if/dangling_else",
-        true,
-    ),
-    (
-        "if/else",
-        true,
-    ),
-    (
-        "if/fun_in_else",
-        true,
-    ),
-    (
-        "if/fun_in_then",
-        true,
-    ),
-    (
-        "if/if",
-        true,
-    ),
-    (
-        "if/truth",
-        true,
-    ),
-    (
-        "if/var_in_else",
-        true,
-    ),
-    (
-        "if/var_in_then",
-        true,
-    ),
-    (
-        "nil/literal",
-        true,
-    ),
-    (
-        "operator/add",
-        true,
-    ),
-    (
-        "operator/add_bool_nil",
-        true,
-    ),
-    (
-        "operator/add_bool_num",
-        true,
-    ),
-    (
-        "operator/add_bool_string",
-        true,
-    ),
-    (
-        "operator/add_nil_nil",
-        true,
-    ),
-    (
-        "operator/add_num_nil",
-        true,
-    ),
-    (
-        "operator/add_string_nil",
-        true,
-    ),
-    (
-        "operator/comparison",
-        true,
-    ),
-    (
-        "operator/divide",
-        true,
-    ),
-    (
-        "operator/divide_nonnum_num",
-        true,
-    ),
-    (
-        "operator/divide_num_nonnum",
-        true,
-    ),
-    (
-        "operator/equals",
-        true,
-    ),
-    (
-        "operator/greater_nonnum_num",
-        true,
-    ),
-    (
-        "operator/greater_num_nonnum",
-        true,
-    ),
-    (
-        "operator/greater_or_equal_nonnum_num",
-        true,
-    ),
-    (
-        "operator/greater_or_equal_num_nonnum",
-        true,
-    ),
-    (
-        "operator/less_nonnum_num",
-        true,
-    ),
-    (
-        "operator/less_num_nonnum",
-        true,
-    ),
-    (
-        "operator/less_or_equal_nonnum_num",
-        true,
-    ),
-    (
-        "operator/less_or_equal_num_nonnum",
-        true,
-    ),
-    (
-        "operator/multiply",
-        true,
-    ),
-    (
-        "operator/multiply_nonnum_num",
-        true,
-    ),
-    (
-        "operator/multiply_num_nonnum",
-        true,
-    ),
-    (
-        "operator/negate",
-        true,
-    ),
-    (
-        "operator/negate_nonnum",
-        true,
-    ),
-    (
-        "operator/not",
-        true,
-    ),
-    (
-        "operator/not_equals",
-        true,
-    ),
-    (
-        "operator/subtract",
-        true,
-    ),
-    (
-        "operator/subtract_nonnum_num",
-        true,
-    ),
-    (
-        "operator/subtract_num_nonnum",
-        true,
-    ),
-    (
-        "precedence",
-        true,
-    ),
-    (
-        "print/missing_argument",
-        true,
-    ),
-    (
-        "return/after_else",
-        true,
-    ),
-    (
-        "return/after_if",
-        true,
-    ),
-    (
-        "return/after_while",
-        true,
-    ),
-    (
-        "return/at_top_level",
-        true,
-    ),
-    (
-        "return/in_function",
-        true,
-    ),
-    (
-        "return/return_void_if_no_value",
-        true,
-    ),
-    (
-        "while/closure_in_body",
-        true,
-    ),
-    (
-        "while/fun_in_body",
-        true,
-    ),
-    (
-        "while/return_closure",
-        true,
-    ),
-    (
-        "while/return_inside",
-        true,
-    ),
-    (
-        "while/syntax",
-        true,
-    ),
-    (
-        "while/var_in_body",
-        true,
-    ),
-]
++--------------------------------------------+---------+
+| name                                       | status  |
++--------------------------------------------+---------+
+| assignment/associativity                   | Passed  |
++--------------------------------------------+---------+
+| assignment/global                          | Passed  |
++--------------------------------------------+---------+
+| assignment/grouping                        | Passed  |
++--------------------------------------------+---------+
+| assignment/infix_operator                  | Passed  |
++--------------------------------------------+---------+
+| assignment/local                           | Passed  |
++--------------------------------------------+---------+
+| assignment/prefix_operator                 | Passed  |
++--------------------------------------------+---------+
+| assignment/syntax                          | Passed  |
++--------------------------------------------+---------+
+| assignment/undefined                       | Passed  |
++--------------------------------------------+---------+
+| block/empty                                | Passed  |
++--------------------------------------------+---------+
+| block/scope                                | Passed  |
++--------------------------------------------+---------+
+| bool/equality                              | Passed  |
++--------------------------------------------+---------+
+| bool/not                                   | Passed  |
++--------------------------------------------+---------+
+| call/bool                                  | Passed  |
++--------------------------------------------+---------+
+| call/nil                                   | Passed  |
++--------------------------------------------+---------+
+| call/num                                   | Passed  |
++--------------------------------------------+---------+
+| call/string                                | Passed  |
++--------------------------------------------+---------+
+| empty_file                                 | Passed  |
++--------------------------------------------+---------+
+| for/closure_in_body                        | Passed  |
++--------------------------------------------+---------+
+| for/return_closure                         | Passed  |
++--------------------------------------------+---------+
+| for/return_inside                          | Passed  |
++--------------------------------------------+---------+
+| for/scope                                  | Passed  |
++--------------------------------------------+---------+
+| for/statement_condition                    | Passed  |
++--------------------------------------------+---------+
+| for/statement_increment                    | Passed  |
++--------------------------------------------+---------+
+| for/statement_initializer                  | Passed  |
++--------------------------------------------+---------+
+| for/syntax                                 | Passed  |
++--------------------------------------------+---------+
+| for/var_in_body                            | Passed  |
++--------------------------------------------+---------+
+| function/body_must_be_block                | Passed  |
++--------------------------------------------+---------+
+| function/empty_body                        | Passed  |
++--------------------------------------------+---------+
+| function/extra_arguments                   | Passed  |
++--------------------------------------------+---------+
+| function/local_mutual_recursion            | Passed  |
++--------------------------------------------+---------+
+| function/local_recursion                   | Passed  |
++--------------------------------------------+---------+
+| function/missing_arguments                 | Passed  |
++--------------------------------------------+---------+
+| function/missing_comma_in_parameters       | Passed  |
++--------------------------------------------+---------+
+| function/nested_call_with_arguments        | Passed  |
++--------------------------------------------+---------+
+| function/parameters                        | Passed  |
++--------------------------------------------+---------+
+| function/recursion                         | Passed  |
++--------------------------------------------+---------+
+| function/too_many_arguments                | Passed  |
++--------------------------------------------+---------+
+| function/too_many_parameters               | Passed  |
++--------------------------------------------+---------+
+| if/dangling_else                           | Passed  |
++--------------------------------------------+---------+
+| if/else                                    | Passed  |
++--------------------------------------------+---------+
+| if/fun_in_else                             | Passed  |
++--------------------------------------------+---------+
+| if/fun_in_then                             | Passed  |
++--------------------------------------------+---------+
+| if/if                                      | Passed  |
++--------------------------------------------+---------+
+| if/truth                                   | Passed  |
++--------------------------------------------+---------+
+| if/var_in_else                             | Passed  |
++--------------------------------------------+---------+
+| if/var_in_then                             | Passed  |
++--------------------------------------------+---------+
+| nil/literal                                | Passed  |
++--------------------------------------------+---------+
+| operator/add                               | Passed  |
++--------------------------------------------+---------+
+| operator/add_bool_nil                      | Passed  |
++--------------------------------------------+---------+
+| operator/add_bool_num                      | Passed  |
++--------------------------------------------+---------+
+| operator/add_bool_string                   | Passed  |
++--------------------------------------------+---------+
+| operator/add_nil_nil                       | Passed  |
++--------------------------------------------+---------+
+| operator/add_num_nil                       | Passed  |
++--------------------------------------------+---------+
+| operator/add_string_nil                    | Passed  |
++--------------------------------------------+---------+
+| operator/comparison                        | Passed  |
++--------------------------------------------+---------+
+| operator/divide                            | Passed  |
++--------------------------------------------+---------+
+| operator/divide_nonnum_num                 | Passed  |
++--------------------------------------------+---------+
+| operator/divide_num_nonnum                 | Passed  |
++--------------------------------------------+---------+
+| operator/equals                            | Passed  |
++--------------------------------------------+---------+
+| operator/greater_nonnum_num                | Passed  |
++--------------------------------------------+---------+
+| operator/greater_num_nonnum                | Passed  |
++--------------------------------------------+---------+
+| operator/greater_or_equal_nonnum_num       | Passed  |
++--------------------------------------------+---------+
+| operator/greater_or_equal_num_nonnum       | Passed  |
++--------------------------------------------+---------+
+| operator/less_nonnum_num                   | Passed  |
++--------------------------------------------+---------+
+| operator/less_num_nonnum                   | Passed  |
++--------------------------------------------+---------+
+| operator/less_or_equal_nonnum_num          | Passed  |
++--------------------------------------------+---------+
+| operator/less_or_equal_num_nonnum          | Passed  |
++--------------------------------------------+---------+
+| operator/multiply                          | Passed  |
++--------------------------------------------+---------+
+| operator/multiply_nonnum_num               | Passed  |
++--------------------------------------------+---------+
+| operator/multiply_num_nonnum               | Passed  |
++--------------------------------------------+---------+
+| operator/negate                            | Passed  |
++--------------------------------------------+---------+
+| operator/negate_nonnum                     | Passed  |
++--------------------------------------------+---------+
+| operator/not                               | Passed  |
++--------------------------------------------+---------+
+| operator/not_equals                        | Passed  |
++--------------------------------------------+---------+
+| operator/subtract                          | Passed  |
++--------------------------------------------+---------+
+| operator/subtract_nonnum_num               | Passed  |
++--------------------------------------------+---------+
+| operator/subtract_num_nonnum               | Passed  |
++--------------------------------------------+---------+
+| precedence                                 | Passed  |
++--------------------------------------------+---------+
+| print/missing_argument                     | Passed  |
++--------------------------------------------+---------+
+| return/after_else                          | Passed  |
++--------------------------------------------+---------+
+| return/after_if                            | Passed  |
++--------------------------------------------+---------+
+| return/after_while                         | Passed  |
++--------------------------------------------+---------+
+| return/at_top_level                        | Passed  |
++--------------------------------------------+---------+
+| return/in_function                         | Passed  |
++--------------------------------------------+---------+
+| return/return_void_if_no_value             | Passed  |
++--------------------------------------------+---------+
+| while/closure_in_body                      | Passed  |
++--------------------------------------------+---------+
+| while/fun_in_body                          | Passed  |
++--------------------------------------------+---------+
+| while/return_closure                       | Passed  |
++--------------------------------------------+---------+
+| while/return_inside                        | Passed  |
++--------------------------------------------+---------+
+| while/syntax                               | Passed  |
++--------------------------------------------+---------+
+| while/var_in_body                          | Passed  |
++--------------------------------------------+---------+
+| assignment/to_this                         | Skipped |
++--------------------------------------------+---------+
+| benchmark/binary_trees                     | Skipped |
++--------------------------------------------+---------+
+| benchmark/equality                         | Skipped |
++--------------------------------------------+---------+
+| benchmark/fib                              | Skipped |
++--------------------------------------------+---------+
+| benchmark/instantiation                    | Skipped |
++--------------------------------------------+---------+
+| benchmark/invocation                       | Skipped |
++--------------------------------------------+---------+
+| benchmark/method_call                      | Skipped |
++--------------------------------------------+---------+
+| benchmark/properties                       | Skipped |
++--------------------------------------------+---------+
+| benchmark/string_equality                  | Skipped |
++--------------------------------------------+---------+
+| benchmark/trees                            | Skipped |
++--------------------------------------------+---------+
+| benchmark/zoo                              | Skipped |
++--------------------------------------------+---------+
+| benchmark/zoo_batch                        | Skipped |
++--------------------------------------------+---------+
+| call/object                                | Skipped |
++--------------------------------------------+---------+
+| class/empty                                | Skipped |
++--------------------------------------------+---------+
+| class/inherit_self                         | Skipped |
++--------------------------------------------+---------+
+| class/inherited_method                     | Skipped |
++--------------------------------------------+---------+
+| class/local_inherit_other                  | Skipped |
++--------------------------------------------+---------+
+| class/local_inherit_self                   | Skipped |
++--------------------------------------------+---------+
+| class/local_reference_self                 | Skipped |
++--------------------------------------------+---------+
+| class/reference_self                       | Skipped |
++--------------------------------------------+---------+
+| closure/assign_to_closure                  | Skipped |
++--------------------------------------------+---------+
+| closure/assign_to_shadowed_later           | Skipped |
++--------------------------------------------+---------+
+| closure/close_over_function_parameter      | Skipped |
++--------------------------------------------+---------+
+| closure/close_over_later_variable          | Skipped |
++--------------------------------------------+---------+
+| closure/close_over_method_parameter        | Skipped |
++--------------------------------------------+---------+
+| closure/closed_closure_in_function         | Skipped |
++--------------------------------------------+---------+
+| closure/nested_closure                     | Skipped |
++--------------------------------------------+---------+
+| closure/open_closure_in_function           | Skipped |
++--------------------------------------------+---------+
+| closure/reference_closure_multiple_times   | Skipped |
++--------------------------------------------+---------+
+| closure/reuse_closure_slot                 | Skipped |
++--------------------------------------------+---------+
+| closure/shadow_closure_with_local          | Skipped |
++--------------------------------------------+---------+
+| closure/unused_closure                     | Skipped |
++--------------------------------------------+---------+
+| closure/unused_later_closure               | Skipped |
++--------------------------------------------+---------+
+| comments/line_at_eof                       | Skipped |
++--------------------------------------------+---------+
+| comments/only_line_comment                 | Skipped |
++--------------------------------------------+---------+
+| comments/only_line_comment_and_line        | Skipped |
++--------------------------------------------+---------+
+| comments/unicode                           | Skipped |
++--------------------------------------------+---------+
+| constructor/arguments                      | Skipped |
++--------------------------------------------+---------+
+| constructor/call_init_early_return         | Skipped |
++--------------------------------------------+---------+
+| constructor/call_init_explicitly           | Skipped |
++--------------------------------------------+---------+
+| constructor/default                        | Skipped |
++--------------------------------------------+---------+
+| constructor/default_arguments              | Skipped |
++--------------------------------------------+---------+
+| constructor/early_return                   | Skipped |
++--------------------------------------------+---------+
+| constructor/extra_arguments                | Skipped |
++--------------------------------------------+---------+
+| constructor/init_not_method                | Skipped |
++--------------------------------------------+---------+
+| constructor/missing_arguments              | Skipped |
++--------------------------------------------+---------+
+| constructor/return_in_nested_function      | Skipped |
++--------------------------------------------+---------+
+| constructor/return_value                   | Skipped |
++--------------------------------------------+---------+
+| expressions/evaluate                       | Skipped |
++--------------------------------------------+---------+
+| expressions/parse                          | Skipped |
++--------------------------------------------+---------+
+| field/call_function_field                  | Skipped |
++--------------------------------------------+---------+
+| field/call_nonfunction_field               | Skipped |
++--------------------------------------------+---------+
+| field/get_and_set_method                   | Skipped |
++--------------------------------------------+---------+
+| field/get_on_bool                          | Skipped |
++--------------------------------------------+---------+
+| field/get_on_class                         | Skipped |
++--------------------------------------------+---------+
+| field/get_on_function                      | Skipped |
++--------------------------------------------+---------+
+| field/get_on_nil                           | Skipped |
++--------------------------------------------+---------+
+| field/get_on_num                           | Skipped |
++--------------------------------------------+---------+
+| field/get_on_string                        | Skipped |
++--------------------------------------------+---------+
+| field/many                                 | Skipped |
++--------------------------------------------+---------+
+| field/method                               | Skipped |
++--------------------------------------------+---------+
+| field/method_binds_this                    | Skipped |
++--------------------------------------------+---------+
+| field/on_instance                          | Skipped |
++--------------------------------------------+---------+
+| field/set_evaluation_order                 | Skipped |
++--------------------------------------------+---------+
+| field/set_on_bool                          | Skipped |
++--------------------------------------------+---------+
+| field/set_on_class                         | Skipped |
++--------------------------------------------+---------+
+| field/set_on_function                      | Skipped |
++--------------------------------------------+---------+
+| field/set_on_nil                           | Skipped |
++--------------------------------------------+---------+
+| field/set_on_num                           | Skipped |
++--------------------------------------------+---------+
+| field/set_on_string                        | Skipped |
++--------------------------------------------+---------+
+| field/undefined                            | Skipped |
++--------------------------------------------+---------+
+| for/class_in_body                          | Skipped |
++--------------------------------------------+---------+
+| for/fun_in_body                            | Skipped |
++--------------------------------------------+---------+
+| function/mutual_recursion                  | Skipped |
++--------------------------------------------+---------+
+| function/print                             | Skipped |
++--------------------------------------------+---------+
+| if/class_in_else                           | Skipped |
++--------------------------------------------+---------+
+| if/class_in_then                           | Skipped |
++--------------------------------------------+---------+
+| inheritance/constructor                    | Skipped |
++--------------------------------------------+---------+
+| inheritance/inherit_from_function          | Skipped |
++--------------------------------------------+---------+
+| inheritance/inherit_from_nil               | Skipped |
++--------------------------------------------+---------+
+| inheritance/inherit_from_number            | Skipped |
++--------------------------------------------+---------+
+| inheritance/inherit_methods                | Skipped |
++--------------------------------------------+---------+
+| inheritance/parenthesized_superclass       | Skipped |
++--------------------------------------------+---------+
+| inheritance/set_fields_from_base_class     | Skipped |
++--------------------------------------------+---------+
+| limit/loop_too_large                       | Skipped |
++--------------------------------------------+---------+
+| limit/no_reuse_constants                   | Skipped |
++--------------------------------------------+---------+
+| limit/stack_overflow                       | Skipped |
++--------------------------------------------+---------+
+| limit/too_many_constants                   | Skipped |
++--------------------------------------------+---------+
+| limit/too_many_locals                      | Skipped |
++--------------------------------------------+---------+
+| limit/too_many_upvalues                    | Skipped |
++--------------------------------------------+---------+
+| logical_operator/and                       | Skipped |
++--------------------------------------------+---------+
+| logical_operator/and_truth                 | Skipped |
++--------------------------------------------+---------+
+| logical_operator/or                        | Skipped |
++--------------------------------------------+---------+
+| logical_operator/or_truth                  | Skipped |
++--------------------------------------------+---------+
+| method/arity                               | Skipped |
++--------------------------------------------+---------+
+| method/empty_block                         | Skipped |
++--------------------------------------------+---------+
+| method/extra_arguments                     | Skipped |
++--------------------------------------------+---------+
+| method/missing_arguments                   | Skipped |
++--------------------------------------------+---------+
+| method/not_found                           | Skipped |
++--------------------------------------------+---------+
+| method/print_bound_method                  | Skipped |
++--------------------------------------------+---------+
+| method/refer_to_name                       | Skipped |
++--------------------------------------------+---------+
+| method/too_many_arguments                  | Skipped |
++--------------------------------------------+---------+
+| method/too_many_parameters                 | Skipped |
++--------------------------------------------+---------+
+| number/decimal_point_at_eof                | Skipped |
++--------------------------------------------+---------+
+| number/leading_dot                         | Skipped |
++--------------------------------------------+---------+
+| number/literals                            | Skipped |
++--------------------------------------------+---------+
+| number/nan_equality                        | Skipped |
++--------------------------------------------+---------+
+| number/trailing_dot                        | Skipped |
++--------------------------------------------+---------+
+| operator/equals_class                      | Skipped |
++--------------------------------------------+---------+
+| operator/equals_method                     | Skipped |
++--------------------------------------------+---------+
+| operator/not_class                         | Skipped |
++--------------------------------------------+---------+
+| regression/394                             | Skipped |
++--------------------------------------------+---------+
+| regression/40                              | Skipped |
++--------------------------------------------+---------+
+| return/in_method                           | Skipped |
++--------------------------------------------+---------+
+| scanning/identifiers                       | Skipped |
++--------------------------------------------+---------+
+| scanning/keywords                          | Skipped |
++--------------------------------------------+---------+
+| scanning/numbers                           | Skipped |
++--------------------------------------------+---------+
+| scanning/punctuators                       | Skipped |
++--------------------------------------------+---------+
+| scanning/strings                           | Skipped |
++--------------------------------------------+---------+
+| scanning/whitespace                        | Skipped |
++--------------------------------------------+---------+
+| string/error_after_multiline               | Skipped |
++--------------------------------------------+---------+
+| string/literals                            | Skipped |
++--------------------------------------------+---------+
+| string/multiline                           | Skipped |
++--------------------------------------------+---------+
+| string/unterminated                        | Skipped |
++--------------------------------------------+---------+
+| super/bound_method                         | Skipped |
++--------------------------------------------+---------+
+| super/call_other_method                    | Skipped |
++--------------------------------------------+---------+
+| super/call_same_method                     | Skipped |
++--------------------------------------------+---------+
+| super/closure                              | Skipped |
++--------------------------------------------+---------+
+| super/constructor                          | Skipped |
++--------------------------------------------+---------+
+| super/extra_arguments                      | Skipped |
++--------------------------------------------+---------+
+| super/indirectly_inherited                 | Skipped |
++--------------------------------------------+---------+
+| super/missing_arguments                    | Skipped |
++--------------------------------------------+---------+
+| super/no_superclass_bind                   | Skipped |
++--------------------------------------------+---------+
+| super/no_superclass_call                   | Skipped |
++--------------------------------------------+---------+
+| super/no_superclass_method                 | Skipped |
++--------------------------------------------+---------+
+| super/parenthesized                        | Skipped |
++--------------------------------------------+---------+
+| super/reassign_superclass                  | Skipped |
++--------------------------------------------+---------+
+| super/super_at_top_level                   | Skipped |
++--------------------------------------------+---------+
+| super/super_in_closure_in_inherited_method | Skipped |
++--------------------------------------------+---------+
+| super/super_in_inherited_method            | Skipped |
++--------------------------------------------+---------+
+| super/super_in_top_level_function          | Skipped |
++--------------------------------------------+---------+
+| super/super_without_dot                    | Skipped |
++--------------------------------------------+---------+
+| super/super_without_name                   | Skipped |
++--------------------------------------------+---------+
+| super/this_in_superclass_method            | Skipped |
++--------------------------------------------+---------+
+| this/closure                               | Skipped |
++--------------------------------------------+---------+
+| this/nested_class                          | Skipped |
++--------------------------------------------+---------+
+| this/nested_closure                        | Skipped |
++--------------------------------------------+---------+
+| this/this_at_top_level                     | Skipped |
++--------------------------------------------+---------+
+| this/this_in_method                        | Skipped |
++--------------------------------------------+---------+
+| this/this_in_top_level_function            | Skipped |
++--------------------------------------------+---------+
+| unexpected_character                       | Skipped |
++--------------------------------------------+---------+
+| variable/collide_with_parameter            | Skipped |
++--------------------------------------------+---------+
+| variable/duplicate_local                   | Skipped |
++--------------------------------------------+---------+
+| variable/duplicate_parameter               | Skipped |
++--------------------------------------------+---------+
+| variable/early_bound                       | Skipped |
++--------------------------------------------+---------+
+| variable/in_middle_of_block                | Skipped |
++--------------------------------------------+---------+
+| variable/in_nested_block                   | Skipped |
++--------------------------------------------+---------+
+| variable/local_from_method                 | Skipped |
++--------------------------------------------+---------+
+| variable/redeclare_global                  | Skipped |
++--------------------------------------------+---------+
+| variable/redefine_global                   | Skipped |
++--------------------------------------------+---------+
+| variable/scope_reuse_in_different_blocks   | Skipped |
++--------------------------------------------+---------+
+| variable/shadow_and_local                  | Skipped |
++--------------------------------------------+---------+
+| variable/shadow_global                     | Skipped |
++--------------------------------------------+---------+
+| variable/shadow_local                      | Skipped |
++--------------------------------------------+---------+
+| variable/undefined_global                  | Skipped |
++--------------------------------------------+---------+
+| variable/undefined_local                   | Skipped |
++--------------------------------------------+---------+
+| variable/uninitialized                     | Skipped |
++--------------------------------------------+---------+
+| variable/unreached_undefined               | Skipped |
++--------------------------------------------+---------+
+| variable/use_false_as_var                  | Skipped |
++--------------------------------------------+---------+
+| variable/use_global_in_initializer         | Skipped |
++--------------------------------------------+---------+
+| variable/use_local_in_initializer          | Skipped |
++--------------------------------------------+---------+
+| variable/use_nil_as_var                    | Skipped |
++--------------------------------------------+---------+
+| variable/use_this_as_var                   | Skipped |
++--------------------------------------------+---------+
+| while/class_in_body                        | Skipped |
++--------------------------------------------+---------+
+
+Test cases in total: 265
