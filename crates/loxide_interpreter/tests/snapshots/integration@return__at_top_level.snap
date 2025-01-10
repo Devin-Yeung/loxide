@@ -1,11 +1,13 @@
 ---
 source: crates/loxide_interpreter/tests/integration.rs
 expression: result
+snapshot_kind: text
 ---
 return "wat"; // Error at 'return': Can't return from top-level code.
 
 
 >>>>> Error Section <<<<<
+
   × Return in top level
    ╭────
  1 │ return "wat"; // Error at 'return': Can't return from top-level code.

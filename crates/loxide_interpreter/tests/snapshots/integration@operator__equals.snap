@@ -1,6 +1,7 @@
 ---
 source: crates/loxide_interpreter/tests/integration.rs
 expression: result
+snapshot_kind: text
 ---
 print nil == nil; // expect: true
 // => bool(true)
@@ -28,6 +29,7 @@ print 0 == "0"; // error: type mismatch
 
 
 >>>>> Error Section <<<<<
+
   × Incompatible operand, nil is incompatible with boolean
     ╭─[12:7]
  11 │ 
@@ -37,6 +39,7 @@ print 0 == "0"; // error: type mismatch
     ·        ╰── has type `nil` here
  13 │ print false == 0; // error: type mismatch
     ╰────
+
   × Incompatible operand, boolean is incompatible with number
     ╭─[13:7]
  12 │ print nil == false; // error: type mismatch
@@ -46,6 +49,7 @@ print 0 == "0"; // error: type mismatch
     ·         ╰── has type `boolean` here
  14 │ print 0 == "0"; // error: type mismatch
     ╰────
+
   × Incompatible operand, number is incompatible with string
     ╭─[14:7]
  13 │ print false == 0; // error: type mismatch

@@ -1,6 +1,7 @@
 ---
 source: crates/loxide_interpreter/tests/integration.rs
 expression: result
+snapshot_kind: text
 ---
 print !true;     // expect: false
 // => bool(false)
@@ -26,6 +27,7 @@ print !foo;      // error: type mismatch
 
 
 >>>>> Error Section <<<<<
+
   × Invalid unary operand, expected: boolean
    ╭─[5:8]
  4 │ 
@@ -34,6 +36,7 @@ print !foo;      // error: type mismatch
    ·         ╰── expect a boolean type here
  6 │ print !0;        // error: type mismatch
    ╰────
+
   × Invalid unary operand, expected: boolean
    ╭─[6:8]
  5 │ print !123;      // error: type mismatch
@@ -42,6 +45,7 @@ print !foo;      // error: type mismatch
    ·        ╰── expect a boolean type here
  7 │ 
    ╰────
+
   × Invalid unary operand, expected: boolean
    ╭─[8:8]
  7 │ 
@@ -50,6 +54,7 @@ print !foo;      // error: type mismatch
    ·         ╰── expect a boolean type here
  9 │ 
    ╰────
+
   × Invalid unary operand, expected: boolean
     ╭─[10:8]
   9 │ 
@@ -58,6 +63,7 @@ print !foo;      // error: type mismatch
     ·         ╰── expect a boolean type here
  11 │ 
     ╰────
+
   × Invalid unary operand, expected: boolean
     ╭─[13:8]
  12 │ fun foo() {}

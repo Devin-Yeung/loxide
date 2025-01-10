@@ -1,6 +1,7 @@
 ---
 source: crates/loxide_interpreter/tests/integration.rs
 expression: result
+snapshot_kind: text
 ---
 fun f(a, b) {}
 
@@ -9,6 +10,7 @@ f(1); // expect runtime error: Expected 2 arguments but got 1.
 
 
 >>>>> Error Section <<<<<
+
   × Bad arity, expected: 2, found: 1
    ╭─[1:6]
  1 │ fun f(a, b) {}

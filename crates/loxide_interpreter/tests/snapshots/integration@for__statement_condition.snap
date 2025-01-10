@@ -1,12 +1,14 @@
 ---
 source: crates/loxide_interpreter/tests/integration.rs
 expression: result
+snapshot_kind: text
 ---
 // [line 3] Error at '{': Expect expression.
 // [line 3] Error at ')': Expect ';' after expression.
 for (var a = 1; {}; a = a + 1) {}
 
 >>>>> Error Section <<<<<
+
   × Expected token `primary expression`, found {
    ╭─[3:17]
  2 │ // [line 3] Error at ')': Expect ';' after expression.
@@ -14,6 +16,7 @@ for (var a = 1; {}; a = a + 1) {}
    ·                 ┬
    ·                 ╰── expected `primary expression`, found {
    ╰────
+
   × Expected token `;`, found )
    ╭─[3:30]
  2 │ // [line 3] Error at ')': Expect ';' after expression.

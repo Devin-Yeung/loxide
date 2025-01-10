@@ -1,11 +1,13 @@
 ---
 source: crates/loxide_interpreter/tests/integration.rs
 expression: result
+snapshot_kind: text
 ---
 // [line 2] Error at ';': Expect expression.
 print;
 
 >>>>> Error Section <<<<<
+
   × Expected token `primary expression`, found ;
    ╭─[2:6]
  1 │ // [line 2] Error at ';': Expect expression.

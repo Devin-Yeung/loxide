@@ -1,11 +1,13 @@
 ---
 source: crates/loxide_interpreter/tests/integration.rs
 expression: result
+snapshot_kind: text
 ---
 -"s"; // expect runtime error: Operand must be a number.
 
 
 >>>>> Error Section <<<<<
+
   × Invalid unary operand, expected: number
    ╭────
  1 │ -"s"; // expect runtime error: Operand must be a number.

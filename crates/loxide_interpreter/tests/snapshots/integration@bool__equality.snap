@@ -1,6 +1,7 @@
 ---
 source: crates/loxide_interpreter/tests/integration.rs
 expression: result
+snapshot_kind: text
 ---
 print true == true;    // expect: true
 // => bool(true)
@@ -45,6 +46,7 @@ print false != "";      //error: type mismatch
 
 
 >>>>> Error Section <<<<<
+
   × Incompatible operand, boolean is incompatible with number
    ╭─[7:7]
  6 │ // Not equal to other types.
@@ -54,6 +56,7 @@ print false != "";      //error: type mismatch
    ·         ╰── has type `boolean` here
  8 │ print false == 0;       // error: type mismatch
    ╰────
+
   × Incompatible operand, boolean is incompatible with number
    ╭─[8:7]
  7 │ print true == 1;        // error: type mismatch
@@ -63,6 +66,7 @@ print false != "";      //error: type mismatch
    ·         ╰── has type `boolean` here
  9 │ print true == "true";   // error: type mismatch
    ╰────
+
   × Incompatible operand, boolean is incompatible with string
     ╭─[9:7]
   8 │ print false == 0;       // error: type mismatch
@@ -72,6 +76,7 @@ print false != "";      //error: type mismatch
     ·         ╰── has type `boolean` here
  10 │ print false == "false"; // error: type mismatch
     ╰────
+
   × Incompatible operand, boolean is incompatible with string
     ╭─[10:7]
   9 │ print true == "true";   // error: type mismatch
@@ -81,6 +86,7 @@ print false != "";      //error: type mismatch
     ·         ╰── has type `boolean` here
  11 │ print false == "";      // error: type mismatch
     ╰────
+
   × Incompatible operand, boolean is incompatible with string
     ╭─[11:7]
  10 │ print false == "false"; // error: type mismatch
@@ -90,6 +96,7 @@ print false != "";      //error: type mismatch
     ·         ╰── has type `boolean` here
  12 │ 
     ╰────
+
   × Incompatible operand, boolean is incompatible with number
     ╭─[19:7]
  18 │ // Not equal to other types.
@@ -99,6 +106,7 @@ print false != "";      //error: type mismatch
     ·         ╰── has type `boolean` here
  20 │ print false != 0;       //error: type mismatch
     ╰────
+
   × Incompatible operand, boolean is incompatible with number
     ╭─[20:7]
  19 │ print true != 1;        //error: type mismatch
@@ -108,6 +116,7 @@ print false != "";      //error: type mismatch
     ·         ╰── has type `boolean` here
  21 │ print true != "true";   //error: type mismatch
     ╰────
+
   × Incompatible operand, boolean is incompatible with string
     ╭─[21:7]
  20 │ print false != 0;       //error: type mismatch
@@ -117,6 +126,7 @@ print false != "";      //error: type mismatch
     ·         ╰── has type `boolean` here
  22 │ print false != "false"; //error: type mismatch
     ╰────
+
   × Incompatible operand, boolean is incompatible with string
     ╭─[22:7]
  21 │ print true != "true";   //error: type mismatch
@@ -126,6 +136,7 @@ print false != "";      //error: type mismatch
     ·         ╰── has type `boolean` here
  23 │ print false != "";      //error: type mismatch
     ╰────
+
   × Incompatible operand, boolean is incompatible with string
     ╭─[23:7]
  22 │ print false != "false"; //error: type mismatch

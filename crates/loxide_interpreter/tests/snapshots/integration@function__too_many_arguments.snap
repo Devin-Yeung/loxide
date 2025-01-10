@@ -1,6 +1,7 @@
 ---
 source: crates/loxide_interpreter/tests/integration.rs
 expression: result
+snapshot_kind: text
 ---
 fun foo() {}
 
@@ -267,6 +268,7 @@ fun foo() {}
 
 
 >>>>> Error Section <<<<<
+
   × Too many arguments, allow at most 255, found 256
      ╭─[4:6]
    3 │       var a = 1;

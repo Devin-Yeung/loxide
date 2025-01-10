@@ -1,6 +1,7 @@
 ---
 source: crates/loxide_interpreter/tests/integration.rs
 expression: result
+snapshot_kind: text
 ---
 // 256 parameters.
 fun f(
@@ -262,6 +263,7 @@ fun f(
 
 
 >>>>> Error Section <<<<<
+
   × Too many parameters, allow at most 255, found 256
      ╭─[2:6]
    1 │     // 256 parameters.

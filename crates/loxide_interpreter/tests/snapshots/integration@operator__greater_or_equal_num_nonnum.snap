@@ -1,11 +1,13 @@
 ---
 source: crates/loxide_interpreter/tests/integration.rs
 expression: result
+snapshot_kind: text
 ---
 1 >= "1"; // expect runtime error: Operands must be numbers.
 
 
 >>>>> Error Section <<<<<
+
   × Invalid binary operand, expected: number
    ╭────
  1 │ 1 >= "1"; // expect runtime error: Operands must be numbers.

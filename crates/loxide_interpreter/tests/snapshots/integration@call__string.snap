@@ -1,11 +1,13 @@
 ---
 source: crates/loxide_interpreter/tests/integration.rs
 expression: result
+snapshot_kind: text
 ---
 "str"(); // expect runtime error: Can only call functions and classes.
 
 
 >>>>> Error Section <<<<<
+
   × Function call on a non-callable value
    ╭────
  1 │ "str"(); // expect runtime error: Can only call functions and classes.
