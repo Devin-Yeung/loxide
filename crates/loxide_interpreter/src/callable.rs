@@ -3,7 +3,7 @@ use crate::error::PrivateRuntimeError::Transparent;
 use crate::error::{PrivateRuntimeError, RuntimeError};
 use crate::eval::Evaluable;
 use crate::value::Value;
-use loxide_parser::ast::FunDeclaration;
+use loxide_parser::ast::{FunDeclaration, Identifier};
 use loxide_parser::token::Span;
 use std::io::Write;
 use std::sync::Arc;
@@ -53,6 +53,14 @@ impl LoxFunction {
         stdout: &mut impl Write,
     ) -> Result<Value, PrivateRuntimeError> {
         let mut env = self.env.extend();
+        // trick: make recursion works
+        env.define(
+            &Identifier::new(
+                self.declaration.name.name.clone(),
+                self.declaration.name.span,
+            ),
+            Value::Callable(Callable::function(self.declaration.clone(), env.clone())),
+        );
 
         if self.declaration.params.len() != arguments.len() {
             return Err(PrivateRuntimeError::BadArity {

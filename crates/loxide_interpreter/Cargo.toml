@@ -17,3 +17,4 @@ insta = { workspace = true }
 loxide_macros = { workspace = true }
 loxide_diagnostic = { workspace = true }
 walkdir = "2.5.0"
+tabled = "0.17.0"

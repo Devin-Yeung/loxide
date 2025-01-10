@@ -42,6 +42,12 @@ pub enum RuntimeError {
         #[label("expect a callable value here, but got type `{1}`")] Span,
         ValueKind,
     ),
+    #[error("Return in top level")]
+    ReturnInTopLevel(#[label("return statement is not allowed in top level")] Span),
+    #[error("Too many parameters, allow at most 255, found {1}")]
+    TooManyParameters(#[label("Can't have more than 255 parameters")] Span, usize),
+    #[error("Too many arguments, allow at most 255, found {1}")]
+    TooManyArguments(#[label("Can't have more than 255 arguments")] Span, usize),
 }
 
 #[derive(Debug)]

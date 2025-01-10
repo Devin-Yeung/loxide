@@ -1,0 +1,16 @@
+---
+source: crates/loxide_interpreter/tests/integration.rs
+expression: result
+snapshot_kind: text
+---
+unknown = "what"; // expect runtime error: Undefined variable 'unknown'.
+
+
+>>>>> Error Section <<<<<
+
+  × Undefined Variable: unknown
+   ╭────
+ 1 │ unknown = "what"; // expect runtime error: Undefined variable 'unknown'.
+   · ───┬───
+   ·    ╰── variable `unknown` is not defined
+   ╰────

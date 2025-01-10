@@ -1,0 +1,16 @@
+---
+source: crates/loxide_interpreter/tests/integration.rs
+expression: result
+snapshot_kind: text
+---
+nil + nil; // expect runtime error: Operands must be two numbers or two strings.
+
+
+>>>>> Error Section <<<<<
+
+  × Invalid binary operand, expected: number
+   ╭────
+ 1 │ nil + nil; // expect runtime error: Operands must be two numbers or two strings.
+   · ─┬─
+   ·  ╰── expect a number type here
+   ╰────

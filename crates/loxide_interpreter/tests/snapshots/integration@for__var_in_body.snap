@@ -1,0 +1,18 @@
+---
+source: crates/loxide_interpreter/tests/integration.rs
+expression: result
+snapshot_kind: text
+---
+// [line 2] Error at 'var': Expect expression.
+for (;;) var foo;
+
+
+>>>>> Error Section <<<<<
+
+  × Expected token `primary expression`, found keyword
+   ╭─[2:10]
+ 1 │ // [line 2] Error at 'var': Expect expression.
+ 2 │ for (;;) var foo;
+   ·          ─┬─
+   ·           ╰── expected `primary expression`, found keyword
+   ╰────

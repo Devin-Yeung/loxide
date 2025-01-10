@@ -4,11 +4,11 @@ print false == true;   // expect: false
 print false == false;  // expect: true
 
 // Not equal to other types.
-print true == 1;        // expect: false
-print false == 0;       // expect: false
-print true == "true";   // expect: false
-print false == "false"; // expect: false
-print false == "";      // expect: false
+print true == 1;        // error: type mismatch
+print false == 0;       // error: type mismatch
+print true == "true";   // error: type mismatch
+print false == "false"; // error: type mismatch
+print false == "";      // error: type mismatch
 
 print true != true;    // expect: false
 print true != false;   // expect: true
@@ -16,8 +16,8 @@ print false != true;   // expect: true
 print false != false;  // expect: false
 
 // Not equal to other types.
-print true != 1;        // expect: true
-print false != 0;       // expect: true
-print true != "true";   // expect: true
-print false != "false"; // expect: true
-print false != "";      // expect: true
+print true != 1;        //error: type mismatch
+print false != 0;       //error: type mismatch
+print true != "true";   //error: type mismatch
+print false != "false"; //error: type mismatch
+print false != "";      //error: type mismatch

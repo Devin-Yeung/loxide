@@ -58,6 +58,14 @@ impl Inner {
             },
         }
     }
+
+    /// freeze the current scope but not the parent scope
+    fn freeze(&self) -> Inner {
+        Inner {
+            values: self.values.clone(),
+            parent: self.parent.clone(),
+        }
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -113,6 +121,13 @@ impl Environment {
                 values: HashMap::new(),
                 parent: Some(self.inner.clone()),
             })),
+        }
+    }
+
+    /// freeze the current scope but not the parent scope
+    pub fn freeze(&self) -> Environment {
+        Environment {
+            inner: Arc::new(RwLock::new(self.inner.read().unwrap().freeze())),
         }
     }
 }

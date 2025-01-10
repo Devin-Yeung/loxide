@@ -1,0 +1,13 @@
+---
+source: crates/loxide_interpreter/tests/integration.rs
+expression: result
+---
+// Assignment on RHS of variable.
+var a = "before";
+
+var c = a = "var";
+
+print a; // expect: var
+// => str(var)
+print c; // expect: var
+// => str(var)

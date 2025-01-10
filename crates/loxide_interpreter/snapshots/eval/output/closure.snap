@@ -1,0 +1,17 @@
+---
+source: crates/loxide_interpreter/tests/unittest.rs
+expression: annotated_eval(src)
+---
+var a = "global";
+
+{
+  fun assign() {
+    a = "assigned";
+  }
+  var a = "inner";
+  assign();
+  print a; // expect: inner
+}
+// => str(inner)
+print a; // expect: assigned
+// => str(assigned)

@@ -1,0 +1,20 @@
+---
+source: crates/loxide_interpreter/tests/integration.rs
+expression: result
+snapshot_kind: text
+---
+var a = "a";
+
+var b = "b";
+
+a + b = "value"; // Error at '=': Invalid assignment target.
+
+>>>>> Error Section <<<<<
+
+  × Invalid assignment target.
+   ╭─[3:1]
+ 2 │ var b = "b";
+ 3 │ a + b = "value"; // Error at '=': Invalid assignment target.
+   · ──┬──
+   ·   ╰── this assignment target is invalid
+   ╰────

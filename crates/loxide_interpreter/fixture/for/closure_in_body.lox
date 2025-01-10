@@ -14,9 +14,12 @@ for (var i = 1; i < 4; i = i + 1) {
   else f3 = f;
 }
 
-f1(); // expect: 4
-      // expect: 1
-f2(); // expect: 4
-      // expect: 2
-f3(); // expect: 4
-      // expect: 3
+f1();
+// expect: 4
+// expect: 1
+f2();
+// expect: 4
+// expect: 2
+f3();
+// expect: 4
+// expect: 3

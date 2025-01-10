@@ -1,0 +1,26 @@
+---
+source: crates/loxide_interpreter/tests/integration.rs
+expression: result
+snapshot_kind: text
+---
+// [line 3] Error at '{': Expect expression.
+// [line 3] Error at ')': Expect ';' after expression.
+for ({}; a < 2; a = a + 1) {}
+
+>>>>> Error Section <<<<<
+
+  × Expected token `)`, found ;
+   ╭─[3:15]
+ 2 │ // [line 3] Error at ')': Expect ';' after expression.
+ 3 │ for ({}; a < 2; a = a + 1) {}
+   ·               ┬
+   ·               ╰── expected `)`, found ;
+   ╰────
+
+  × Expected token `;`, found )
+   ╭─[3:26]
+ 2 │ // [line 3] Error at ')': Expect ';' after expression.
+ 3 │ for ({}; a < 2; a = a + 1) {}
+   ·                          ┬
+   ·                          ╰── expected `;`, found )
+   ╰────

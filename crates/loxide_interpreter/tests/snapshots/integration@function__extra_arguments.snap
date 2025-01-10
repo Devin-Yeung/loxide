@@ -1,0 +1,29 @@
+---
+source: crates/loxide_interpreter/tests/integration.rs
+expression: result
+snapshot_kind: text
+---
+fun f(a, b) {
+  print a;
+  print b;
+}
+
+
+f(1, 2, 3, 4); // expect runtime error: Expected 2 arguments but got 4.
+
+
+>>>>> Error Section <<<<<
+
+  × Bad arity, expected: 2, found: 4
+   ╭─[1:6]
+ 1 │ fun f(a, b) {
+   ·      ───┬──
+   ·         ╰── function declare here with 2 parameters
+ 2 │   print a;
+   ╰────
+   ╭─[6:2]
+ 5 │ 
+ 6 │ f(1, 2, 3, 4); // expect runtime error: Expected 2 arguments but got 4.
+   ·  ──────┬─────
+   ·        ╰── function call here with 4 parameters
+   ╰────
