@@ -1,7 +1,7 @@
 use crate::common::annotate::annotated_eval;
 use std::collections::HashMap;
 use std::path::PathBuf;
-use std::sync::{mpsc, Arc};
+use std::sync::mpsc;
 use std::thread;
 use std::time::Duration;
 use walkdir::WalkDir;
