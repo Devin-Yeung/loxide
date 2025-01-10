@@ -1,5 +1,4 @@
 use crate::common::annotate::annotated_eval;
-use std::cmp::Ordering;
 use std::collections::HashMap;
 use std::fmt::Display;
 use std::path::PathBuf;
@@ -17,26 +16,12 @@ pub struct TestEntry {
     pub path: PathBuf,
 }
 
-#[derive(Debug, PartialEq, Eq, Ord)]
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord)]
+// The order of the variants is important Passed > Skipped > Failed
 pub enum Status {
     Passed,
-    Failed,
     Skipped,
-}
-
-impl PartialOrd for Status {
-    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        // pass > skip > fail
-        Some(match (self, other) {
-            (Status::Passed, Status::Passed) => Ordering::Equal,
-            (Status::Passed, _) => Ordering::Greater,
-            (_, Status::Passed) => Ordering::Less,
-            (Status::Skipped, Status::Skipped) => Ordering::Equal,
-            (Status::Skipped, _) => Ordering::Greater,
-            (_, Status::Skipped) => Ordering::Less,
-            (Status::Failed, Status::Failed) => Ordering::Equal,
-        })
-    }
+    Failed,
 }
 
 impl Display for Status {
