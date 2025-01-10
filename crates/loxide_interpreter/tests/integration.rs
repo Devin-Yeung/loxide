@@ -170,13 +170,13 @@ fn integration() {
             let status = if pass { Status::Passed } else { Status::Failed };
             TestResult { name, status }
         })
-        .chain(skipped.into_iter())
+        .chain(skipped)
         .collect::<Vec<_>>();
     summary.sort_by(|a, b| a.status.cmp(&b.status).then(a.name.cmp(&b.name)));
 
     let count = summary.len();
     let table = Table::new(summary);
-    let mut output = String::from(table.to_string());
+    let mut output = table.to_string();
     output.push_str(&format!("\n\nTest cases in total: {}", count));
 
     insta::with_settings!({
