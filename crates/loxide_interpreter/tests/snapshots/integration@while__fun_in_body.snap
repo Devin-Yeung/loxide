@@ -1,0 +1,18 @@
+---
+source: crates/loxide_interpreter/tests/integration.rs
+expression: result
+snapshot_kind: text
+---
+// [line 2] Error at 'fun': Expect expression.
+while (true) fun foo() {}
+
+
+>>>>> Error Section <<<<<
+
+  × Expected token `primary expression`, found keyword
+   ╭─[2:14]
+ 1 │ // [line 2] Error at 'fun': Expect expression.
+ 2 │ while (true) fun foo() {}
+   ·              ─┬─
+   ·               ╰── expected `primary expression`, found keyword
+   ╰────

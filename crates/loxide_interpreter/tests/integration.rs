@@ -25,6 +25,7 @@ fn integration() {
             // panic
             "unexpected_character",
             // oop
+            "while/class_in_body",
             "field",
             "call/object",
             "if/class_in_else",
@@ -55,7 +56,6 @@ fn integration() {
             "regression",
             "scanning",
             "super",
-            "while",
             "benchmark",
             "class",
             "comments",
