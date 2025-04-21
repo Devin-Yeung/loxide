@@ -1,7 +1,6 @@
 ---
 source: crates/loxide_interpreter/tests/unittest.rs
 expression: results
-snapshot_kind: text
 ---
   × Invalid unary operand, expected: number
    ╭────
@@ -9,7 +8,6 @@ snapshot_kind: text
    ·  ──┬─
    ·    ╰── expect a number type here
    ╰────
-
 
   × Invalid unary operand, expected: boolean
    ╭────

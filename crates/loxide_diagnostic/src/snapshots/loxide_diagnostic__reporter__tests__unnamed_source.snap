@@ -1,7 +1,6 @@
 ---
 source: crates/loxide_diagnostic/src/reporter.rs
 expression: reporter.report_to_string()
-snapshot_kind: text
 ---
   × Expected upper case letter
    ╭────
@@ -9,7 +8,6 @@ snapshot_kind: text
    · ┬
    · ╰── found lowercase letter
    ╰────
-
   × Trailing space is not allowed
    ╭────
  1 │ hello World! 
