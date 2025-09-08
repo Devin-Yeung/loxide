@@ -100,8 +100,8 @@ jobs:
       - name: cargo test
         run: cargo test --locked --all-features --all-targets
   coverage:
-    runs-on: macos-latest
-    name: macos / stable / coverage
+    runs-on: ubuntu-latest
+    name: ubuntu / stable / coverage
     steps:
       - uses: actions/checkout@v5
         with:
