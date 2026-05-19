@@ -15,4 +15,4 @@ clap = { version = "4.6.1", features = ["derive"] }
 [dev-dependencies]
 loxide_macros = { workspace = true }
 loxide_testsuite = { workspace = true }
-automod = "1.0.16"
+automod = "1.0.17"
